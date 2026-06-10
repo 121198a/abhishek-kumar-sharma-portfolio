@@ -1,0 +1,20 @@
+{
+  "name": "bold-portfolio",
+  "version": "1.0.0",
+  "description": "Bold & Modern Personal Portfolio",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd server && node index.js",
+    "client": "cd client && npm start",
+    "install:all": "npm install && cd client && npm install && cd ../server && npm install",
+    "build": "cd client && npm run build"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.5.0",
+    "concurrently": "^8.2.2",
+    "postcss": "^8.5.15"
+  },
+  "dependencies": {
+    "postcss-loader": "^8.2.1"
+  }
+}

@@ -25,7 +25,7 @@ export default function About() {
           </h2>
           <div className="about__text">
             <p>
-              I'm Abhsiehk Kumar Sharma — a  Frontend and Full-Stack Developer
+              I'm Abhishek Kumar Sharma — a  Frontend and Full-Stack Developer
               from Jharkhand, India with practical experience in React.js,
               JavaScript, Node.js, Spring Boot, MySQL, MongoDB, and AWS. <em></em>
             </p>

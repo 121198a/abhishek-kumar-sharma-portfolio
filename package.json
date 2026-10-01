@@ -1,20 +1,42 @@
 {
-  "name": "bold-portfolio",
+  "name": "abhishek-kumar-sharma-portfolio",
   "version": "1.0.0",
-  "description": "Bold & Modern Personal Portfolio",
+  "private": true,
   "scripts": {
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "cd server && node index.js",
-    "client": "cd client && npm start",
-    "install:all": "npm install && cd client && npm install && cd ../server && npm install",
-    "build": "cd client && npm run build"
-  },
-  "devDependencies": {
-    "autoprefixer": "^10.5.0",
-    "concurrently": "^8.2.2",
-    "postcss": "^8.5.15"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "index:knowledge": "tsx scripts/build-embeddings.ts",
+    "test:embedding": "tsx tests/test-embedding.ts",
+    "test:recruiter": "tsx tests/run-retrieval-tests.ts",
+    "test:smoke": "tsx tests/smoke-test.ts",
+    "cost:check": "node scripts/cost-check.mjs"
   },
   "dependencies": {
-    "postcss-loader": "^8.2.1"
+    "lenis": "^1.3.26",
+    "next": "15.5.21",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "resend": "4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "20.14.2",
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0",
+    "autoprefixer": "10.4.19",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^15.5.21",
+    "postcss": "8.5.26",
+    "tailwindcss": "3.4.4",
+    "tsx": "^4.19.2",
+    "typescript": "5.4.5"
+  },
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "overrides": {
+    "postcss": "8.5.26",
+    "sharp": "0.35.3"
   }
 }

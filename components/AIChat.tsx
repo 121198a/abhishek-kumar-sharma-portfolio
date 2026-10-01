@@ -1,0 +1,483 @@
+"use client";
+
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import {
+  ASK_AI_PROJECT_EVENT,
+  OPEN_AI_CHAT_EVENT,
+  type AskAiProjectDetail,
+  type OpenAiChatDetail,
+} from "@/lib/project-ai-event";
+import { trackEvent, mapFallbackReason } from "@/lib/analytics";
+
+type Msg = {
+  role: "user" | "bot";
+  text: string;
+};
+
+type ChatMode = "general" | "recruiter";
+
+type ChatResponse = {
+  reply?: string;
+  mode?: "ai" | "fallback" | "limit" | "rate_limited";
+  reason?: string;
+  category?: string;
+  error?: string;
+};
+
+const QUICK_LINKS = [
+  { href: "#projects", label: "View Projects" },
+  { href: "#skills", label: "View Skills" },
+  { href: "/resume.pdf", label: "View Resume" },
+  { href: "#contact", label: "Contact Abhishek" },
+];
+
+const SUGGESTED_QUESTIONS = [
+  "Tell me about Abhishek",
+  "What are his strongest skills?",
+  "Tell me about his projects",
+  "What is his research work?",
+];
+
+const INITIAL_GREETING =
+  "Hi! I'm Abhishek AI. Ask me about verified technical skills, full-stack projects, internship experience, research publications, or recruiter evaluations.";
+
+export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
+  const [open, setOpen] = useState(false);
+  const [messages, setMessages] = useState<Msg[]>([
+    {
+      role: "bot",
+      text: INITIAL_GREETING,
+    },
+  ]);
+  const [input, setInput] = useState("");
+  const [mode, setMode] = useState<ChatMode>("general");
+  const [selectedProject, setSelectedProject] = useState<AskAiProjectDetail | null>(null);
+  const [sending, setSending] = useState(false);
+  const [offline, setOffline] = useState(!aiEnabled);
+
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const sentCount = useRef(0);
+  const hasStartedChat = useRef(false);
+
+  // Auto-scroll on new messages
+  useEffect(() => {
+    if (open) {
+      bodyRef.current?.scrollTo({
+        top: bodyRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [messages, open]);
+
+  // Close on Escape key
+  useEffect(() => {
+    if (!open) return;
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setOpen(false);
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [open]);
+
+  const sendQuery = useCallback(
+    async (queryText: string, customMode?: ChatMode, projectSlug?: string) => {
+      const q = queryText.trim();
+      if (!q || sending) return;
+
+      const activeMode = customMode ?? mode;
+      const activeProjectSlug = projectSlug !== undefined ? projectSlug : selectedProject?.slug;
+
+      // Add visitor message
+      setMessages((current) => [...current, { role: "user", text: q }]);
+      setInput("");
+      setSending(true);
+
+      const lastIdx = messages.length - 1;
+      const history =
+        messages.length >= 2 &&
+        messages[lastIdx].role === "bot" &&
+        messages[lastIdx - 1].role === "user"
+          ? [
+              { role: "user" as const, content: messages[lastIdx - 1].text },
+              { role: "assistant" as const, content: messages[lastIdx].text },
+            ]
+          : [];
+
+      try {
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: q,
+            sessionMessageCount: sentCount.current,
+            mode: activeMode,
+            selectedProject: activeProjectSlug,
+            history,
+          }),
+        });
+
+        const data: ChatResponse = await res.json();
+        sentCount.current += 1;
+
+        if (!res.ok) {
+          setMessages((current) => [
+            ...current,
+            {
+              role: "bot",
+              text: data.error ?? "Something went wrong. Please try again.",
+            },
+          ]);
+          return;
+        }
+
+        if (data.mode === "ai") {
+          setOffline(false);
+          if (data.category) trackEvent("ai_question_category", { category: data.category });
+        }
+
+        if (data.mode === "fallback") {
+          setOffline(true);
+          trackEvent("fallback_used", { category: mapFallbackReason(data.reason) });
+          if (data.category) trackEvent("ai_question_category", { category: data.category });
+        }
+
+        setMessages((current) => [
+          ...current,
+          {
+            role: "bot",
+            text: data.reply ?? "I couldn't generate an answer right now.",
+          },
+        ]);
+      } catch {
+        setOffline(true);
+        setMessages((current) => [
+          ...current,
+          {
+            role: "bot",
+            text:
+              "AI is temporarily unreachable. You can explore Abhishek's verified projects, skills, and resume directly below.",
+          },
+        ]);
+      } finally {
+        setSending(false);
+      }
+    },
+    [messages, mode, selectedProject, sending]
+  );
+
+  // Handle Project Deep Dive event
+  useEffect(() => {
+    function handleAskAiProject(e: Event) {
+      const detail = (e as CustomEvent<AskAiProjectDetail>).detail;
+      if (!detail?.slug) return;
+      setSelectedProject(detail);
+      setOpen(true);
+      trackEvent("project_view", { project: detail.name });
+      trackEvent("project_ai_opened", { project: detail.name });
+
+      // Automatically ask a project context question
+      sendQuery(`Tell me about ${detail.name} and what technologies it uses.`, undefined, detail.slug);
+    }
+    window.addEventListener(ASK_AI_PROJECT_EVENT, handleAskAiProject);
+    return () => window.removeEventListener(ASK_AI_PROJECT_EVENT, handleAskAiProject);
+  }, [sendQuery]);
+
+  // Handle Open AI Chat event (from AIIntro or CTAs)
+  useEffect(() => {
+    function handleOpenAiChat(e: Event) {
+      const detail = (e as CustomEvent<OpenAiChatDetail>).detail;
+      setOpen(true);
+      if (!hasStartedChat.current) {
+        hasStartedChat.current = true;
+        trackEvent("ai_chat_started");
+      }
+      if (detail?.mode) {
+        setMode(detail.mode);
+      }
+      if (detail?.initialQuestion) {
+        sendQuery(detail.initialQuestion, detail.mode);
+      } else {
+        setTimeout(() => inputRef.current?.focus(), 150);
+      }
+    }
+    window.addEventListener(OPEN_AI_CHAT_EVENT, handleOpenAiChat);
+    return () => window.removeEventListener(OPEN_AI_CHAT_EVENT, handleOpenAiChat);
+  }, [sendQuery]);
+
+  function handleFormSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!input.trim() || sending) return;
+    sendQuery(input);
+  }
+
+  function handleClearChat() {
+    setMessages([{ role: "bot", text: INITIAL_GREETING }]);
+    setSelectedProject(null);
+    sentCount.current = 0;
+  }
+
+  return (
+    <>
+      {/* Floating Assistant Trigger Button */}
+      <button
+        type="button"
+        onClick={() => {
+          setOpen((v) => !v);
+          if (!hasStartedChat.current) {
+            hasStartedChat.current = true;
+            trackEvent("ai_chat_started");
+          }
+        }}
+        aria-label={open ? "Close Abhishek AI assistant" : "Open Abhishek AI assistant"}
+        className="fixed bottom-6 right-6 z-[60] flex h-14 w-14 items-center justify-center rounded-full border border-purple/40 text-2xl text-white shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95 glow"
+        style={{ background: "linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)" }}
+      >
+        <span className="transition-transform duration-200">
+          {open ? "✕" : "✦"}
+        </span>
+      </button>
+
+      {/* Floating Chat Dialog */}
+      {open && (
+        <div
+          data-lenis-prevent
+          role="dialog"
+          aria-label="Abhishek AI Assistant"
+          aria-modal="false"
+          className="fixed bottom-[88px] right-6 z-[60] flex w-[390px] max-w-[calc(100vw-32px)] flex-col overflow-hidden rounded-2xl border border-purple/35 bg-panel shadow-2xl backdrop-blur-2xl"
+        >
+          {/* Header */}
+          <div
+            className="flex items-center justify-between border-b border-line px-4 py-3.5"
+            style={{ background: "linear-gradient(135deg, #1f0f3d 0%, #12091f 100%)" }}
+          >
+            <div className="flex items-center gap-2">
+              <span className="grid h-6 w-6 place-items-center rounded-full bg-purple/20 text-xs font-bold text-white">
+                ✦
+              </span>
+              <div>
+                <span className="text-xs font-bold text-white block leading-tight">
+                  Abhishek AI
+                </span>
+                <span className="text-[10px] text-muted block">
+                  Portfolio Assistant
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              {/* Online/Fallback status badge */}
+              <span
+                className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-bold ${
+                  offline
+                    ? "bg-yellow-500/15 text-yellow-300 border border-yellow-500/30"
+                    : "bg-green-500/15 text-green-300 border border-green-500/30"
+                }`}
+              >
+                <span
+                  className={`h-1.5 w-1.5 rounded-full ${
+                    offline ? "bg-yellow-400" : "bg-green-400 animate-pulse"
+                  }`}
+                />
+                <span>{offline ? "OFFLINE / LOCAL" : "ONLINE"}</span>
+              </span>
+
+              {/* Clear chat button */}
+              <button
+                type="button"
+                onClick={handleClearChat}
+                title="Clear conversation"
+                aria-label="Clear conversation"
+                className="rounded-lg p-1.5 text-muted hover:bg-white/10 hover:text-white transition-colors text-xs"
+              >
+                ↺
+              </button>
+
+              {/* Close button */}
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                aria-label="Close assistant"
+                className="rounded-lg p-1.5 text-muted hover:bg-white/10 hover:text-white transition-colors text-xs"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+
+          {/* Mode Selector */}
+          <div
+            role="group"
+            aria-label="Chat persona mode"
+            className="flex items-center justify-between border-b border-line bg-panel2/50 px-3 py-2 text-[11px]"
+          >
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => setMode("general")}
+                aria-pressed={mode === "general"}
+                className={`rounded-lg px-2.5 py-1 font-semibold transition ${
+                  mode === "general"
+                    ? "bg-purple/25 text-white border border-purple/40"
+                    : "text-muted hover:text-white"
+                }`}
+              >
+                💬 General
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (mode !== "recruiter") trackEvent("recruiter_mode", { enabled: true });
+                  setMode("recruiter");
+                }}
+                aria-pressed={mode === "recruiter"}
+                className={`rounded-lg px-2.5 py-1 font-semibold transition ${
+                  mode === "recruiter"
+                    ? "bg-purple/25 text-white border border-purple/40"
+                    : "text-muted hover:text-white"
+                }`}
+              >
+                👔 Recruiter Mode
+              </button>
+            </div>
+            <span className="text-[10px] text-muted/60">
+              {mode === "recruiter" ? "Fact → Evidence" : "General"}
+            </span>
+          </div>
+
+          {/* Selected Project Focus Banner */}
+          {selectedProject && (
+            <div className="flex items-center justify-between border-b border-line bg-purple/15 px-3 py-1.5 text-[11px]">
+              <span className="truncate text-[#d8b4fe]">
+                ✦ Focus: <strong>{selectedProject.name}</strong>
+              </span>
+              <button
+                type="button"
+                onClick={() => setSelectedProject(null)}
+                aria-label="Clear project focus"
+                className="rounded-full px-1.5 text-xs text-muted hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+          )}
+
+          {/* Messages Container with scroll prevention */}
+          <div
+            ref={bodyRef}
+            data-lenis-prevent
+            className="h-[300px] overflow-y-auto p-4 space-y-3 overscroll-contain"
+          >
+            {messages.map((message, index) => (
+              <div
+                key={index}
+                className={`flex flex-col ${
+                  message.role === "user" ? "items-end" : "items-start"
+                }`}
+              >
+                <div
+                  className={`max-w-[88%] rounded-2xl p-3 text-xs leading-relaxed ${
+                    message.role === "user"
+                      ? "rounded-br-sm bg-purple/35 text-white border border-purple/40"
+                      : "rounded-bl-sm border border-line bg-white/[0.04] text-[#ece8f4]"
+                  }`}
+                >
+                  {message.text}
+                </div>
+              </div>
+            ))}
+
+            {/* Thinking / Loading indicator */}
+            {sending && (
+              <div className="flex items-center gap-1.5 rounded-2xl rounded-bl-sm border border-line bg-white/[0.04] px-3.5 py-2.5 w-fit">
+                <span className="h-1.5 w-1.5 rounded-full bg-purple animate-bounce" />
+                <span className="h-1.5 w-1.5 rounded-full bg-purple animate-bounce [animation-delay:0.15s]" />
+                <span className="h-1.5 w-1.5 rounded-full bg-purple animate-bounce [animation-delay:0.3s]" />
+                <span className="text-[10px] text-muted ml-1">Analyzing verified knowledge...</span>
+              </div>
+            )}
+
+            {/* Quick suggested prompts when messages <= 2 */}
+            {messages.length <= 2 && !sending && (
+              <div className="pt-2">
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted/60 block mb-1.5">
+                  Suggested queries:
+                </span>
+                <div className="flex flex-col gap-1.5">
+                  {SUGGESTED_QUESTIONS.map((q) => (
+                    <button
+                      key={q}
+                      type="button"
+                      onClick={() => sendQuery(q)}
+                      className="text-left rounded-xl border border-line/60 bg-white/[0.02] px-3 py-1.5 text-xs text-muted hover:border-purple/40 hover:bg-purple/10 hover:text-white transition"
+                    >
+                      &ldquo;{q}&rdquo;
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Offline quick links */}
+            {offline && (
+              <div className="pt-2 border-t border-line/60 mt-3">
+                <span className="text-[10px] text-muted block mb-1.5 font-medium">
+                  Direct verified portfolio links:
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {QUICK_LINKS.map((link) => (
+                    <a
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => {
+                        setOpen(false);
+                        if (link.href === "/resume.pdf") trackEvent("resume_download");
+                      }}
+                      className="rounded-full border border-purple/30 bg-purple/10 px-2.5 py-1 text-[10px] font-medium text-[#d8b4fe] hover:border-purple hover:bg-purple/20 transition"
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Input Form */}
+          <form
+            onSubmit={handleFormSubmit}
+            className="flex items-center border-t border-line bg-panel2/60 p-2 gap-2"
+          >
+            <input
+              ref={inputRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Ask about projects, skills, education..."
+              autoComplete="off"
+              maxLength={400}
+              disabled={sending}
+              className="flex-1 rounded-xl border border-line/80 bg-white/[0.03] px-3 py-2.5 text-xs text-white placeholder-muted/50 outline-none focus:border-purple transition disabled:opacity-50"
+            />
+
+            <button
+              type="submit"
+              disabled={sending || !input.trim()}
+              aria-label="Send message"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-purple text-white transition hover:bg-purple/90 disabled:opacity-40"
+            >
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M14 8L2 2L4.5 8L2 14L14 8Z"
+                  fill="currentColor"
+                />
+              </svg>
+            </button>
+          </form>
+        </div>
+      )}
+    </>
+  );
+}

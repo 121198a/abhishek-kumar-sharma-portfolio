@@ -1,5 +1,28 @@
-﻿node_modules/
-.env
+﻿# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Next.js build outputs
+/.next/
+/out/
 build/
 dist/
+
+# Testing & coverage
 coverage/
+
+# Environment files
+.env
+.env*.local
+
+# Vercel
+.vercel
+
+# OS metadata
+.DS_Store
+Thumbs.db
+*.pem
+
+# TypeScript cache
+*.tsbuildinfo

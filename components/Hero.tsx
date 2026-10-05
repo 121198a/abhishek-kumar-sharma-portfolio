@@ -9,6 +9,7 @@ import { experience } from "@/data/experience";
 import { trackEvent } from "@/lib/analytics";
 import Reveal from "@/components/motion/Reveal";
 import Magnetic from "@/components/motion/Magnetic";
+import Tilt3D from "@/components/motion/Tilt3D";
 import dynamic from "next/dynamic";
 import type { VideoManifest } from "@/lib/media-policy";
 
@@ -124,33 +125,79 @@ export default function Hero({ portraitSrc = null, video = null }: HeroProps) {
             </Reveal>
           </div>
 
-          {/* Portrait slot: only rendered when /public/images/abhishek.* exists.
-              `grayscale` is display styling only — delete the class to show the
-              original colours. The photo itself is never altered or regenerated. */}
+          {/* Portrait slot: rendered when /public/images/abhishek.* exists.
+              Wrapped in an interactive Tilt3D container with cinematic lighting. */}
           {portraitSrc && (
             <Reveal immediate delay={0.3}>
-              <figure className="mx-auto w-full max-w-[320px] lg:max-w-none">
-                <div className="relative aspect-[4/5] overflow-hidden border border-line">
-                  <Image
-                    src={portraitSrc}
-                    alt={`Portrait of ${profile.name}`}
-                    fill
-                    priority
-                    sizes="(min-width: 1024px) 320px, 80vw"
-                    className="object-cover grayscale contrast-110"
-                  />
-                </div>
+              <figure className="mx-auto w-full max-w-[340px] lg:max-w-none">
+                <Tilt3D maxTilt={10} scale={1.03} glare glareOpacity={0.2} className="group">
+                  <div className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/15 bg-panel2/80 shadow-2xl backdrop-blur-md transition-all duration-300 group-hover:border-purple/60 group-hover:shadow-[0_0_50px_rgba(111,147,255,0.25)]">
+                    {/* Atmospheric ambient backlight */}
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute -inset-1 opacity-40 blur-2xl transition-opacity duration-500 group-hover:opacity-75"
+                      style={{
+                        background:
+                          "radial-gradient(circle at 50% 30%, rgba(111, 147, 255, 0.45), rgba(63, 102, 245, 0.2) 50%, transparent 80%)",
+                      }}
+                    />
+
+                    <Image
+                      src={portraitSrc}
+                      alt={`Portrait of ${profile.name}`}
+                      fill
+                      priority
+                      sizes="(min-width: 1024px) 340px, 80vw"
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    />
+
+                    {/* Gradient depth vignette */}
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0a0a0c] via-transparent to-transparent opacity-65"
+                    />
+
+                    {/* Floating 3D holographic badge at bottom */}
+                    <div
+                      className="absolute inset-x-3.5 bottom-3.5 flex items-center justify-between rounded-2xl border border-white/10 bg-bg/85 p-3 backdrop-blur-xl shadow-lg transition-transform duration-300"
+                      style={{ transform: "translateZ(24px)" }}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <span className="relative flex h-2.5 w-2.5">
+                          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#86efac] opacity-75" />
+                          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#86efac]" />
+                        </span>
+                        <div>
+                          <p className="text-[11px] font-bold text-ink leading-tight">{profile.name}</p>
+                          <p className="text-[9px] font-medium text-muted uppercase tracking-wider">
+                            Full-Stack &amp; AI
+                          </p>
+                        </div>
+                      </div>
+                      <span className="rounded-lg border border-purple/30 bg-purple/15 px-2 py-0.5 text-[10px] font-semibold text-[#b4c6fe]">
+                        Available
+                      </span>
+                    </div>
+                  </div>
+                </Tilt3D>
               </figure>
             </Reveal>
           )}
         </div>
 
         <Reveal immediate delay={0.45}>
-          <dl className="mt-14 grid grid-cols-2 gap-x-6 gap-y-6 border-t border-line pt-6 sm:grid-cols-4">
+          <dl className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6 border-t border-line pt-6">
             {stats.map((s) => (
-              <div key={s.label} className="flex flex-col-reverse">
-                <dt className="mt-1 text-[11px] font-medium uppercase tracking-wider text-muted">{s.label}</dt>
-                <dd className="text-2xl font-black text-ink sm:text-3xl">{s.value}</dd>
+              <div
+                key={s.label}
+                className="group flex flex-col-reverse rounded-2xl border border-line/60 bg-panel2/40 p-4 transition-all duration-300 hover:border-purple/40 hover:bg-panel2/70 hover:-translate-y-1 hover:shadow-glow"
+              >
+                <dt className="mt-1.5 text-[11px] font-medium uppercase tracking-wider text-muted group-hover:text-ink/80 transition-colors">
+                  {s.label}
+                </dt>
+                <dd className="text-2xl font-black text-ink sm:text-3xl tracking-tight group-hover:text-purple transition-colors">
+                  {s.value}
+                </dd>
               </div>
             ))}
           </dl>

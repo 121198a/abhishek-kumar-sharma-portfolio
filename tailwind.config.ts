@@ -20,6 +20,24 @@ const config: Config = {
       },
       boxShadow: {
         glow: "0 0 50px rgba(111,147,255,.18)",
+        "glow-lg": "0 0 80px rgba(111,147,255,.28)",
+        "glow-cyan": "0 0 60px rgba(56,189,248,.22)",
+        "3d": "0 25px 50px -12px rgba(0,0,0,.7), 0 0 30px rgba(111,147,255,.15)",
+      },
+      animation: {
+        "float-slow": "float 8s ease-in-out infinite",
+        "pulse-subtle": "pulseSubtle 4s ease-in-out infinite",
+        shimmer: "shimmer 2.5s infinite linear",
+      },
+      keyframes: {
+        pulseSubtle: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.6" },
+        },
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
       },
       maxWidth: {
         shell: "1400px",

@@ -8,6 +8,7 @@ import { dispatchAskAiProject } from "@/lib/project-ai-event";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Reveal from "@/components/motion/Reveal";
 import Badge from "@/components/ui/Badge";
+import Tilt3D from "@/components/motion/Tilt3D";
 
 export default function Projects() {
   const [filter, setFilter] = useState<(typeof projectCategories)[number]>("All");
@@ -72,8 +73,10 @@ export default function Projects() {
         ) : (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {visible.map((p, index) => (
-              <Reveal key={p.slug} delay={index * 0.08}>
-                <ProjectCard project={p} />
+              <Reveal key={p.slug} delay={index * 0.08} className="h-full">
+                <Tilt3D maxTilt={6} scale={1.015} perspective={1200} glare glareOpacity={0.12} className="h-full">
+                  <ProjectCard project={p} />
+                </Tilt3D>
               </Reveal>
             ))}
           </div>

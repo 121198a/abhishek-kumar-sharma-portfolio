@@ -2,6 +2,7 @@ import React from "react";
 import { profile } from "@/data/profile";
 import TrackedLink from "@/components/ui/TrackedLink";
 import Reveal from "@/components/motion/Reveal";
+import Tilt3D from "@/components/motion/Tilt3D";
 
 export default function About() {
   return (
@@ -65,59 +66,63 @@ export default function About() {
           </div>
 
           {/* Right Column: Verified Highlights & Information Cards */}
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-5">
             {/* Current Position Card */}
             <Reveal delay={0.2}>
-              <div className="rounded-2xl border border-line bg-panel2/70 p-7">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold tracking-[0.18em] text-[#84a2fc] uppercase">
-                    Active Engagement
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#86efac]/10 px-2.5 py-0.5 text-[10px] font-bold text-[#86efac]">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#86efac] animate-pulse" />
-                    Present
-                  </span>
+              <Tilt3D maxTilt={6} scale={1.015} glare glareOpacity={0.12}>
+                <div className="rounded-2xl border border-line/80 bg-panel2/70 p-7 shadow-lg transition-all duration-300 hover:border-purple/50 hover:shadow-glow">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold tracking-[0.18em] text-[#84a2fc] uppercase">
+                      Active Engagement
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#86efac]/10 px-2.5 py-0.5 text-[10px] font-bold text-[#86efac]">
+                      <span className="h-1.5 w-1.5 rounded-full bg-[#86efac] animate-pulse" />
+                      Present
+                    </span>
+                  </div>
+                  <h3 className="mt-3 text-lg font-bold text-white">
+                    {profile.currentRole.title}
+                  </h3>
+                  <p className="text-sm text-muted mt-0.5">
+                    {profile.currentRole.org}
+                  </p>
+                  <div className="my-5 h-px bg-line/80" />
+                  <p className="text-xs leading-relaxed text-muted">
+                    Developing user interfaces with React.js, Tailwind CSS, and REST API integrations. Focused on clean component composition and performance.
+                  </p>
                 </div>
-                <h3 className="mt-3 text-lg font-bold text-white">
-                  {profile.currentRole.title}
-                </h3>
-                <p className="text-sm text-muted mt-0.5">
-                  {profile.currentRole.org}
-                </p>
-                <div className="my-5 h-px bg-line/80" />
-                <p className="text-xs leading-relaxed text-muted">
-                  Developing user interfaces with React.js, Tailwind CSS, and REST API integrations. Focused on clean component composition and performance.
-                </p>
-              </div>
+              </Tilt3D>
             </Reveal>
 
             {/* Location & Academic Base Card */}
             <Reveal delay={0.3}>
-              <div className="rounded-2xl border border-line bg-panel2/50 p-6">
-                <span className="text-[10px] font-bold tracking-[0.18em] text-muted uppercase">
-                  Location &amp; Foundation
-                </span>
-                <div className="mt-3 grid grid-cols-2 gap-4">
-                  <div>
-                    <span className="text-xs text-muted block">Location</span>
-                    <strong className="text-sm text-white font-semibold mt-0.5 block">
-                      {profile.location}
-                    </strong>
+              <Tilt3D maxTilt={6} scale={1.015} glare glareOpacity={0.12}>
+                <div className="rounded-2xl border border-line/80 bg-panel2/60 p-6 shadow-lg transition-all duration-300 hover:border-purple/50 hover:shadow-glow">
+                  <span className="text-[10px] font-bold tracking-[0.18em] text-muted uppercase">
+                    Location &amp; Foundation
+                  </span>
+                  <div className="mt-3 grid grid-cols-2 gap-4">
+                    <div>
+                      <span className="text-xs text-muted block">Location</span>
+                      <strong className="text-sm text-white font-semibold mt-0.5 block">
+                        {profile.location}
+                      </strong>
+                    </div>
+                    <div>
+                      <span className="text-xs text-muted block">Education</span>
+                      <strong className="text-sm text-white font-semibold mt-0.5 block">
+                        B.Tech in CSIT
+                      </strong>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-xs text-muted block">Education</span>
-                    <strong className="text-sm text-white font-semibold mt-0.5 block">
-                      B.Tech in CSIT
-                    </strong>
+                  <div className="mt-4 pt-4 border-t border-line/60">
+                    <span className="text-xs text-muted block">Research Publication</span>
+                    <p className="text-xs text-[#b4c6fe] mt-1 font-medium">
+                      Presented at CoCole 2025, NIT Rourkela on Coverless Image Steganography
+                    </p>
                   </div>
                 </div>
-                <div className="mt-4 pt-4 border-t border-line/60">
-                  <span className="text-xs text-muted block">Research Publication</span>
-                  <p className="text-xs text-[#b4c6fe] mt-1 font-medium">
-                    Presented at CoCole 2025, NIT Rourkela on Coverless Image Steganography
-                  </p>
-                </div>
-              </div>
+              </Tilt3D>
             </Reveal>
           </div>
         </div>

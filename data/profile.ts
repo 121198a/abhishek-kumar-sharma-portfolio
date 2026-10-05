@@ -4,8 +4,8 @@
 
 export const profile = {
   name: "Abhishek Kumar Sharma",
-  title: "Frontend & Full-Stack Developer",
-  shortTitle: "Full-Stack Developer",
+  title: "Full-Stack AI Developer",
+  shortTitle: "Full-Stack AI Developer",
   location: "Jharkhand, India",
   email: "sharmaabhishek121198@gmail.com",
   github: "https://github.com/121198a",

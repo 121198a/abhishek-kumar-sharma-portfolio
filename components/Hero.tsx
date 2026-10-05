@@ -22,36 +22,52 @@ const stats = [
 ];
 
 type HeroProps = {
-  /** Optional portrait or fallback image. Rendered only when a file exists in /public/images. */
+  /** Optional portrait image. Rendered only when a file exists in /public/images. */
   portraitSrc?: string | null;
   /** Optional looping 3D video manifest (from `public/videos/hero`). */
   video?: VideoManifest | null;
 };
 
 export default function Hero({ portraitSrc = null, video = null }: HeroProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const bgVideoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(true);
-  const [videoError, setVideoError] = useState(false);
 
-  // Resolve video path from manifest or default 1080p hero video
-  const videoSrc = video?.sources?.[0]?.src ?? (portraitSrc ? "/videos/hero/hero-1080.mp4" : null);
+  // Background video source path
+  const videoSrc = video?.sources?.[0]?.src ?? "/videos/hero/hero-1080.mp4";
 
+  // Ensure continuous background video auto-play across all browser policies
   useEffect(() => {
-    const v = videoRef.current;
+    const v = bgVideoRef.current;
     if (!v) return;
+
     v.muted = true;
     v.defaultMuted = true;
-    v.play()
-      .then(() => setIsPlaying(true))
-      .catch(() => {
-        // Autoplay policy or low-power mode might pause initially
-        setIsPlaying(false);
-      });
+
+    const playPromise = v.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => setIsPlaying(true))
+        .catch(() => {
+          // If browser restricts unprompted autoplay, play on first user interaction
+          setIsPlaying(false);
+          const handleFirstInteraction = () => {
+            v.play()
+              .then(() => setIsPlaying(true))
+              .catch(() => {});
+            window.removeEventListener("click", handleFirstInteraction);
+            window.removeEventListener("touchstart", handleFirstInteraction);
+            window.removeEventListener("keydown", handleFirstInteraction);
+          };
+          window.addEventListener("click", handleFirstInteraction, { once: true });
+          window.addEventListener("touchstart", handleFirstInteraction, { once: true });
+          window.addEventListener("keydown", handleFirstInteraction, { once: true });
+        });
+    }
   }, [videoSrc]);
 
-  const togglePlay = (e: React.MouseEvent) => {
+  const toggleBgVideo = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const v = videoRef.current;
+    const v = bgVideoRef.current;
     if (!v) return;
     if (v.paused) {
       v.play()
@@ -64,30 +80,61 @@ export default function Hero({ portraitSrc = null, video = null }: HeroProps) {
   };
 
   return (
-    <section className="relative overflow-hidden pt-24 pb-12 sm:pt-28 sm:pb-16">
+    <section className="relative overflow-hidden pt-24 pb-12 sm:pt-28 sm:pb-16 min-h-[600px] flex flex-col justify-center">
+      {/* ─────────────────────────────────────────────────────────────────
+          Continuous 3D Motion Background Video (z-0)
+          Plays behind all hero content and stays playing when chatbot opens.
+          ───────────────────────────────────────────────────────────────── */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+      >
+        <video
+          ref={bgVideoRef}
+          src={videoSrc}
+          poster="/videos/hero/hero-poster.png"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          className="h-full w-full object-cover object-center opacity-30 sm:opacity-35"
+        />
+        {/* Cinematic gradient overlays to guarantee WCAG AAA text contrast */}
+        <div className="absolute inset-0 bg-gradient-to-r from-bg via-bg/85 to-bg/60" />
+        <div className="absolute inset-0 bg-gradient-to-b from-bg/70 via-transparent to-bg" />
+      </div>
+
+      {/* Hero Content Container (z-10) */}
       <div className="relative z-10 mx-auto w-full max-w-shell px-6 sm:px-8">
-        {/* Status line — content comes from data/profile.ts */}
+        {/* Status Line: Professional Title & Active Role */}
         <Reveal immediate delay={0.05} direction="down">
-          <p className="flex items-center gap-2.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted sm:text-xs">
-            <span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-full bg-[#86efac] motion-safe:animate-pulse" />
-            <span>
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="inline-flex items-center gap-2 rounded-full border border-purple/30 bg-purple/15 px-3 py-1 text-xs font-semibold text-[#b4c6fe]">
+              <span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-full bg-[#86efac] motion-safe:animate-pulse" />
+              <span>{profile.title}</span>
+            </span>
+            <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted sm:text-xs">
               {profile.currentRole.title} · {profile.currentRole.org}
             </span>
-          </p>
+          </div>
         </Reveal>
 
         <div className="mt-6 sm:mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[1.15fr_340px] xl:grid-cols-[1.2fr_360px] lg:items-center lg:gap-12">
+          {/* Left Column: Heading, Subtitle & CTAs */}
           <div>
-            {/* h1 + intro paragraph are LCP candidates: rendered static, no entrance animation. */}
             <div>
-              <h1 className="break-words text-[clamp(2.1rem,13vw,8.5rem)] font-black uppercase leading-[0.86] tracking-[-0.055em] text-ink">
+              <h1 className="break-words text-[clamp(2.5rem,7vw,5.5rem)] font-black uppercase leading-[0.92] tracking-[-0.045em] text-ink">
                 <span className="block">Abhishek</span>
                 <span className="block">Kumar</span>
-                <span className="block text-purple">Sharma</span>
+                <span className="block gradient-text">Sharma</span>
               </h1>
-              <p className="mt-6 sm:mt-8 max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
-                Full-stack developer building React, Next.js and Node.js applications with REST APIs,
-                JWT authentication and role-based access control.
+              <p className="mt-3 text-lg sm:text-xl font-bold text-[#b4c6fe] tracking-tight">
+                {profile.title}
+              </p>
+              <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
+                Full-stack developer building React, Next.js and Node.js applications with AI model integrations,
+                REST APIs, JWT authentication, and role-based access control.
               </p>
             </div>
 
@@ -154,8 +201,8 @@ export default function Hero({ portraitSrc = null, video = null }: HeroProps) {
             </Reveal>
           </div>
 
-          {/* Hero 3D Card: displays the 3D animated motion video, with static image fallback */}
-          {(portraitSrc || videoSrc) && (
+          {/* Right Column: Hero Character Card (contained within bounds, no overflow) */}
+          {portraitSrc && (
             <Reveal immediate delay={0.25}>
               <figure className="mx-auto w-full max-w-[340px] sm:max-w-[360px] lg:max-w-none">
                 <Tilt3D maxTilt={8} scale={1.02} glare glareOpacity={0.18} className="group">
@@ -170,51 +217,21 @@ export default function Hero({ portraitSrc = null, video = null }: HeroProps) {
                       }}
                     />
 
-                    {/* Fallback Static Image */}
-                    {portraitSrc && (
-                      <Image
-                        src={portraitSrc}
-                        alt={`Portrait of ${profile.name}`}
-                        fill
-                        priority
-                        sizes="(min-width: 1024px) 360px, 80vw"
-                        className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                      />
-                    )}
-
-                    {/* 3D Animated Motion Video */}
-                    {videoSrc && !videoError && (
-                      <video
-                        ref={videoRef}
-                        src={videoSrc}
-                        poster={portraitSrc ?? undefined}
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        preload="auto"
-                        onError={() => setVideoError(true)}
-                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                      />
-                    )}
+                    {/* Character Portrait Image */}
+                    <Image
+                      src={portraitSrc}
+                      alt={`Portrait of ${profile.name}`}
+                      fill
+                      priority
+                      sizes="(min-width: 1024px) 360px, 80vw"
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    />
 
                     {/* Gradient depth vignette */}
                     <div
                       aria-hidden="true"
                       className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0a0a0c]/90 via-[#0a0a0c]/20 to-transparent"
                     />
-
-                    {/* Play/Pause Control Button */}
-                    {videoSrc && !videoError && (
-                      <button
-                        type="button"
-                        onClick={togglePlay}
-                        aria-label={isPlaying ? "Pause 3D animation" : "Play 3D animation"}
-                        className="absolute top-3 right-3 z-20 flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-bg/75 text-xs text-white shadow-md backdrop-blur-md transition-all hover:scale-110 hover:border-purple hover:bg-purple/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-purple"
-                      >
-                        <span aria-hidden="true">{isPlaying ? "❚❚" : "▶"}</span>
-                      </button>
-                    )}
 
                     {/* Floating 3D holographic badge at bottom */}
                     <div
@@ -229,12 +246,12 @@ export default function Hero({ portraitSrc = null, video = null }: HeroProps) {
                         <div>
                           <p className="text-[11px] font-bold text-ink leading-tight">{profile.name}</p>
                           <p className="text-[9px] font-medium text-muted uppercase tracking-wider">
-                            Full-Stack &amp; AI
+                            {profile.title}
                           </p>
                         </div>
                       </div>
-                      <span className="rounded-lg border border-purple/30 bg-purple/15 px-2 py-0.5 text-[10px] font-semibold text-[#b4c6fe]">
-                        3D Motion
+                      <span className="rounded-lg border border-[#86efac]/30 bg-[#86efac]/10 px-2 py-0.5 text-[10px] font-semibold text-[#86efac]">
+                        Available
                       </span>
                     </div>
                   </div>
@@ -244,22 +261,38 @@ export default function Hero({ portraitSrc = null, video = null }: HeroProps) {
           )}
         </div>
 
+        {/* Hero Bottom Stats Bar */}
         <Reveal immediate delay={0.45}>
-          <dl className="mt-10 sm:mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6 border-t border-line pt-6">
-            {stats.map((s) => (
-              <div
-                key={s.label}
-                className="group flex flex-col-reverse rounded-2xl border border-line/60 bg-panel2/40 p-4 transition-all duration-300 hover:border-purple/40 hover:bg-panel2/70 hover:-translate-y-1 hover:shadow-glow"
+          <div className="mt-10 sm:mt-12 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-t border-line pt-6">
+            <dl className="grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6 flex-1">
+              {stats.map((s) => (
+                <div
+                  key={s.label}
+                  className="group flex flex-col-reverse rounded-2xl border border-line/60 bg-panel2/40 p-4 transition-all duration-300 hover:border-purple/40 hover:bg-panel2/70 hover:-translate-y-1 hover:shadow-glow"
+                >
+                  <dt className="mt-1.5 text-[11px] font-medium uppercase tracking-wider text-muted group-hover:text-ink/80 transition-colors">
+                    {s.label}
+                  </dt>
+                  <dd className="text-2xl font-black text-ink sm:text-3xl tracking-tight group-hover:text-purple transition-colors">
+                    {s.value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+
+            {/* Optional Unobtrusive Background Video Play/Pause Toggle */}
+            <div className="flex items-center justify-end">
+              <button
+                type="button"
+                onClick={toggleBgVideo}
+                aria-label={isPlaying ? "Pause background animation" : "Play background animation"}
+                className="inline-flex items-center gap-1.5 rounded-full border border-line/70 bg-panel2/50 px-3 py-1 text-[11px] font-medium text-muted transition hover:border-purple/40 hover:text-white"
               >
-                <dt className="mt-1.5 text-[11px] font-medium uppercase tracking-wider text-muted group-hover:text-ink/80 transition-colors">
-                  {s.label}
-                </dt>
-                <dd className="text-2xl font-black text-ink sm:text-3xl tracking-tight group-hover:text-purple transition-colors">
-                  {s.value}
-                </dd>
-              </div>
-            ))}
-          </dl>
+                <span aria-hidden="true" className="text-[10px]">{isPlaying ? "❚❚" : "▶"}</span>
+                <span>{isPlaying ? "Pause Motion" : "Play Motion"}</span>
+              </button>
+            </div>
+          </div>
         </Reveal>
       </div>
     </section>

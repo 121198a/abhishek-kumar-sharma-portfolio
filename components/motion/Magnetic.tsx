@@ -18,11 +18,21 @@ export default function Magnetic({
   const [disabled, setDisabled] = useState(false);
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const isTouchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
-    if (prefersReducedMotion || isTouchDevice) {
-      setDisabled(true);
-    }
+    const mqMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const mqHover = window.matchMedia("(hover: none)");
+
+    const updateDisabled = () => {
+      setDisabled(mqMotion.matches || mqHover.matches);
+    };
+
+    updateDisabled();
+    mqMotion.addEventListener("change", updateDisabled);
+    mqHover.addEventListener("change", updateDisabled);
+
+    return () => {
+      mqMotion.removeEventListener("change", updateDisabled);
+      mqHover.removeEventListener("change", updateDisabled);
+    };
   }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {

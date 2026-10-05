@@ -28,11 +28,21 @@ export default function Tilt3D({
   const [disabled, setDisabled] = useState(false);
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const isTouchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 0;
-    if (prefersReducedMotion || isTouchDevice) {
-      setDisabled(true);
-    }
+    const mqMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const mqHover = window.matchMedia("(hover: none)");
+
+    const updateDisabled = () => {
+      setDisabled(mqMotion.matches || mqHover.matches);
+    };
+
+    updateDisabled();
+    mqMotion.addEventListener("change", updateDisabled);
+    mqHover.addEventListener("change", updateDisabled);
+
+    return () => {
+      mqMotion.removeEventListener("change", updateDisabled);
+      mqHover.removeEventListener("change", updateDisabled);
+    };
   }, []);
 
   const handleMouseMove = useCallback(
@@ -98,7 +108,9 @@ export default function Tilt3D({
       <div
         className="w-full h-full transform-gpu transition-transform duration-200 ease-out"
         style={{
-          transform: `rotateX(${coords.rotateX.toFixed(2)}deg) rotateY(${coords.rotateY.toFixed(2)}deg) scale3d(${coords.scale}, ${coords.scale}, 1)`,
+          transform: isHovered
+            ? `rotateX(${coords.rotateX.toFixed(2)}deg) rotateY(${coords.rotateY.toFixed(2)}deg) scale3d(${coords.scale}, ${coords.scale}, 1)`
+            : "rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)",
           transformStyle: "preserve-3d",
         }}
       >

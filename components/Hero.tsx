@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { profile } from "@/data/profile";
 import { projects } from "@/data/projects";
@@ -10,11 +10,7 @@ import { trackEvent } from "@/lib/analytics";
 import Reveal from "@/components/motion/Reveal";
 import Magnetic from "@/components/motion/Magnetic";
 import Tilt3D from "@/components/motion/Tilt3D";
-import dynamic from "next/dynamic";
 import type { VideoManifest } from "@/lib/media-policy";
-
-// Code-split: the video component is only downloaded when a video actually exists.
-const ResponsiveVideo = dynamic(() => import("@/components/media/ResponsiveVideo"));
 
 const earliestYear = Math.min(...experience.map((e) => Number(e.year)));
 
@@ -26,16 +22,49 @@ const stats = [
 ];
 
 type HeroProps = {
-  /** Optional portrait. Rendered only when a file exists in /public/images. */
+  /** Optional portrait or fallback image. Rendered only when a file exists in /public/images. */
   portraitSrc?: string | null;
-  /** Optional looping background video (from `npm run media:optimize`). */
+  /** Optional looping 3D video manifest (from `public/videos/hero`). */
   video?: VideoManifest | null;
 };
 
 export default function Hero({ portraitSrc = null, video = null }: HeroProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [videoError, setVideoError] = useState(false);
+
+  // Resolve video path from manifest or default 1080p hero video
+  const videoSrc = video?.sources?.[0]?.src ?? (portraitSrc ? "/videos/hero/hero-1080.mp4" : null);
+
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = true;
+    v.defaultMuted = true;
+    v.play()
+      .then(() => setIsPlaying(true))
+      .catch(() => {
+        // Autoplay policy or low-power mode might pause initially
+        setIsPlaying(false);
+      });
+  }, [videoSrc]);
+
+  const togglePlay = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const v = videoRef.current;
+    if (!v) return;
+    if (v.paused) {
+      v.play()
+        .then(() => setIsPlaying(true))
+        .catch(() => {});
+    } else {
+      v.pause();
+      setIsPlaying(false);
+    }
+  };
+
   return (
-    <section className="relative overflow-hidden pt-28 pb-14 sm:pt-32 sm:pb-20">
-      {video && <ResponsiveVideo manifest={video} />}
+    <section className="relative overflow-hidden pt-24 pb-12 sm:pt-28 sm:pb-16">
       <div className="relative z-10 mx-auto w-full max-w-shell px-6 sm:px-8">
         {/* Status line — content comes from data/profile.ts */}
         <Reveal immediate delay={0.05} direction="down">
@@ -47,7 +76,7 @@ export default function Hero({ portraitSrc = null, video = null }: HeroProps) {
           </p>
         </Reveal>
 
-        <div className="mt-8 grid grid-cols-1 gap-10 lg:grid-cols-[1fr_320px] lg:items-end lg:gap-14">
+        <div className="mt-6 sm:mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[1.15fr_340px] xl:grid-cols-[1.2fr_360px] lg:items-center lg:gap-12">
           <div>
             {/* h1 + intro paragraph are LCP candidates: rendered static, no entrance animation. */}
             <div>
@@ -56,7 +85,7 @@ export default function Hero({ portraitSrc = null, video = null }: HeroProps) {
                 <span className="block">Kumar</span>
                 <span className="block text-purple">Sharma</span>
               </h1>
-              <p className="mt-8 max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
+              <p className="mt-6 sm:mt-8 max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
                 Full-stack developer building React, Next.js and Node.js applications with REST APIs,
                 JWT authentication and role-based access control.
               </p>
@@ -125,13 +154,12 @@ export default function Hero({ portraitSrc = null, video = null }: HeroProps) {
             </Reveal>
           </div>
 
-          {/* Portrait slot: rendered when /public/images/abhishek.* exists.
-              Wrapped in an interactive Tilt3D container with cinematic lighting. */}
-          {portraitSrc && (
-            <Reveal immediate delay={0.3}>
-              <figure className="mx-auto w-full max-w-[340px] lg:max-w-none">
-                <Tilt3D maxTilt={10} scale={1.03} glare glareOpacity={0.2} className="group">
-                  <div className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/15 bg-panel2/80 shadow-2xl backdrop-blur-md transition-all duration-300 group-hover:border-purple/60 group-hover:shadow-[0_0_50px_rgba(111,147,255,0.25)]">
+          {/* Hero 3D Card: displays the 3D animated motion video, with static image fallback */}
+          {(portraitSrc || videoSrc) && (
+            <Reveal immediate delay={0.25}>
+              <figure className="mx-auto w-full max-w-[340px] sm:max-w-[360px] lg:max-w-none">
+                <Tilt3D maxTilt={8} scale={1.02} glare glareOpacity={0.18} className="group">
+                  <div className="relative aspect-[4/5] overflow-hidden rounded-3xl border border-white/15 bg-panel2/90 shadow-2xl backdrop-blur-md transition-all duration-300 group-hover:border-purple/60 group-hover:shadow-[0_0_50px_rgba(111,147,255,0.25)]">
                     {/* Atmospheric ambient backlight */}
                     <div
                       aria-hidden="true"
@@ -142,24 +170,55 @@ export default function Hero({ portraitSrc = null, video = null }: HeroProps) {
                       }}
                     />
 
-                    <Image
-                      src={portraitSrc}
-                      alt={`Portrait of ${profile.name}`}
-                      fill
-                      priority
-                      sizes="(min-width: 1024px) 340px, 80vw"
-                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                    />
+                    {/* Fallback Static Image */}
+                    {portraitSrc && (
+                      <Image
+                        src={portraitSrc}
+                        alt={`Portrait of ${profile.name}`}
+                        fill
+                        priority
+                        sizes="(min-width: 1024px) 360px, 80vw"
+                        className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      />
+                    )}
+
+                    {/* 3D Animated Motion Video */}
+                    {videoSrc && !videoError && (
+                      <video
+                        ref={videoRef}
+                        src={videoSrc}
+                        poster={portraitSrc ?? undefined}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        preload="auto"
+                        onError={() => setVideoError(true)}
+                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                      />
+                    )}
 
                     {/* Gradient depth vignette */}
                     <div
                       aria-hidden="true"
-                      className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0a0a0c] via-transparent to-transparent opacity-65"
+                      className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0a0a0c]/90 via-[#0a0a0c]/20 to-transparent"
                     />
+
+                    {/* Play/Pause Control Button */}
+                    {videoSrc && !videoError && (
+                      <button
+                        type="button"
+                        onClick={togglePlay}
+                        aria-label={isPlaying ? "Pause 3D animation" : "Play 3D animation"}
+                        className="absolute top-3 right-3 z-20 flex h-8 w-8 items-center justify-center rounded-full border border-white/20 bg-bg/75 text-xs text-white shadow-md backdrop-blur-md transition-all hover:scale-110 hover:border-purple hover:bg-purple/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-purple"
+                      >
+                        <span aria-hidden="true">{isPlaying ? "❚❚" : "▶"}</span>
+                      </button>
+                    )}
 
                     {/* Floating 3D holographic badge at bottom */}
                     <div
-                      className="absolute inset-x-3.5 bottom-3.5 flex items-center justify-between rounded-2xl border border-white/10 bg-bg/85 p-3 backdrop-blur-xl shadow-lg transition-transform duration-300"
+                      className="absolute inset-x-3.5 bottom-3.5 z-20 flex items-center justify-between rounded-2xl border border-white/10 bg-bg/85 p-3 backdrop-blur-xl shadow-lg transition-transform duration-300"
                       style={{ transform: "translateZ(24px)" }}
                     >
                       <div className="flex items-center gap-2.5">
@@ -175,7 +234,7 @@ export default function Hero({ portraitSrc = null, video = null }: HeroProps) {
                         </div>
                       </div>
                       <span className="rounded-lg border border-purple/30 bg-purple/15 px-2 py-0.5 text-[10px] font-semibold text-[#b4c6fe]">
-                        Available
+                        3D Motion
                       </span>
                     </div>
                   </div>
@@ -186,7 +245,7 @@ export default function Hero({ portraitSrc = null, video = null }: HeroProps) {
         </div>
 
         <Reveal immediate delay={0.45}>
-          <dl className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6 border-t border-line pt-6">
+          <dl className="mt-10 sm:mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6 border-t border-line pt-6">
             {stats.map((s) => (
               <div
                 key={s.label}

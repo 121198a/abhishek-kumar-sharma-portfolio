@@ -108,7 +108,7 @@ export const recruiterQuestions: RecruiterTestQuestion[] = [
   positive("Was WAGAN SHOP built during an internship?", "projects", ["project-wagan"]),
   positive("Tell me about the Bank Management System.", "projects", ["project-bank"]),
   positive("What technologies were used in the Bank Management System?", "projects", ["project-bank"]),
-  positive("Tell me about the Multi-Waveform Generator.", "projects", ["project-waveform"]),
+  positive("Tell me about the Ramp Waveform Generator.", "projects", ["project-waveform"]),
   positive("What hardware was used?", "projects", ["project-waveform"]),
   positive("What embedded technologies were used?", "projects", ["project-waveform", "experience-embedded"]),
 

@@ -54,6 +54,12 @@ export function tryConsumeDailyAiBudget(dailyLimit: number): boolean {
 }
 
 export function getClientIp(headers: Headers): string {
+  // On Vercel, x-vercel-forwarded-for is set by the platform (and survives an
+  // upstream proxy); x-forwarded-for is also overwritten there to stop spoofing
+  // (Vercel docs, "Request headers"). On any OTHER host these headers are
+  // client-controlled, so per-IP limits can be dodged - see docs/SECURITY_NOTES.md.
+  const vercel = headers.get("x-vercel-forwarded-for");
+  if (vercel) return vercel.split(",")[0].trim();
   const forwarded = headers.get("x-forwarded-for");
   if (forwarded) return forwarded.split(",")[0].trim();
   return headers.get("x-real-ip") ?? "unknown";

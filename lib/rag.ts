@@ -10,17 +10,25 @@ import {
 } from "./embeddings";
 import { recruiterCategoryBoost, type ChatMode } from "@/data/faq";
 import rawIndex from "@/data/embeddings.generated.json";
+import { ragChunks as CURRENT_CHUNKS } from "@/data/rag-chunks";
 
 const INDEX_METADATA: Partial<VectorIndex> | null =
   !Array.isArray(rawIndex) && typeof rawIndex === "object" && rawIndex !== null
     ? (rawIndex as unknown as Partial<VectorIndex>)
     : null;
 
-const INDEX: IndexedChunk[] = Array.isArray(rawIndex)
+const RAW_INDEX: IndexedChunk[] = Array.isArray(rawIndex)
   ? (rawIndex as IndexedChunk[])
   : Array.isArray(INDEX_METADATA?.chunks)
   ? INDEX_METADATA.chunks
   : [];
+
+// Freshness guard: only use indexed chunks whose id AND text still match the
+// current verified data. After editing data/*.ts, stale vectors are ignored
+// (the keyword/FAQ path still answers) until `npm run index:knowledge` is re-run.
+const CURRENT_TEXT = new Map(CURRENT_CHUNKS.map((c) => [c.id, c.text]));
+const INDEX: IndexedChunk[] = RAW_INDEX.filter((c) => CURRENT_TEXT.get(c.id) === c.text);
+export const STALE_INDEX_CHUNKS = RAW_INDEX.length - INDEX.length;
 
 export type RagResult = {
   id: string;

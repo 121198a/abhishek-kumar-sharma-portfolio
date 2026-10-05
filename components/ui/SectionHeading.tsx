@@ -24,10 +24,10 @@ export default function SectionHeading({
 
   return (
     <div className={`mb-12 max-w-2xl ${alignmentClass} ${className}`}>
-      <span className="inline-block text-[11px] font-bold tracking-[0.2em] uppercase text-[#c084fc]">
+      <span className="inline-block text-[11px] font-bold tracking-[0.2em] uppercase text-[#84a2fc]">
         {eyebrow}
       </span>
-      <h2 className="mt-3 text-[clamp(2.25rem,4.5vw,3.75rem)] font-bold leading-[1.05] tracking-[-0.035em] text-white">
+      <h2 className="mt-3 break-words text-[clamp(1.5rem,9vw,2.25rem)] sm:text-[clamp(2.25rem,4.5vw,3.75rem)] font-bold leading-[1.05] tracking-[-0.035em] text-white">
         {title}
       </h2>
       {subtitle && (

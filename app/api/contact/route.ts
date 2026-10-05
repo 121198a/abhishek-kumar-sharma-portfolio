@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { flags, emailLimits } from "@/lib/env";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { readJsonObject } from "@/lib/request-guard";
 import { isNonEmptyString, isValidEmail, clampLength, looksLikeSpam, stripControlChars } from "@/lib/validate";
 
 export const runtime = "nodejs";
@@ -26,17 +27,9 @@ export async function POST(req: NextRequest) {
     return fail("The contact form is currently disabled.", 503);
   }
 
-  const contentLength = Number(req.headers.get("content-length") ?? 0);
-  if (contentLength > MAX_BODY_BYTES) {
-    return fail("Request too large.", 413);
-  }
-
-  let body: ContactBody;
-  try {
-    body = await req.json();
-  } catch {
-    return fail("Invalid request body.", 400);
-  }
+  const guarded = await readJsonObject(req, MAX_BODY_BYTES, fail);
+  if (!guarded.ok) return guarded.response;
+  const body = guarded.body as unknown as ContactBody;
 
   // Honeypot: real visitors never fill this hidden field. Silently pretend
   // success — never reveal to a bot (or a script probing the endpoint)

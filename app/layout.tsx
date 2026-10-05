@@ -1,3 +1,4 @@
+import { jsonLdString } from "@/lib/json-ld";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { profile } from "@/data/profile";
@@ -83,10 +84,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdString(jsonLd) }}
         />
       </head>
-      <body className="bg-bg text-ink font-sans antialiased">{children}</body>
+      <body className="bg-bg text-ink font-sans antialiased">
+        <a
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-ink focus:px-4 focus:py-3 focus:text-sm focus:font-bold focus:text-bg focus:shadow-lg"
+        >
+          Skip to main content
+        </a>
+        {children}
+      </body>
     </html>
   );
 }

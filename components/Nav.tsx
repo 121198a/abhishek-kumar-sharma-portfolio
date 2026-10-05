@@ -180,7 +180,7 @@ export default function Nav() {
             href="#contact"
             onClick={(e) => handleNavClick(e, "#contact")}
             className="glow rounded-lg px-4 py-2 text-xs font-bold text-white transition-all duration-200 hover:opacity-95 hover:scale-[1.02]"
-            style={{ background: "linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)" }}
+            style={{ background: "linear-gradient(135deg, #3f66f5 0%, #2d52dc 100%)" }}
           >
             Let&apos;s Talk
           </a>
@@ -219,14 +219,14 @@ export default function Nav() {
         <div
           id="mobile-nav"
           ref={mobileMenuRef}
-          data-lenis-prevent
+         
           role="dialog"
           aria-modal="true"
           aria-label="Mobile navigation"
           className="fixed inset-x-0 top-[76px] bottom-0 z-50 flex flex-col justify-between overflow-y-auto bg-bg/95 backdrop-blur-2xl border-t border-line p-6 md:hidden"
         >
           <div className="flex flex-col gap-2">
-            <span className="text-[10px] font-bold tracking-[0.2em] text-[#c084fc] uppercase mb-2">
+            <span className="text-[10px] font-bold tracking-[0.2em] text-[#84a2fc] uppercase mb-2">
               Menu Navigation
             </span>
             {NAV_LINKS.map((link) => {
@@ -266,7 +266,7 @@ export default function Nav() {
               href="#contact"
               onClick={(e) => handleNavClick(e, "#contact")}
               className="glow flex items-center justify-center rounded-xl py-3 text-sm font-bold text-white"
-              style={{ background: "linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)" }}
+              style={{ background: "linear-gradient(135deg, #3f66f5 0%, #2d52dc 100%)" }}
             >
               Let&apos;s Connect
             </a>
@@ -277,7 +277,7 @@ export default function Nav() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => trackEvent("github_click")}
-                className="hover:text-white"
+                className="inline-flex min-h-11 items-center hover:text-white"
               >
                 GitHub ↗
               </a>
@@ -286,11 +286,11 @@ export default function Nav() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => trackEvent("linkedin_click")}
-                className="hover:text-white"
+                className="inline-flex min-h-11 items-center hover:text-white"
               >
                 LinkedIn ↗
               </a>
-              <a href={`mailto:${profile.email}`} className="hover:text-white">
+              <a href={`mailto:${profile.email}`} className="inline-flex min-h-11 items-center hover:text-white">
                 Email ↗
               </a>
             </div>

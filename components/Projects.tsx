@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
+import { caseStudySlugs } from "@/data/case-study-slugs";
 import { projects, projectCategories, type Project } from "@/data/projects";
 import { dispatchAskAiProject } from "@/lib/project-ai-event";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -33,7 +35,7 @@ export default function Projects() {
             <div
               role="tablist"
               aria-label="Filter projects by category"
-              className="flex flex-wrap gap-2 rounded-2xl border border-line/80 bg-panel2/60 p-1.5 backdrop-blur-sm"
+              className="flex flex-wrap gap-2 rounded-2xl border border-line/80 bg-panel2/60 p-1.5"
             >
               {projectCategories.map((c) => {
                 const count = c === "All" ? projects.length : projects.filter((p) => p.category === c).length;
@@ -45,14 +47,14 @@ export default function Projects() {
                     role="tab"
                     aria-selected={isSelected}
                     onClick={() => setFilter(c)}
-                    className={`flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
+                    className={`flex min-h-9 items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs font-semibold transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple ${
                       isSelected
                         ? "border border-purple/40 bg-purple/25 text-white shadow-sm"
                         : "border border-transparent text-muted hover:border-line hover:text-white"
                     }`}
                   >
                     <span>{c}</span>
-                    <span className={`text-[10px] ${isSelected ? "text-purple" : "text-muted/60"}`}>
+                    <span className={`text-[10px] ${isSelected ? "text-[#b4c6fe]" : "text-muted"}`}>
                       ({count})
                     </span>
                   </button>
@@ -91,7 +93,7 @@ function ProjectCard({ project: p }: { project: Project }) {
 
   return (
     <article
-      className="group relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-line bg-panel2/70 backdrop-blur-md transition-all duration-300 hover:-translate-y-2 hover:border-purple/50 hover:shadow-glow"
+      className="group relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-line bg-panel2/70 transition-all duration-300 hover:-translate-y-2 hover:border-purple/50 hover:shadow-glow"
     >
       <div>
         {/* Header Preview Banner */}
@@ -99,7 +101,7 @@ function ProjectCard({ project: p }: { project: Project }) {
           className="relative flex h-[160px] items-center justify-center overflow-hidden border-b border-line"
           style={{
             background:
-              "radial-gradient(circle at 30% 30%, rgba(168,85,247,0.3) 0%, transparent 60%), linear-gradient(135deg, #100b22 0%, #1c0e35 100%)",
+              "radial-gradient(circle at 30% 30%, rgba(85, 125, 247, 0.3) 0%, transparent 60%), linear-gradient(135deg, #151518 0%, #1f1f24 100%)",
           }}
         >
           {/* Subtle watermark monogram */}
@@ -109,7 +111,7 @@ function ProjectCard({ project: p }: { project: Project }) {
 
           {/* Top metadata badges */}
           <div className="absolute inset-x-4 top-4 flex items-center justify-between">
-            <span className="rounded-md border border-line bg-bg/80 px-2 py-0.5 text-[10px] font-mono text-muted backdrop-blur-sm">
+            <span className="rounded-md border border-line bg-bg/80 px-2 py-0.5 text-[10px] font-mono text-muted">
               {p.year}
             </span>
             <Badge variant={statusVariant} size="sm">
@@ -119,7 +121,7 @@ function ProjectCard({ project: p }: { project: Project }) {
 
           {/* Category Pill at bottom left */}
           <div className="absolute bottom-3 left-4">
-            <span className="text-[10px] font-bold tracking-wider uppercase text-[#c084fc]">
+            <span className="text-[10px] font-bold tracking-wider uppercase text-[#84a2fc]">
               {p.category}
             </span>
           </div>
@@ -127,7 +129,7 @@ function ProjectCard({ project: p }: { project: Project }) {
 
         {/* Content Body */}
         <div className="p-6">
-          <h3 className="text-lg font-bold text-white group-hover:text-[#d8b4fe] transition-colors leading-snug">
+          <h3 className="text-lg font-bold text-white group-hover:text-[#b4c6fe] transition-colors leading-snug">
             {p.name}
           </h3>
 
@@ -138,10 +140,10 @@ function ProjectCard({ project: p }: { project: Project }) {
           {/* Approach & Implementation notes */}
           {p.approach && (
             <div className="mt-4 border-t border-line/60 pt-3">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#d8b4fe] block mb-1">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#b4c6fe] block mb-1">
                 Implementation Approach:
               </span>
-              <p className="text-xs leading-relaxed text-muted/90">
+              <p className="text-xs leading-relaxed text-muted">
                 {p.approach}
               </p>
             </div>
@@ -160,12 +162,22 @@ function ProjectCard({ project: p }: { project: Project }) {
 
       {/* Card Actions Footer */}
       <div className="border-t border-line/60 p-6 pt-4 flex flex-col gap-2.5">
+        {caseStudySlugs.includes(p.slug) && (
+          <Link
+            href={`/projects/${p.slug}`}
+            className="inline-flex min-h-11 items-center gap-1.5 text-xs font-bold text-ink transition-colors hover:text-[#84a2fc]"
+          >
+            <span>Read case study</span>
+            <span aria-hidden="true">→</span>
+          </Link>
+        )}
+
         {p.href && (
           <a
             href={p.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#c084fc] hover:text-white transition-colors"
+            className="inline-flex min-h-11 items-center gap-1.5 text-xs font-bold text-[#84a2fc] hover:text-white transition-colors"
           >
             <span>View Project Link</span>
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -177,7 +189,7 @@ function ProjectCard({ project: p }: { project: Project }) {
         <button
           type="button"
           onClick={() => dispatchAskAiProject({ slug: p.slug, name: p.name })}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-purple/35 bg-purple/10 px-3.5 py-2.5 text-xs font-semibold text-[#d8b4fe] transition hover:border-purple hover:bg-purple/20 hover:text-white"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-purple/35 bg-purple/10 px-3.5 py-2.5 text-xs font-semibold text-[#b4c6fe] transition hover:border-purple hover:bg-purple/20 hover:text-white"
         >
           <span>✦ Ask AI about this project</span>
         </button>

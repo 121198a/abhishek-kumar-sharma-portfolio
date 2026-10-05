@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { capabilities } from "@/data/skills";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -25,18 +23,18 @@ export default function Capabilities() {
           {capabilities.map((c, index) => (
             <Reveal key={c.title} delay={index * 0.08}>
               <div
-                className="group relative flex h-full flex-col justify-between rounded-2xl border border-line bg-panel2/60 p-7 transition-all duration-300 hover:-translate-y-1.5 hover:border-purple/50 hover:shadow-glow backdrop-blur-sm"
+                className="group relative flex h-full flex-col justify-between rounded-2xl border border-line bg-panel2/60 p-7 transition-all duration-300 hover:-translate-y-1.5 hover:border-purple/50 hover:shadow-glow"
               >
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xl text-[#c084fc] transition-transform duration-300 group-hover:scale-110">
+                    <span className="text-xl text-[#84a2fc] transition-transform duration-300 group-hover:scale-110">
                       ◆
                     </span>
-                    <span className="text-[10px] font-mono font-medium text-muted/60">
+                    <span className="text-[10px] font-mono font-medium text-muted">
                       0{index + 1}
                     </span>
                   </div>
-                  <h3 className="mt-6 text-base font-bold text-white group-hover:text-[#d8b4fe] transition-colors">
+                  <h3 className="mt-6 text-base font-bold text-white group-hover:text-[#b4c6fe] transition-colors">
                     {c.title}
                   </h3>
                   <p className="mt-2.5 text-xs sm:text-sm leading-relaxed text-muted">

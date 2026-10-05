@@ -9,7 +9,7 @@ export default function NotFound() {
           404
         </span>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-xs font-bold tracking-[0.2em] uppercase text-[#c084fc]">
+          <span className="text-xs font-bold tracking-[0.2em] uppercase text-[#84a2fc]">
             Page Not Found
           </span>
           <h1 className="mt-2 text-2xl sm:text-3xl font-bold text-white">
@@ -26,7 +26,7 @@ export default function NotFound() {
         <Link
           href="/"
           className="glow rounded-xl px-6 py-3 text-xs font-bold text-white transition hover:scale-105"
-          style={{ background: "linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)" }}
+          style={{ background: "linear-gradient(135deg, #3f66f5 0%, #2d52dc 100%)" }}
         >
           Return to Portfolio
         </Link>

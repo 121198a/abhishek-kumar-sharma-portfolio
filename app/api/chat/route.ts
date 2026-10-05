@@ -9,9 +9,17 @@ import {
 import { isNonEmptyString, clampLength } from "@/lib/validate";
 import { localFaqLookup, retrieveKnowledge, faqAsContext, type ChatMode } from "@/data/faq";
 import { ragRetrieve } from "@/lib/rag";
+import { readJsonObject } from "@/lib/request-guard";
+import { SESSION_COOKIE, readSessionCount, buildSessionCookie, sessionCookieOptions } from "@/lib/session-cap";
 import { findProjectBySlug, projectContextSummary, type Project } from "@/data/projects";
 
 export const runtime = "nodejs";
+
+// Vercel Hobby defaults to a 10 s function limit. This route can wait up to
+// ~4 s for embeddings plus AI_REQUEST_TIMEOUT_MS (default 15 s) for the model,
+// so give it headroom: otherwise the platform kills the request with a raw 504
+// before the graceful local-answer fallback below can run.
+export const maxDuration = 30;
 
 const SYSTEM_PROMPT_BASE = `
 You are Abhishek AI, the official portfolio assistant for Abhishek Kumar Sharma.
@@ -269,7 +277,7 @@ function fallbackResponse(
   });
 }
 
-export async function POST(req: NextRequest) {
+async function handleChat(req: NextRequest, cookieCount: number) {
   // ---------------------------------------------------------
   // 1. Parse request
   // ---------------------------------------------------------
@@ -280,24 +288,13 @@ export async function POST(req: NextRequest) {
   // reply fall through to the generic FAQ_DEFAULT_ANSWER instead of a
   // real, keyword-matched answer.
 
-  // Reject grossly oversized bodies before spending any work parsing
-  // them — cheap enough to check even though history/message are already
-  // separately clamped further down.
-  const contentLength = Number(req.headers.get("content-length") ?? 0);
-  if (contentLength > 20_000) {
-    return NextResponse.json({ error: "Request too large." }, { status: 413 });
-  }
-
-  let body: ChatRequestBody;
-
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json(
-      { error: "Invalid request body." },
-      { status: 400 }
-    );
-  }
+  // Origin, Content-Type, byte cap (even for chunked uploads) and "must be a JSON
+  // object" are all enforced in one shared guard — see lib/request-guard.ts.
+  const guarded = await readJsonObject(req, 20_000, (error, status) =>
+    NextResponse.json({ error }, { status })
+  );
+  if (!guarded.ok) return guarded.response;
+  const body = guarded.body as ChatRequestBody;
 
   if (!isNonEmptyString(body.message)) {
     return NextResponse.json(
@@ -339,7 +336,9 @@ export async function POST(req: NextRequest) {
   // 3. Session limit
   // ---------------------------------------------------------
 
-  const sessionCount = body.sessionMessageCount ?? 0;
+  // Trust the larger of the client hint and the signed cookie: the client can
+  // raise its own count but can never lower the server-verified one.
+  const sessionCount = Math.max(body.sessionMessageCount ?? 0, cookieCount);
 
   if (sessionCount >= aiLimits.maxMessagesPerSession) {
     return NextResponse.json(
@@ -701,4 +700,18 @@ export async function POST(req: NextRequest) {
   } finally {
     clearTimeout(timeout);
   }
+}
+
+/**
+ * Public handler: wraps handleChat to keep a signed server-side message count.
+ * Malformed/oversized requests (400/413) and already-limited ones (429 "limit")
+ * do not advance the count.
+ */
+export async function POST(req: NextRequest) {
+  const cookieCount = readSessionCount(req.cookies.get(SESSION_COOKIE)?.value);
+  const res = await handleChat(req, cookieCount);
+  if (res.status !== 400 && res.status !== 413 && res.status !== 429) {
+    res.cookies.set(SESSION_COOKIE, buildSessionCookie(cookieCount + 1), sessionCookieOptions);
+  }
+  return res;
 }

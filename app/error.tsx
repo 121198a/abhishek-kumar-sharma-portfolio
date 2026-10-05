@@ -20,7 +20,7 @@ export default function ErrorBoundary({
         <span className="text-2xl text-pink">⚠</span>
       </div>
 
-      <span className="text-xs font-bold tracking-[0.2em] uppercase text-[#c084fc]">
+      <span className="text-xs font-bold tracking-[0.2em] uppercase text-[#84a2fc]">
         Application Error
       </span>
 
@@ -37,7 +37,7 @@ export default function ErrorBoundary({
           type="button"
           onClick={() => reset()}
           className="glow rounded-xl px-6 py-3 text-xs font-bold text-white transition hover:scale-105"
-          style={{ background: "linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)" }}
+          style={{ background: "linear-gradient(135deg, #3f66f5 0%, #2d52dc 100%)" }}
         >
           Try Again
         </button>

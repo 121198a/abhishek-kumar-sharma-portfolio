@@ -1,96 +1,65 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useRef, useState } from "react";
-import Lenis from "lenis";
-import "lenis/dist/lenis.css";
+import React, { createContext, useContext, useEffect } from "react";
+
+// Native smooth scrolling. Replaces the Lenis library (extra JS plus a
+// permanent requestAnimationFrame loop): CSS `scroll-behavior` in globals.css
+// handles smoothing and already switches off for prefers-reduced-motion.
+// The API (`useSmoothScroll().scrollTo`) is unchanged for existing consumers.
+
+const HEADER_OFFSET = 76; // sticky nav height, px
+
+type ScrollTarget = string | number | HTMLElement;
+type ScrollOptions = { offset?: number; immediate?: boolean };
 
 interface SmoothScrollContextValue {
-  lenis: Lenis | null;
-  scrollTo: (target: string | number | HTMLElement, options?: Parameters<Lenis["scrollTo"]>[1]) => void;
+  scrollTo: (target: ScrollTarget, options?: ScrollOptions) => void;
 }
 
-const SmoothScrollContext = createContext<SmoothScrollContextValue>({
-  lenis: null,
-  scrollTo: () => {},
-});
+function prefersReducedMotion() {
+  return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function scrollToTarget(target: ScrollTarget, options: ScrollOptions = {}) {
+  if (typeof window === "undefined") return;
+  const behavior: ScrollBehavior = options.immediate || prefersReducedMotion() ? "auto" : "smooth";
+  const offset = options.offset ?? -HEADER_OFFSET;
+
+  if (typeof target === "number") {
+    window.scrollTo({ top: target, behavior });
+    return;
+  }
+  const el = typeof target === "string" ? document.querySelector<HTMLElement>(target) : target;
+  if (!el) return;
+  const top = el.getBoundingClientRect().top + window.scrollY + offset;
+  window.scrollTo({ top: Math.max(0, top), behavior });
+}
+
+const SmoothScrollContext = createContext<SmoothScrollContextValue>({ scrollTo: scrollToTarget });
 
 export function useSmoothScroll() {
   return useContext(SmoothScrollContext);
 }
 
 export function SmoothScrollProvider({ children }: { children: React.ReactNode }) {
-  const [lenisInstance, setLenisInstance] = useState<Lenis | null>(null);
-  const rafHandleRef = useRef<number | null>(null);
-
   useEffect(() => {
-    // Check user preference for reduced motion
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReducedMotion) {
-      // Keep native scrolling for reduced motion
-      return;
-    }
-
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: "vertical",
-      gestureOrientation: "vertical",
-      smoothWheel: true,
-      touchMultiplier: 1.8,
-    });
-
-    setLenisInstance(lenis);
-
-    function raf(time: number) {
-      lenis.raf(time);
-      rafHandleRef.current = requestAnimationFrame(raf);
-    }
-
-    rafHandleRef.current = requestAnimationFrame(raf);
-
-    // Global anchor link smooth scroll interception
+    // Keep in-page anchor links offset below the sticky header.
     function handleAnchorClick(e: MouseEvent) {
-      const target = (e.target as HTMLElement).closest("a");
-      if (!target) return;
-
-      const href = target.getAttribute("href");
-      if (href && href.startsWith("#") && href.length > 1) {
-        const element = document.querySelector(href);
-        if (element) {
-          e.preventDefault();
-          lenis.scrollTo(element as HTMLElement, { offset: -76 });
-        }
-      }
+      const link = (e.target as HTMLElement).closest("a");
+      const href = link?.getAttribute("href");
+      if (!href || !href.startsWith("#") || href.length < 2) return;
+      const el = document.querySelector<HTMLElement>(href);
+      if (!el) return;
+      e.preventDefault();
+      scrollToTarget(el);
+      // Keep keyboard / screen-reader position in sync with the scroll
+      // (we cancelled the browser's default jump, which would have done this).
+      if (!el.hasAttribute("tabindex") && !el.matches("a,button,input,select,textarea")) el.setAttribute("tabindex", "-1");
+      el.focus({ preventScroll: true });
     }
-
-    document.addEventListener("click", handleAnchorClick, { passive: false });
-
-    return () => {
-      document.removeEventListener("click", handleAnchorClick);
-      if (rafHandleRef.current !== null) {
-        cancelAnimationFrame(rafHandleRef.current);
-      }
-      lenis.destroy();
-      setLenisInstance(null);
-    };
+    document.addEventListener("click", handleAnchorClick);
+    return () => document.removeEventListener("click", handleAnchorClick);
   }, []);
 
-  const scrollTo: SmoothScrollContextValue["scrollTo"] = (target, options) => {
-    if (lenisInstance) {
-      lenisInstance.scrollTo(target, options);
-    } else if (typeof target === "string" && target.startsWith("#")) {
-      const el = document.querySelector(target);
-      el?.scrollIntoView({ behavior: "smooth" });
-    } else if (typeof target === "number") {
-      window.scrollTo({ top: target, behavior: "smooth" });
-    } else if (target instanceof HTMLElement) {
-      target.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
-  return (
-    <SmoothScrollContext.Provider value={{ lenis: lenisInstance, scrollTo }}>
-      {children}
-    </SmoothScrollContext.Provider>
-  );
+  return <SmoothScrollContext.Provider value={{ scrollTo: scrollToTarget }}>{children}</SmoothScrollContext.Provider>;
 }

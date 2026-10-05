@@ -131,7 +131,7 @@ export const faq: FaqEntry[] = [
     phrases: ["unboundx", "unboundx admin dashboard"],
     keywords: ["unboundx"],
     answer:
-      "UnBoundX Admin Dashboard: an internal admin dashboard for managing users, content and analytics with role-based access control, built with React, Node.js/Express and MongoDB.",
+      "UnboundX Admin Dashboard: a React admin panel with token-based login, protected routes, paginated searchable data tables and a Level Activity builder, built with React 19, Vite, Tailwind CSS and React Router. It consumes an external backend API.",
   },
   {
     id: "project-bank",
@@ -139,7 +139,7 @@ export const faq: FaqEntry[] = [
     phrases: ["bank management system", "banking system project"],
     keywords: ["bank management", "banking system"],
     answer:
-      "Bank Management System: a full-stack banking simulation covering accounts, transactions and statements, built with Java, Spring Boot and SQL.",
+      "Bank Management System: a full-stack banking application built with React, Express and MongoDB, covering KYC workflows, transactions, audit logging and PDF statements, with JWT authentication, role and permission checks, MongoDB transactions and CI.",
   },
   {
     id: "project-wagan",
@@ -147,7 +147,7 @@ export const faq: FaqEntry[] = [
     phrases: ["wagan shop", "wagan"],
     keywords: ["wagan"],
     answer:
-      "WAGAN SHOP: a full-stack e-commerce application built during an internship — product catalog, cart/checkout, authentication and product management — using React, Node.js/Express, MongoDB and JWT.",
+      "WAGAN SHOP: an e-commerce application with shopper and admin interfaces (category browsing, cart, orders, user dashboard, product management), built with React and a Node.js/Express/MongoDB REST API.",
   },
   {
     id: "project-steganography",
@@ -160,10 +160,42 @@ export const faq: FaqEntry[] = [
   {
     id: "project-waveform",
     category: "projects",
-    phrases: ["multi waveform generator", "waveform generator", "stm32 project", "embedded systems", "embedded technologies", "hardware used"],
+    phrases: ["ramp waveform generator", "waveform generator", "stm32 project", "embedded systems", "embedded technologies", "hardware used"],
     keywords: ["waveform generator", "stm32 project", "embedded systems", "embedded technologies", "hardware used"],
     answer:
-      "Multi-Waveform Generator: an STM32-based embedded systems project generating and validating multiple waveform outputs, built with STM32CubeIDE, Embedded C, HAL, UART and oscilloscope-based testing.",
+      "Ramp Waveform Generator: an STM32 project written in Embedded C with HAL in STM32CubeIDE during an embedded-systems internship, with output checked on an oscilloscope.",
+  },
+  {
+    id: "project-ventureflow",
+    category: "projects",
+    phrases: ["ventureflow"],
+    keywords: ["ventureflow"],
+    answer:
+      "VentureFlow Web Platform: a Next.js 15 / TypeScript platform with a marketing site, authentication flows, a CMS and role-based founder and investor dashboards, using Supabase and a 69-case automated test suite.",
+  },
+  {
+    id: "project-sharma-kitchen",
+    category: "projects",
+    phrases: ["sharma kitchen"],
+    keywords: ["sharma kitchen"],
+    answer:
+      "Sharma Kitchen: a Next.js food-ordering prototype with a 269-dish menu, cart, Razorpay checkout, table reservations and an admin order view. Authentication is not implemented.",
+  },
+  {
+    id: "project-noc-lab",
+    category: "projects",
+    phrases: ["noc monitoring"],
+    keywords: ["noc monitoring"],
+    answer:
+      "NOC Monitoring Lab: a Python/FastAPI network monitoring lab with async SNMP polling, UDP syslog ingestion, deduplicated alerts and a React dashboard. SNMP trap receiving is not yet implemented.",
+  },
+  {
+    id: "project-fir",
+    category: "projects",
+    phrases: ["fir management"],
+    keywords: ["fir management"],
+    answer:
+      "FIR Management System: a Java Swing desktop application using JDBC and MySQL for registering and tracking FIR complaints, with user and admin login and complaint approval.",
   },
   {
     id: "projects-overview",
@@ -171,7 +203,7 @@ export const faq: FaqEntry[] = [
     phrases: ["projects has abhishek built", "his projects", "list of projects", "portfolio projects"],
     keywords: ["projects built", "his projects", "project list"],
     answer:
-      "Abhishek has built the UnBoundX Admin Dashboard (React/Node.js/MongoDB), a Bank Management System (Java/Spring Boot/SQL), WAGAN SHOP — an e-commerce app built during an internship (React/Node.js/MongoDB/JWT), a coverless image steganography research project (Python/OpenCV/AWS, presented at CoCole 2025, NIT Rourkela), and a Multi-Waveform Generator built on STM32 during an embedded systems internship.",
+      "Abhishek's projects include a Bank Management System (React/Express/MongoDB), the VentureFlow web platform (Next.js/TypeScript/Supabase), the UnboundX Admin Dashboard (React), Sharma Kitchen (Next.js food-ordering prototype), a NOC Monitoring Lab (Python/FastAPI), a Java Swing FIR Management System, WAGAN SHOP (React e-commerce), a coverless image steganography research project (Python/OpenCV/AWS, presented at CoCole 2025, NIT Rourkela), and a Ramp Waveform Generator on STM32.",
   },
 
   // ----------------------------------------------------------- EXPERIENCE
@@ -262,7 +294,7 @@ export const faq: FaqEntry[] = [
       "full stack development",
     ],
     answer:
-      "Abhishek's portfolio demonstrates hands-on experience with React, Node.js, Spring Boot and MongoDB through real projects and internships, along with cloud exposure (AWS) via a published research project at NIT Rourkela. His work spans frontend, backend, database and embedded systems, showing he can operate across the stack rather than in a single lane. The best way to judge fit for a specific role is to review the Projects section or his resume directly.",
+      "Abhishek's portfolio demonstrates hands-on experience with React, Node.js and MongoDB through real projects and internships, along with cloud exposure (AWS) via a published research project at NIT Rourkela. His work spans frontend, backend, database and embedded systems, showing he can operate across the stack rather than in a single lane. The best way to judge fit for a specific role is to review the Projects section or his resume directly.",
   },
   {
     id: "recruiter-strengths",
@@ -270,7 +302,7 @@ export const faq: FaqEntry[] = [
     phrases: ["his strengths", "key strengths", "what are his strengths", "makes him different", "what makes him different", "strongest technical areas"],
     keywords: ["his strengths", "key strengths", "makes him different", "strongest technical areas"],
     answer:
-      "Based on the verified portfolio, Abhishek's strengths are: full-stack web development (React/Node.js/Spring Boot), REST API design with JWT authentication, and applied AWS cloud usage in a research context. He has also worked with embedded systems (STM32) and computer vision (OpenCV), which is less common alongside typical web development experience.",
+      "Based on the verified portfolio, Abhishek's strengths are: full-stack web development (React/Node.js/Next.js), REST API design with JWT authentication, and applied AWS cloud usage in a research context. He has also worked with embedded systems (STM32) and computer vision (OpenCV), which is less common alongside typical web development experience.",
   },
 
   // --------------------------------------------------------------- CONTACT
@@ -360,7 +392,11 @@ export const FAQ_PROJECT_SLUG: Record<string, string> = {
   "project-bank": "bank-management-system",
   "project-wagan": "wagan-shop",
   "project-steganography": "coverless-image-steganography",
-  "project-waveform": "multi-waveform-generator",
+  "project-waveform": "ramp-waveform-generator",
+  "project-ventureflow": "ventureflow-web",
+  "project-sharma-kitchen": "sharma-kitchen",
+  "project-noc-lab": "noc-monitoring-lab",
+  "project-fir": "fir-management-system",
 };
 
 /**

@@ -312,3 +312,9 @@ If the contact form reports `"Email delivery isn't configured yet"`:
 - **Zero Client Leakage:** API keys and sensitive tokens are strictly server-side; none are prefixed with `NEXT_PUBLIC_`.
 - **Performance:** Server Components by default; client components scoped strictly to interactive elements; total First Load JS is ~131 kB.
 - **Accessibility:** Semantic HTML5 landmarks, ARIA dialog and expanded states, full keyboard navigation, Escape-to-close on drawers/dialogs, focus trapping, and full compliance with `prefers-reduced-motion`.
+
+## Documentation
+See `docs/`: DEPLOYMENT.md (deploy + env vars), COST_AND_LIMITS.md (free-tier limits, sourced), TEST_MATRIX.md (46 device viewports), PERFORMANCE_A11Y.md, ACCESSIBILITY.md, MEDIA_PIPELINE.md, CASE_STUDIES.md, GITHUB_SECTION.md, SECURITY_NOTES.md, DESIGN_SYSTEM.md, RESPONSIVE_AUDIT.md, CONTENT_AUDIT.md.
+
+## Tests
+`npm run test:content`, `test:github`, `test:media`, `test:recruiter`, `test:smoke` (needs a built + running server), and `test:security` (needs a running server: `BASE_URL=http://localhost:3000 npm run test:security`).

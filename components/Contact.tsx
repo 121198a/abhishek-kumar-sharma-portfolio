@@ -74,16 +74,16 @@ export default function Contact({ contactEnabled }: ContactProps) {
       <div className="mx-auto max-w-shell px-6 sm:px-8">
         <Reveal>
           <div
-            className="relative overflow-hidden rounded-3xl border border-line bg-panel2/80 p-8 sm:p-12 lg:p-16 backdrop-blur-xl shadow-2xl"
+            className="relative overflow-hidden rounded-3xl border border-line bg-panel2/80 p-8 sm:p-12 lg:p-16 shadow-2xl"
             style={{
               background:
-                "radial-gradient(circle at 10% 20%, rgba(124,58,237,0.14) 0%, transparent 50%), linear-gradient(135deg, rgba(17,11,32,0.9) 0%, rgba(10,7,20,0.95) 100%)",
+                "radial-gradient(circle at 10% 20%, rgba(58, 103, 237, 0.14) 0%, transparent 50%), linear-gradient(135deg, rgba(20, 20, 23, 0.9) 0%, rgba(12, 12, 15, 0.95) 100%)",
             }}
           >
             <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
               {/* Left Column: Context & Direct Contact Options */}
               <div>
-                <span className="text-[11px] font-bold tracking-[0.2em] text-[#c084fc] uppercase">
+                <span className="text-[11px] font-bold tracking-[0.2em] text-[#84a2fc] uppercase">
                   Let&apos;s Connect
                 </span>
                 <h2 className="mt-3 text-[clamp(2.25rem,5vw,4.25rem)] font-black leading-[0.98] tracking-[-0.04em] text-white">
@@ -108,7 +108,7 @@ export default function Contact({ contactEnabled }: ContactProps) {
                       <span className="text-[10px] font-semibold uppercase tracking-wider text-muted block">
                         Direct Email
                       </span>
-                      <strong className="text-sm font-semibold text-white group-hover:text-[#d8b4fe] transition-colors">
+                      <strong className="text-sm font-semibold text-white group-hover:text-[#b4c6fe] transition-colors">
                         {profile.email}
                       </strong>
                     </div>
@@ -149,7 +149,7 @@ export default function Contact({ contactEnabled }: ContactProps) {
               </div>
 
               {/* Right Column: Contact Form */}
-              <div className="rounded-2xl border border-line/90 bg-panel/90 p-6 sm:p-8 backdrop-blur-md">
+              <div className="rounded-2xl border border-line/90 bg-panel/90 p-6 sm:p-8">
                 {!contactEnabled ? (
                   <div className="p-6 text-center">
                     <p className="text-sm text-muted">
@@ -158,7 +158,7 @@ export default function Contact({ contactEnabled }: ContactProps) {
                     <a
                       href={`mailto:${profile.email}`}
                       className="glow mt-4 inline-block rounded-xl px-5 py-2.5 text-xs font-bold text-white"
-                      style={{ background: "linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)" }}
+                      style={{ background: "linear-gradient(135deg, #3f66f5 0%, #2d52dc 100%)" }}
                     >
                       Email {profile.email}
                     </a>
@@ -238,7 +238,7 @@ export default function Contact({ contactEnabled }: ContactProps) {
                         <label htmlFor="contact-message" className="text-xs font-semibold text-muted">
                           Your Message <span className="text-pink">*</span>
                         </label>
-                        <span className="text-[10px] text-muted/60 font-mono">
+                        <span className="text-[10px] text-muted font-mono">
                           {formData.message.length}/2000
                         </span>
                       </div>
@@ -275,7 +275,7 @@ export default function Contact({ contactEnabled }: ContactProps) {
                       type="submit"
                       disabled={status === "submitting"}
                       className="glow flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold text-white transition-all disabled:opacity-60"
-                      style={{ background: "linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)" }}
+                      style={{ background: "linear-gradient(135deg, #3f66f5 0%, #2d52dc 100%)" }}
                     >
                       {status === "submitting" ? (
                         <>

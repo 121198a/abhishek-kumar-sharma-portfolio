@@ -57,6 +57,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
 
   const bodyRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const launcherRef = useRef<HTMLButtonElement>(null);
   const sentCount = useRef(0);
   const hasStartedChat = useRef(false);
 
@@ -76,6 +77,8 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
         setOpen(false);
+        // Return focus to the launcher so keyboard users are not left stranded.
+        launcherRef.current?.focus();
       }
     }
     window.addEventListener("keydown", handleKeyDown);
@@ -223,8 +226,14 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
     <>
       {/* Floating Assistant Trigger Button */}
       <button
+        ref={launcherRef}
         type="button"
-        onClick={() => {
+        onClick={(e) => {
+          // e.detail === 0 means the click came from the keyboard (Enter/Space).
+          // Only then move focus into the chat: on touch it would pop up the
+          // on-screen keyboard and cover the conversation.
+          const viaKeyboard = e.detail === 0;
+          if (!open && viaKeyboard) setTimeout(() => inputRef.current?.focus(), 120);
           setOpen((v) => !v);
           if (!hasStartedChat.current) {
             hasStartedChat.current = true;
@@ -233,7 +242,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
         }}
         aria-label={open ? "Close Abhishek AI assistant" : "Open Abhishek AI assistant"}
         className="fixed bottom-6 right-6 z-[60] flex h-14 w-14 items-center justify-center rounded-full border border-purple/40 text-2xl text-white shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95 glow"
-        style={{ background: "linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)" }}
+        style={{ background: "linear-gradient(135deg, #3f66f5 0%, #2d52dc 100%)" }}
       >
         <span className="transition-transform duration-200">
           {open ? "✕" : "✦"}
@@ -243,7 +252,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
       {/* Floating Chat Dialog */}
       {open && (
         <div
-          data-lenis-prevent
+         
           role="dialog"
           aria-label="Abhishek AI Assistant"
           aria-modal="false"
@@ -252,7 +261,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
           {/* Header */}
           <div
             className="flex items-center justify-between border-b border-line px-4 py-3.5"
-            style={{ background: "linear-gradient(135deg, #1f0f3d 0%, #12091f 100%)" }}
+            style={{ background: "linear-gradient(135deg, #232329 0%, #121216 100%)" }}
           >
             <div className="flex items-center gap-2">
               <span className="grid h-6 w-6 place-items-center rounded-full bg-purple/20 text-xs font-bold text-white">
@@ -343,7 +352,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
                 👔 Recruiter Mode
               </button>
             </div>
-            <span className="text-[10px] text-muted/60">
+            <span className="text-[10px] text-muted">
               {mode === "recruiter" ? "Fact → Evidence" : "General"}
             </span>
           </div>
@@ -351,7 +360,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
           {/* Selected Project Focus Banner */}
           {selectedProject && (
             <div className="flex items-center justify-between border-b border-line bg-purple/15 px-3 py-1.5 text-[11px]">
-              <span className="truncate text-[#d8b4fe]">
+              <span className="truncate text-[#b4c6fe]">
                 ✦ Focus: <strong>{selectedProject.name}</strong>
               </span>
               <button
@@ -368,8 +377,14 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
           {/* Messages Container with scroll prevention */}
           <div
             ref={bodyRef}
-            data-lenis-prevent
-            className="h-[300px] overflow-y-auto p-4 space-y-3 overscroll-contain"
+            // role="log" makes new assistant replies (and the "analyzing" status) get
+            // announced politely by screen readers; tabIndex lets keyboard users
+            // scroll the history.
+            role="log"
+            aria-label="Conversation with Abhishek's assistant"
+            aria-relevant="additions text"
+            tabIndex={0}
+            className="h-[300px] overflow-y-auto p-4 space-y-3 overscroll-contain focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-purple"
           >
             {messages.map((message, index) => (
               <div
@@ -382,7 +397,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
                   className={`max-w-[88%] rounded-2xl p-3 text-xs leading-relaxed ${
                     message.role === "user"
                       ? "rounded-br-sm bg-purple/35 text-white border border-purple/40"
-                      : "rounded-bl-sm border border-line bg-white/[0.04] text-[#ece8f4]"
+                      : "rounded-bl-sm border border-line bg-white/[0.04] text-[#e8ebf4]"
                   }`}
                 >
                   {message.text}
@@ -393,17 +408,17 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
             {/* Thinking / Loading indicator */}
             {sending && (
               <div className="flex items-center gap-1.5 rounded-2xl rounded-bl-sm border border-line bg-white/[0.04] px-3.5 py-2.5 w-fit">
-                <span className="h-1.5 w-1.5 rounded-full bg-purple animate-bounce" />
-                <span className="h-1.5 w-1.5 rounded-full bg-purple animate-bounce [animation-delay:0.15s]" />
-                <span className="h-1.5 w-1.5 rounded-full bg-purple animate-bounce [animation-delay:0.3s]" />
+                <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-purple animate-bounce" />
+                <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-purple animate-bounce [animation-delay:0.15s]" />
+                <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-purple animate-bounce [animation-delay:0.3s]" />
                 <span className="text-[10px] text-muted ml-1">Analyzing verified knowledge...</span>
               </div>
             )}
 
             {/* Quick suggested prompts when messages <= 2 */}
             {messages.length <= 2 && !sending && (
-              <div className="pt-2">
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted/60 block mb-1.5">
+              <div className="pt-2" aria-live="off">
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted block mb-1.5">
                   Suggested queries:
                 </span>
                 <div className="flex flex-col gap-1.5">
@@ -436,7 +451,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
                         setOpen(false);
                         if (link.href === "/resume.pdf") trackEvent("resume_download");
                       }}
-                      className="rounded-full border border-purple/30 bg-purple/10 px-2.5 py-1 text-[10px] font-medium text-[#d8b4fe] hover:border-purple hover:bg-purple/20 transition"
+                      className="rounded-full border border-purple/30 bg-purple/10 px-2.5 py-1 text-[10px] font-medium text-[#b4c6fe] hover:border-purple hover:bg-purple/20 transition"
                     >
                       {link.label}
                     </a>
@@ -466,7 +481,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
               type="submit"
               disabled={sending || !input.trim()}
               aria-label="Send message"
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-purple text-white transition hover:bg-purple/90 disabled:opacity-40"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet text-white transition hover:bg-violet/90 disabled:opacity-40"
             >
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                 <path

@@ -19,7 +19,7 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative mt-20 border-t border-line/80 bg-panel2/60 pt-16 pb-14 text-muted backdrop-blur-md">
+    <footer className="relative mt-20 border-t border-line/80 bg-panel2/60 pt-16 pb-14 text-muted">
       {/* Top subtle gradient accent line */}
       <div
         aria-hidden="true"
@@ -30,7 +30,7 @@ export default function Footer() {
         {/* Pre-footer Callout */}
         <div className="mb-14 rounded-2xl border border-line bg-panel p-8 sm:p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#c084fc]">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#84a2fc]">
               Looking Ahead
             </span>
             <h3 className="mt-2 text-xl sm:text-2xl font-bold text-white leading-tight">
@@ -47,7 +47,7 @@ export default function Footer() {
               scrollTo("#contact");
             }}
             className="glow shrink-0 rounded-xl px-6 py-3 text-xs font-bold text-white transition hover:scale-105"
-            style={{ background: "linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)" }}
+            style={{ background: "linear-gradient(135deg, #3f66f5 0%, #2d52dc 100%)" }}
           >
             Get In Touch
           </a>
@@ -92,7 +92,7 @@ export default function Footer() {
                       e.preventDefault();
                       scrollTo(item.href);
                     }}
-                    className="text-muted hover:text-white transition-colors"
+                    className="text-muted hover:text-white transition-colors inline-block py-3"
                   >
                     {item.label}
                   </a>
@@ -110,7 +110,7 @@ export default function Footer() {
               <li>
                 <a
                   href={`mailto:${profile.email}`}
-                  className="text-muted hover:text-white transition-colors block truncate"
+                  className="text-muted hover:text-white transition-colors block truncate py-3.5"
                 >
                   {profile.email}
                 </a>
@@ -121,7 +121,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => trackEvent("github_click")}
-                  className="text-muted hover:text-white transition-colors inline-flex items-center gap-1"
+                  className="text-muted hover:text-white transition-colors inline-flex min-h-11 items-center gap-1"
                 >
                   <span>GitHub</span>
                   <span>↗</span>
@@ -133,7 +133,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => trackEvent("linkedin_click")}
-                  className="text-muted hover:text-white transition-colors inline-flex items-center gap-1"
+                  className="text-muted hover:text-white transition-colors inline-flex min-h-11 items-center gap-1"
                 >
                   <span>LinkedIn</span>
                   <span>↗</span>
@@ -145,7 +145,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => trackEvent("resume_download")}
-                  className="text-muted hover:text-white transition-colors inline-flex items-center gap-1"
+                  className="text-muted hover:text-white transition-colors inline-flex min-h-11 items-center gap-1"
                 >
                   <span>Resume (PDF)</span>
                   <span>↓</span>
@@ -156,14 +156,14 @@ export default function Footer() {
         </div>
 
         {/* Bottom copyright row */}
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-muted/70">
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-muted">
           <div>
-            © {year} {profile.name}. All verified portfolio facts sourced from authenticated projects and academic history.
+            © {year} {profile.name}.
           </div>
           <button
             type="button"
             onClick={() => scrollTo(0)}
-            className="text-muted hover:text-white transition-colors inline-flex items-center gap-1.5"
+            className="text-muted hover:text-white transition-colors inline-flex min-h-11 items-center gap-1.5"
           >
             <span>Back to top</span>
             <span>↑</span>

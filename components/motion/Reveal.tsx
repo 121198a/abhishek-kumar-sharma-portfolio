@@ -9,9 +9,11 @@ interface RevealProps {
   duration?: number; // in seconds
   className?: string;
   threshold?: number;
+  /** Above-the-fold content: CSS-only entrance, no hydration wait, visible without JS. */
+  immediate?: boolean;
 }
 
-export default function Reveal({
+function RevealObserved({
   children,
   direction = "up",
   delay = 0,
@@ -82,4 +84,19 @@ export default function Reveal({
       {children}
     </div>
   );
+}
+
+export default function Reveal(props: RevealProps) {
+  if (props.immediate) {
+    const { children, delay = 0, duration = 0.7, className = "" } = props;
+    return (
+      <div
+        className={`reveal-immediate ${className}`}
+        style={{ animationDuration: `${duration}s`, animationDelay: `${delay}s` }}
+      >
+        {children}
+      </div>
+    );
+  }
+  return <RevealObserved {...props} />;
 }

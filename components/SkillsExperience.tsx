@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { skillGroups } from "@/data/skills";
 import { experience } from "@/data/experience";
@@ -25,9 +23,9 @@ export default function SkillsExperience() {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_1.1fr]">
           {/* Left Column: Technical Skills Groups */}
           <Reveal delay={0.1}>
-            <div className="flex h-full flex-col rounded-2xl border border-line bg-panel2/70 p-7 sm:p-8 backdrop-blur-md">
+            <div className="flex h-full flex-col rounded-2xl border border-line bg-panel2/70 p-7 sm:p-8">
               <div className="flex items-center justify-between border-b border-line pb-4">
-                <span className="text-[11px] font-bold tracking-[0.2em] text-[#c084fc] uppercase">
+                <span className="text-[11px] font-bold tracking-[0.2em] text-[#84a2fc] uppercase">
                   Technical Arsenal
                 </span>
                 <span className="text-xs text-muted font-medium">Categorized Stack</span>
@@ -38,9 +36,9 @@ export default function SkillsExperience() {
                   <div key={group.label} className="group">
                     <div className="flex items-center gap-2 mb-2.5">
                       <span className="h-1.5 w-1.5 rounded-full bg-purple" />
-                      <h4 className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#d8b4fe]">
+                      <h3 className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#b4c6fe]">
                         {group.label}
-                      </h4>
+                      </h3>
                     </div>
 
                     <div className="flex flex-wrap gap-2">
@@ -63,10 +61,10 @@ export default function SkillsExperience() {
           <Reveal delay={0.2}>
             <div
               id="experience"
-              className="flex h-full flex-col rounded-2xl border border-line bg-panel2/70 p-7 sm:p-8 backdrop-blur-md"
+              className="flex h-full flex-col rounded-2xl border border-line bg-panel2/70 p-7 sm:p-8"
             >
               <div className="flex items-center justify-between border-b border-line pb-4">
-                <span className="text-[11px] font-bold tracking-[0.2em] text-[#c084fc] uppercase">
+                <span className="text-[11px] font-bold tracking-[0.2em] text-[#84a2fc] uppercase">
                   Career Milestones
                 </span>
                 <span className="text-xs text-muted font-medium">Verified History</span>
@@ -77,7 +75,7 @@ export default function SkillsExperience() {
                   <div key={entry.year + entry.role} className="py-5 first:pt-0 last:pb-0">
                     <div className="flex items-baseline justify-between gap-3">
                       <div className="flex items-center gap-2.5">
-                        <span className="font-mono text-sm font-bold text-[#c084fc]">
+                        <span className="font-mono text-sm font-bold text-[#84a2fc]">
                           {entry.year}
                         </span>
                         {entry.current && (
@@ -87,14 +85,14 @@ export default function SkillsExperience() {
                           </span>
                         )}
                       </div>
-                      <span className="text-xs text-muted/70 text-right truncate">
+                      <span className="text-xs text-muted text-right truncate">
                         {entry.org}
                       </span>
                     </div>
 
-                    <h4 className="mt-2 text-sm sm:text-base font-bold text-white">
+                    <h3 className="mt-2 text-sm sm:text-base font-bold text-white">
                       {entry.role}
-                    </h4>
+                    </h3>
 
                     <p className="mt-2 text-xs sm:text-sm leading-relaxed text-muted">
                       {entry.body}

@@ -6,7 +6,7 @@ import {
   tryConsumeDailyAiBudget,
   getClientIp,
 } from "@/lib/rate-limit";
-import { isNonEmptyString, clampLength } from "@/lib/validate";
+import { chatSchema, clampLength, isNonEmptyString } from "@/lib/validate";
 import { localFaqLookup, retrieveKnowledge, faqAsContext, type ChatMode } from "@/data/faq";
 import { ragRetrieve } from "@/lib/rag";
 import { readJsonObject } from "@/lib/request-guard";
@@ -294,17 +294,20 @@ async function handleChat(req: NextRequest, cookieCount: number) {
     NextResponse.json({ error }, { status })
   );
   if (!guarded.ok) return guarded.response;
-  const body = guarded.body as ChatRequestBody;
 
-  if (!isNonEmptyString(body.message)) {
+  // Zod schema validation
+  const parsed = chatSchema.safeParse(guarded.body);
+  if (!parsed.success) {
     return NextResponse.json(
       { error: "message is required." },
       { status: 400 }
     );
   }
 
+  const body = guarded.body as ChatRequestBody;
+
   const message = clampLength(
-    body.message.trim(),
+    parsed.data.message.trim(),
     aiLimits.maxInputChars
   );
 

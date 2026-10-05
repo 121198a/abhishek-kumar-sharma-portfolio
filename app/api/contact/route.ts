@@ -3,20 +3,13 @@ import { Resend } from "resend";
 import { flags, emailLimits } from "@/lib/env";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 import { readJsonObject } from "@/lib/request-guard";
-import { isNonEmptyString, isValidEmail, clampLength, looksLikeSpam, stripControlChars } from "@/lib/validate";
+import { contactSchema, stripControlChars, clampLength } from "@/lib/validate";
 
 export const runtime = "nodejs";
 
 // Reject grossly oversized bodies before spending any work parsing them —
 // security checks happen before expensive work, not after.
 const MAX_BODY_BYTES = 20_000;
-
-type ContactBody = {
-  name: string;
-  email: string;
-  message: string;
-  honeypot?: string; // hidden field — bots tend to fill every field
-};
 
 function fail(error: string, status: number) {
   return NextResponse.json({ success: false, error }, { status });
@@ -29,32 +22,29 @@ export async function POST(req: NextRequest) {
 
   const guarded = await readJsonObject(req, MAX_BODY_BYTES, fail);
   if (!guarded.ok) return guarded.response;
-  const body = guarded.body as unknown as ContactBody;
+  const rawBody = guarded.body as Record<string, unknown>;
 
   // Honeypot: real visitors never fill this hidden field. Silently pretend
   // success — never reveal to a bot (or a script probing the endpoint)
   // that this specific check is what caught it.
-  if (body.honeypot) {
+  if (typeof rawBody?.honeypot === "string" && rawBody.honeypot.trim().length > 0) {
     return NextResponse.json({ success: true });
   }
 
-  if (!isNonEmptyString(body.name) || !isNonEmptyString(body.email) || !isNonEmptyString(body.message)) {
-    return fail("Name, email and message are all required.", 400);
-  }
-
-  if (!isValidEmail(body.email.trim())) {
-    return fail("Please enter a valid email address.", 400);
+  // Zod validation: validates required fields, types, email format,
+  // maximum length (name: 120, email: 254, message: 2000), and spam heuristics.
+  const parsed = contactSchema.safeParse(rawBody);
+  if (!parsed.success) {
+    const firstIssue = parsed.error.issues[0];
+    const errorMessage = firstIssue?.message || "Name, email and message are all required.";
+    return fail(errorMessage, 400);
   }
 
   // stripControlChars: defense-in-depth against header injection via the
   // subject line (which embeds `name`) — see lib/validate.ts.
-  const name = stripControlChars(clampLength(body.name.trim(), 120));
-  const email = body.email.trim();
-  const message = clampLength(body.message.trim(), 2000);
-
-  if (looksLikeSpam(message)) {
-    return fail("Message flagged as spam. Please revise and resend.", 400);
-  }
+  const name = stripControlChars(clampLength(parsed.data.name.trim(), 120));
+  const email = parsed.data.email.trim();
+  const message = clampLength(parsed.data.message.trim(), 2000);
 
   const ip = getClientIp(req.headers);
   const withinLimit = checkRateLimit(`contact:${ip}`, emailLimits.perIpPerHour, 60 * 60_000);

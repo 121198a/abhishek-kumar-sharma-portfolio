@@ -1,10 +1,12 @@
+import { z } from "zod";
+
 export function isNonEmptyString(v: unknown): v is string {
   return typeof v === "string" && v.trim().length > 0;
 }
 
 export function isValidEmail(v: string): boolean {
-  // Deliberately simple — good enough to catch typos, not a full RFC5322 check.
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+  if (typeof v !== "string" || /[\r\n]/.test(v)) return false;
+  return z.string().email().safeParse(v.trim()).success;
 }
 
 export function clampLength(v: string, max: number): string {
@@ -30,3 +32,58 @@ export function looksLikeSpam(text: string): boolean {
   if (text.length > 0 && text.replace(/[^A-Z]/g, "").length / text.length > 0.7) return true;
   return false;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Zod Schemas for API validation
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const contactSchema = z.object({
+  name: z
+    .string("Name, email and message are all required.")
+    .refine((val) => val.trim().length > 0, {
+      message: "Name, email and message are all required.",
+    })
+    .refine((val) => val.trim().length <= 120, {
+      message: "Name must be 120 characters or fewer.",
+    }),
+  email: z
+    .string("Name, email and message are all required.")
+    .refine((val) => val.trim().length > 0, {
+      message: "Name, email and message are all required.",
+    })
+    .refine((val) => !/[\r\n]/.test(val) && isValidEmail(val.trim()), {
+      message: "Please enter a valid email address.",
+    })
+    .refine((val) => val.trim().length <= 254, {
+      message: "Email is too long.",
+    }),
+  message: z
+    .string("Name, email and message are all required.")
+    .refine((val) => val.trim().length > 0, {
+      message: "Name, email and message are all required.",
+    })
+    .refine((val) => val.trim().length <= 2000, {
+      message: "Message must be 2000 characters or fewer.",
+    })
+    .refine((val) => !looksLikeSpam(val), {
+      message: "Message flagged as spam. Please revise and resend.",
+    }),
+  honeypot: z.string().optional(),
+});
+
+export type ContactInput = z.infer<typeof contactSchema>;
+
+export const chatSchema = z.object({
+  message: z
+    .string("message is required.")
+    .refine((val) => val.trim().length > 0, {
+      message: "message is required.",
+    }),
+  sessionMessageCount: z.unknown().optional(),
+  mode: z.enum(["general", "recruiter"]).optional(),
+  selectedProject: z.string().optional(),
+  history: z.unknown().optional(),
+});
+
+export type ChatInput = z.infer<typeof chatSchema>;
+

@@ -241,11 +241,16 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
           }
         }}
         aria-label={open ? "Close Abhishek AI assistant" : "Open Abhishek AI assistant"}
-        className="fixed bottom-6 right-6 z-[60] flex h-14 w-14 items-center justify-center rounded-full border border-purple/40 text-2xl text-white shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95 glow"
-        style={{ background: "linear-gradient(135deg, #3f66f5 0%, #2d52dc 100%)" }}
+        className="chat-launcher"
       >
         <span className="transition-transform duration-200">
-          {open ? "✕" : "✦"}
+          {open ? (
+            <span className="text-xl">✕</span>
+          ) : (
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          )}
         </span>
       </button>
 
@@ -256,22 +261,19 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
           role="dialog"
           aria-label="Abhishek AI Assistant"
           aria-modal="false"
-          className="fixed bottom-[88px] right-6 z-[60] flex w-[390px] max-w-[calc(100vw-32px)] flex-col overflow-hidden rounded-2xl border border-purple/35 bg-panel shadow-2xl backdrop-blur-2xl"
+          className="fixed bottom-[88px] right-6 z-[60] flex w-[390px] max-w-[calc(100vw-32px)] flex-col overflow-hidden rounded-2xl border border-line bg-panel shadow-2xl backdrop-blur-2xl"
         >
           {/* Header */}
-          <div
-            className="flex items-center justify-between border-b border-line px-4 py-3.5"
-            style={{ background: "linear-gradient(135deg, #232329 0%, #121216 100%)" }}
-          >
-            <div className="flex items-center gap-2">
-              <span className="grid h-6 w-6 place-items-center rounded-full bg-purple/20 text-xs font-bold text-white">
-                ✦
+          <div className="flex items-center justify-between border-b border-line bg-panel2 px-4 py-3.5">
+            <div className="flex items-center gap-2.5">
+              <span className="grid h-7 w-7 place-items-center rounded-lg border border-line bg-panel text-xs font-bold text-purple">
+                AI
               </span>
               <div>
                 <span className="text-xs font-bold text-white block leading-tight">
                   Abhishek AI
                 </span>
-                <span className="text-[10px] text-muted block">
+                <span className="text-xs text-muted block">
                   Portfolio Assistant
                 </span>
               </div>
@@ -280,7 +282,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
             <div className="flex items-center gap-2">
               {/* Online/Fallback status badge */}
               <span
-                className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-bold ${
+                className={`badge-status ${
                   offline
                     ? "bg-yellow-500/15 text-yellow-300 border border-yellow-500/30"
                     : "bg-green-500/15 text-green-300 border border-green-500/30"
@@ -321,7 +323,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
           <div
             role="group"
             aria-label="Chat persona mode"
-            className="flex items-center justify-between border-b border-line bg-panel2/50 px-3 py-2 text-[11px]"
+            className="flex items-center justify-between border-b border-line bg-panel2/50 px-3 py-2 text-xs"
           >
             <div className="flex items-center gap-1.5">
               <button
@@ -330,11 +332,11 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
                 aria-pressed={mode === "general"}
                 className={`rounded-lg px-2.5 py-1 font-semibold transition ${
                   mode === "general"
-                    ? "bg-purple/25 text-white border border-purple/40"
+                    ? "bg-purple/20 text-white border border-purple/30"
                     : "text-muted hover:text-white"
                 }`}
               >
-                💬 General
+                General
               </button>
               <button
                 type="button"
@@ -345,23 +347,23 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
                 aria-pressed={mode === "recruiter"}
                 className={`rounded-lg px-2.5 py-1 font-semibold transition ${
                   mode === "recruiter"
-                    ? "bg-purple/25 text-white border border-purple/40"
+                    ? "bg-purple/20 text-white border border-purple/30"
                     : "text-muted hover:text-white"
                 }`}
               >
-                👔 Recruiter Mode
+                Recruiter Mode
               </button>
             </div>
-            <span className="text-[10px] text-muted">
+            <span className="text-xs text-muted">
               {mode === "recruiter" ? "Fact → Evidence" : "General"}
             </span>
           </div>
 
           {/* Selected Project Focus Banner */}
           {selectedProject && (
-            <div className="flex items-center justify-between border-b border-line bg-purple/15 px-3 py-1.5 text-[11px]">
-              <span className="truncate text-[#b4c6fe]">
-                ✦ Focus: <strong>{selectedProject.name}</strong>
+            <div className="flex items-center justify-between border-b border-line bg-purple/15 px-3 py-1.5 text-xs">
+              <span className="truncate text-purple">
+                Active Context: <strong>{selectedProject.name}</strong>
               </span>
               <button
                 type="button"
@@ -394,7 +396,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
                 }`}
               >
                 <div
-                  className={`max-w-[88%] rounded-2xl p-3 text-xs leading-relaxed ${
+                  className={`chat-bubble ${
                     message.role === "user"
                       ? "rounded-br-sm bg-purple/35 text-white border border-purple/40"
                       : "rounded-bl-sm border border-line bg-white/[0.04] text-[#e8ebf4]"
@@ -411,14 +413,14 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
                 <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-purple animate-bounce" />
                 <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-purple animate-bounce [animation-delay:0.15s]" />
                 <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-purple animate-bounce [animation-delay:0.3s]" />
-                <span className="text-[10px] text-muted ml-1">Analyzing verified knowledge...</span>
+                <span className="text-xs text-muted ml-1">Analyzing verified knowledge...</span>
               </div>
             )}
 
             {/* Quick suggested prompts when messages <= 2 */}
             {messages.length <= 2 && !sending && (
               <div className="pt-2" aria-live="off">
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted block mb-1.5">
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted block mb-1.5">
                   Suggested queries:
                 </span>
                 <div className="flex flex-col gap-1.5">
@@ -439,7 +441,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
             {/* Offline quick links */}
             {offline && (
               <div className="pt-2 border-t border-line/60 mt-3">
-                <span className="text-[10px] text-muted block mb-1.5 font-medium">
+                <span className="text-xs text-muted block mb-1.5 font-medium">
                   Direct verified portfolio links:
                 </span>
                 <div className="flex flex-wrap gap-1.5">
@@ -451,7 +453,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
                         setOpen(false);
                         if (link.href === "/resume.pdf") trackEvent("resume_download");
                       }}
-                      className="rounded-full border border-purple/30 bg-purple/10 px-2.5 py-1 text-[10px] font-medium text-[#b4c6fe] hover:border-purple hover:bg-purple/20 transition"
+                      className="rounded-full border border-purple/30 bg-purple/10 px-2.5 py-1 text-xs font-medium text-[#b4c6fe] hover:border-purple hover:bg-purple/20 transition"
                     >
                       {link.label}
                     </a>
@@ -471,6 +473,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about projects, skills, education..."
+              aria-label="Ask about projects, skills, education"
               autoComplete="off"
               maxLength={400}
               disabled={sending}

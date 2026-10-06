@@ -128,7 +128,7 @@ export default function ResponsiveVideo({ manifest, minWidth = 768 }: Props) {
           onClick={toggle}
           aria-pressed={userPaused}
           aria-label={userPaused ? "Play background video" : "Pause background video"}
-          className="absolute right-4 top-20 z-20 sm:top-24 inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-ink/30 bg-bg/70 px-3 text-xs font-semibold text-ink transition-colors hover:border-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple"
+          className="absolute right-4 top-20 z-20 sm:top-24 btn-icon"
         >
           <span aria-hidden="true">{userPaused ? "▶" : "❚❚"}</span>
         </button>

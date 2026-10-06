@@ -53,7 +53,7 @@ export const capabilities = [
   },
   {
     title: "Cloud & Deployment",
-    body: "Shipping to AWS (S3, Lambda) and Vercel with CI/CD and free-tier-conscious infrastructure.",
+    body: "Deploying applications to AWS (S3, Lambda) and Vercel with automated CI/CD pipelines optimized for low-cost cloud infrastructure.",
   },
   {
     title: "Systems Thinking",

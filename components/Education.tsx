@@ -19,35 +19,27 @@ export default function Education() {
           />
         </Reveal>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
           {education.map((e, index) => (
-            <Reveal key={e.degree} delay={index * 0.1}>
-              <div
-                className="group relative flex h-full flex-col justify-between rounded-2xl border border-line bg-panel2/70 p-7 transition-all duration-300 hover:-translate-y-1.5 hover:border-purple/50 hover:shadow-glow"
-              >
+            <Reveal key={e.degree} delay={index * 0.08}>
+              <div className="flex flex-col justify-between border-t border-line/70 pt-6">
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-bold text-[#84a2fc]">
+                    <span className="font-mono text-xs font-bold text-purple">
                       {e.year}
                     </span>
-                    <span className="text-[10px] uppercase tracking-wider text-muted font-mono">
-                      Step 0{education.length - index}
+                    <span className="inline-flex items-center rounded-lg border border-purple/30 bg-purple/10 px-2.5 py-0.5 text-xs font-semibold text-purple">
+                      {e.score}
                     </span>
                   </div>
 
-                  <h3 className="mt-4 text-base font-bold text-white leading-snug group-hover:text-[#b4c6fe] transition-colors">
+                  <h3 className="mt-4 text-base font-bold text-ink leading-snug">
                     {e.degree}
                   </h3>
 
-                  <p className="mt-2 text-xs sm:text-sm text-muted leading-relaxed">
+                  <p className="mt-2 text-sm text-muted leading-relaxed">
                     {e.institute}
                   </p>
-                </div>
-
-                <div className="mt-6 border-t border-line/60 pt-4">
-                  <span className="inline-flex items-center rounded-lg border border-purple/30 bg-purple/15 px-3 py-1.5 text-xs font-bold text-[#b4c6fe]">
-                    {e.score}
-                  </span>
                 </div>
               </div>
             </Reveal>

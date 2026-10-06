@@ -4,13 +4,14 @@ import React from "react";
 import { profile } from "@/data/profile";
 import { trackEvent } from "@/lib/analytics";
 import { useSmoothScroll } from "@/components/providers/SmoothScrollProvider";
+import GetInTouch from "@/components/ui/GetInTouch";
+import { Github, Linkedin, Mail, Phone, Download, ArrowUp } from "@/components/ui/Icons";
 
 const NAV_ITEMS = [
   { href: "#about", label: "About" },
-  { href: "#capabilities", label: "Capabilities" },
+  { href: "#experience", label: "Experience" },
+  { href: "#skills", label: "Skills" },
   { href: "#projects", label: "Projects" },
-  { href: "#skills", label: "Skills & Experience" },
-  { href: "#education", label: "Education" },
   { href: "#contact", label: "Contact" },
 ];
 
@@ -19,38 +20,32 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative mt-20 border-t border-line/80 bg-panel2/60 pt-16 pb-14 text-muted">
-      {/* Top subtle gradient accent line */}
-      <div
-        aria-hidden="true"
-        className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-purple/60 to-transparent"
-      />
-
+    <footer className="relative mt-20 border-t border-line bg-panel2/60 pt-16 pb-14 text-muted">
       <div className="mx-auto max-w-shell px-6 sm:px-8">
         {/* Pre-footer Callout */}
         <div className="mb-14 rounded-2xl border border-line bg-panel p-8 sm:p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#84a2fc]">
+            <span className="text-xs font-bold uppercase tracking-[0.18em] text-purple">
               Looking Ahead
             </span>
-            <h3 className="mt-2 text-xl sm:text-2xl font-bold text-white leading-tight">
+            <h3 className="mt-2 text-xl sm:text-2xl font-bold text-ink leading-tight">
               Have an opportunity, project, or technical conversation in mind?
             </h3>
             <p className="mt-1 text-xs sm:text-sm text-muted">
               {profile.tagline}
             </p>
           </div>
-          <a
-            href="#contact"
-            onClick={(e) => {
-              e.preventDefault();
-              scrollTo("#contact");
+          <GetInTouch
+            id="footer-social-profiles"
+            links={{
+              github: profile.github,
+              linkedin: profile.linkedin,
+              facebook: profile.facebook,
+              instagram: profile.instagram,
+              x: profile.x,
             }}
-            className="glow shrink-0 rounded-xl px-6 py-3 text-xs font-bold text-white transition hover:scale-105"
-            style={{ background: "linear-gradient(135deg, #3f66f5 0%, #2d52dc 100%)" }}
-          >
-            Get In Touch
-          </a>
+            className="shrink-0"
+          />
         </div>
 
         {/* Main Footer Content */}
@@ -59,17 +54,17 @@ export default function Footer() {
           <div>
             <div className="flex items-center gap-3">
               <span
-                className="grid h-8 w-8 place-items-center rounded-lg border border-purple/40 bg-gradient-to-br from-purple to-violet text-white font-black text-sm shadow-md"
+                className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-panel text-ink font-bold text-sm shadow-sm"
               >
                 A
               </span>
-              <span className="text-base font-bold text-white tracking-tight">
+              <span className="text-base font-bold text-ink tracking-tight">
                 {profile.name}
               </span>
             </div>
 
             <p className="mt-4 max-w-sm text-xs sm:text-sm leading-relaxed text-muted">
-              {profile.title} based in {profile.location}. Designing responsive interfaces, scalable APIs, and reliable full-stack applications.
+              {profile.title}, currently based in {profile.currentLocation} with a permanent location in {profile.permanentLocation}. Designing responsive interfaces, scalable APIs, and reliable full-stack applications.
             </p>
 
             <div className="mt-4 flex items-center gap-2 text-xs text-[#86efac]">
@@ -80,7 +75,7 @@ export default function Footer() {
 
           {/* Quick Navigation Links */}
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-[0.16em] text-white">
+            <h4 className="text-xs font-bold uppercase tracking-[0.16em] text-ink">
               Navigation
             </h4>
             <ul className="mt-4 space-y-2.5 text-xs">
@@ -92,7 +87,7 @@ export default function Footer() {
                       e.preventDefault();
                       scrollTo(item.href);
                     }}
-                    className="text-muted hover:text-white transition-colors inline-block py-3"
+                    className="text-muted hover:text-ink transition-colors inline-block py-3"
                   >
                     {item.label}
                   </a>
@@ -103,16 +98,26 @@ export default function Footer() {
 
           {/* Contact & Profiles */}
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-[0.16em] text-white">
+            <h4 className="text-xs font-bold uppercase tracking-[0.16em] text-ink">
               Direct Links
             </h4>
             <ul className="mt-4 space-y-2.5 text-xs">
               <li>
                 <a
                   href={`mailto:${profile.email}`}
-                  className="text-muted hover:text-white transition-colors block truncate py-3.5"
+                  className="text-muted hover:text-ink transition-colors inline-flex items-center gap-2 py-1.5"
                 >
-                  {profile.email}
+                  <Mail className="h-3.5 w-3.5 text-purple" />
+                  <span className="truncate">{profile.email}</span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href={profile.phoneHref}
+                  className="text-muted hover:text-ink transition-colors inline-flex items-center gap-2 py-1.5"
+                >
+                  <Phone className="h-3.5 w-3.5 text-purple" />
+                  <span>{profile.phone}</span>
                 </a>
               </li>
               <li>
@@ -121,10 +126,10 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => trackEvent("github_click")}
-                  className="text-muted hover:text-white transition-colors inline-flex min-h-11 items-center gap-1"
+                  className="text-muted hover:text-ink transition-colors inline-flex items-center gap-2 py-1.5"
                 >
+                  <Github className="h-3.5 w-3.5 text-purple" />
                   <span>GitHub</span>
-                  <span>↗</span>
                 </a>
               </li>
               <li>
@@ -133,10 +138,10 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => trackEvent("linkedin_click")}
-                  className="text-muted hover:text-white transition-colors inline-flex min-h-11 items-center gap-1"
+                  className="text-muted hover:text-ink transition-colors inline-flex items-center gap-2 py-1.5"
                 >
+                  <Linkedin className="h-3.5 w-3.5 text-purple" />
                   <span>LinkedIn</span>
-                  <span>↗</span>
                 </a>
               </li>
               <li>
@@ -145,10 +150,10 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => trackEvent("resume_download")}
-                  className="text-muted hover:text-white transition-colors inline-flex min-h-11 items-center gap-1"
+                  className="text-muted hover:text-ink transition-colors inline-flex items-center gap-2 py-1.5"
                 >
-                  <span>Resume (PDF)</span>
-                  <span>↓</span>
+                  <Download className="h-3.5 w-3.5 text-purple" />
+                  <span>Resume (PDF) ↓</span>
                 </a>
               </li>
             </ul>
@@ -156,18 +161,21 @@ export default function Footer() {
         </div>
 
         {/* Bottom copyright row */}
-        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-muted">
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted">
           <div>
             © {year} {profile.name}.
           </div>
-          <button
-            type="button"
-            onClick={() => scrollTo(0)}
-            className="text-muted hover:text-white transition-colors inline-flex min-h-11 items-center gap-1.5"
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              scrollTo(0);
+            }}
+            className="text-muted hover:text-ink transition-colors inline-flex min-h-11 items-center gap-1.5 font-semibold"
           >
             <span>Back to top</span>
-            <span>↑</span>
-          </button>
+            <ArrowUp className="h-3.5 w-3.5" />
+          </a>
         </div>
       </div>
     </footer>

@@ -1,8 +1,8 @@
 import React from "react";
 import { profile } from "@/data/profile";
+import { capabilities } from "@/data/skills";
 import TrackedLink from "@/components/ui/TrackedLink";
 import Reveal from "@/components/motion/Reveal";
-import Tilt3D from "@/components/motion/Tilt3D";
 
 export default function About() {
   return (
@@ -12,10 +12,10 @@ export default function About() {
           {/* Left Column: Narrative and Links */}
           <div>
             <Reveal>
-              <span className="text-[11px] font-bold tracking-[0.2em] text-[#84a2fc] uppercase">
+              <span className="text-xs font-bold tracking-[0.18em] text-[#84a2fc] uppercase">
                 About Abhishek
               </span>
-              <h2 className="mt-3 break-words text-[clamp(1.5rem,9vw,2.25rem)] sm:text-[clamp(2.25rem,4.5vw,3.75rem)] font-black leading-[1.02] tracking-[-0.035em] text-white">
+              <h2 className="mt-3 break-words text-[clamp(1.85rem,4vw,3rem)] font-black leading-[1.02] tracking-[-0.035em] text-ink">
                 Engineering with <span className="gradient-text">clarity &amp; craft.</span>
               </h2>
             </Reveal>
@@ -35,7 +35,7 @@ export default function About() {
                   href={profile.github}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-full border border-purple/40 bg-purple/10 px-4 py-2 text-xs font-semibold text-[#b4c6fe] transition hover:border-purple hover:bg-purple/20 hover:text-white"
+                  className="btn-secondary"
                 >
                   <span>GitHub</span>
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -46,7 +46,7 @@ export default function About() {
                   href={profile.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-full border border-purple/40 bg-purple/10 px-4 py-2 text-xs font-semibold text-[#b4c6fe] transition hover:border-purple hover:bg-purple/20 hover:text-white"
+                  className="btn-secondary"
                 >
                   <span>LinkedIn</span>
                   <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -57,7 +57,7 @@ export default function About() {
                   href={profile.resumeHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.03] px-4 py-2 text-xs font-semibold text-white/90 transition hover:border-purple/50 hover:text-white"
+                  className="btn-secondary"
                 >
                   <span>Download Resume ↓</span>
                 </TrackedLink>
@@ -65,65 +65,81 @@ export default function About() {
             </Reveal>
           </div>
 
-          {/* Right Column: Verified Highlights & Information Cards */}
-          <div className="flex flex-col gap-5">
-            {/* Current Position Card */}
+          {/* Right Column: Verified Credentials & Engagement */}
+          <div className="flex flex-col gap-6">
             <Reveal delay={0.2}>
-              <Tilt3D maxTilt={6} scale={1.015} glare glareOpacity={0.12}>
-                <div className="rounded-2xl border border-line/80 bg-panel2/70 p-7 shadow-lg transition-all duration-300 hover:border-purple/50 hover:shadow-glow">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-bold tracking-[0.18em] text-[#84a2fc] uppercase">
-                      Active Engagement
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#86efac]/10 px-2.5 py-0.5 text-[10px] font-bold text-[#86efac]">
-                      <span className="h-1.5 w-1.5 rounded-full bg-[#86efac] animate-pulse" />
-                      Present
-                    </span>
-                  </div>
-                  <h3 className="mt-3 text-lg font-bold text-white">
-                    {profile.currentRole.title}
-                  </h3>
-                  <p className="text-sm text-muted mt-0.5">
-                    {profile.currentRole.org}
-                  </p>
-                  <div className="my-5 h-px bg-line/80" />
-                  <p className="text-xs leading-relaxed text-muted">
-                    Developing user interfaces with React.js, Tailwind CSS, and REST API integrations. Focused on clean component composition and performance.
-                  </p>
+              <div className="rounded-2xl border border-line bg-panel2/60 p-7 shadow-lg">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-purple">
+                    Active Engagement
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#86efac]/10 px-2.5 py-0.5 text-xs font-bold text-[#86efac]">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#86efac] animate-pulse" />
+                    Present
+                  </span>
                 </div>
-              </Tilt3D>
-            </Reveal>
+                <h3 className="mt-3 text-lg font-bold text-ink">
+                  {profile.currentRole.title}
+                </h3>
+                <p className="text-sm text-muted mt-0.5">
+                  {profile.currentRole.org}
+                </p>
+                <div className="my-4 h-px bg-line/60" />
+                <p className="text-xs leading-relaxed text-muted">
+                  Building responsive user interfaces with React.js, Tailwind CSS, and REST APIs, with an emphasis on clean code and fast load times.
+                </p>
 
-            {/* Location & Academic Base Card */}
-            <Reveal delay={0.3}>
-              <Tilt3D maxTilt={6} scale={1.015} glare glareOpacity={0.12}>
-                <div className="rounded-2xl border border-line/80 bg-panel2/60 p-6 shadow-lg transition-all duration-300 hover:border-purple/50 hover:shadow-glow">
-                  <span className="text-[10px] font-bold tracking-[0.18em] text-muted uppercase">
-                    Location &amp; Foundation
+                <div className="mt-6 pt-6 border-t border-line/60">
+                  <span className="text-xs font-semibold text-muted">
+                    Location &amp; Academic Base
                   </span>
                   <div className="mt-3 grid grid-cols-2 gap-4">
                     <div>
-                      <span className="text-xs text-muted block">Location</span>
-                      <strong className="text-sm text-white font-semibold mt-0.5 block">
-                        {profile.location}
+                      <span className="text-xs text-muted block">Current Location</span>
+                      <strong className="text-sm text-ink font-semibold mt-0.5 block">
+                        {profile.currentLocation}
+                      </strong>
+                    </div>
+                    <div>
+                      <span className="text-xs text-muted block">Permanent Location</span>
+                      <strong className="text-sm text-ink font-semibold mt-0.5 block">
+                        {profile.permanentLocation}
                       </strong>
                     </div>
                     <div>
                       <span className="text-xs text-muted block">Education</span>
-                      <strong className="text-sm text-white font-semibold mt-0.5 block">
+                      <strong className="text-sm text-ink font-semibold mt-0.5 block">
                         B.Tech in CSIT
                       </strong>
                     </div>
                   </div>
                   <div className="mt-4 pt-4 border-t border-line/60">
-                    <span className="text-xs text-muted block">Research Publication</span>
+                    <span className="text-xs text-muted block">Research Contribution</span>
                     <p className="text-xs text-[#b4c6fe] mt-1 font-medium">
                       Presented at CoCole 2025, NIT Rourkela on Coverless Image Steganography
                     </p>
                   </div>
                 </div>
-              </Tilt3D>
+              </div>
             </Reveal>
+          </div>
+        </div>
+
+        <div className="mt-16">
+          <Reveal>
+            <h3 className="text-lg font-bold text-ink">Engineering approach</h3>
+          </Reveal>
+          <div className="mt-6 grid grid-cols-1 gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+            {capabilities.map((capability, index) => (
+              <Reveal key={capability.title} delay={index * 0.05}>
+                <article className="h-full border-t border-line/70 pt-5">
+                  <h4 className="text-sm font-bold text-ink">{capability.title}</h4>
+                  <p className="mt-2 text-sm leading-relaxed text-muted">
+                    {capability.body}
+                  </p>
+                </article>
+              </Reveal>
+            ))}
           </div>
         </div>
       </div>

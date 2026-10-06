@@ -39,7 +39,7 @@ export default async function GitHubActivity() {
           <div className="mb-8 flex flex-col gap-6 border-y border-line py-6 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-3xl font-black text-ink">{data.repos.length}</p>
-              <p className="text-[11px] font-medium uppercase tracking-wider text-muted">Public repositories</p>
+              <p className="text-xs font-medium text-muted">Public repositories</p>
             </div>
             {withLang > 0 && (
               <div className="min-w-0 flex-1 sm:max-w-md">
@@ -66,7 +66,7 @@ export default async function GitHubActivity() {
               href={data.profileUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border border-ink/30 px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple"
+              className="btn-secondary shrink-0"
             >
               View profile <span aria-hidden="true">↗</span>
             </a>
@@ -81,17 +81,17 @@ export default async function GitHubActivity() {
                   href={`https://github.com/121198a/${r.name}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex h-full flex-col justify-between rounded-2xl border border-line bg-panel2/70 p-6 transition-colors hover:border-purple/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple"
+                  className="editorial-card group flex h-full flex-col justify-between focus-visible:outline focus-visible:outline-2 focus-visible:outline-purple"
                 >
                   <div>
-                    <h3 className="break-words text-base font-bold leading-snug text-ink group-hover:text-[#b4c6fe]">
+                    <h3 className="break-words text-base font-bold leading-snug text-ink group-hover:text-purple transition-colors">
                       {r.name}
                     </h3>
                     {r.description && (
                       <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-muted">{r.description}</p>
                     )}
                   </div>
-                  <div className="mt-5 flex items-center justify-between text-[11px] text-muted">
+                  <div className="mt-5 flex items-center justify-between text-xs text-muted">
                     <span>{r.language ?? "—"}</span>
                     {formatMonth(r.updatedAt) && <span>Updated {formatMonth(r.updatedAt)}</span>}
                   </div>

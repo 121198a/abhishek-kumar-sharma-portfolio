@@ -68,6 +68,8 @@ export const contactSchema = z.object({
     .refine((val) => !looksLikeSpam(val), {
       message: "Message flagged as spam. Please revise and resend.",
     }),
+  phone: z.string().max(40).optional(),
+  subject: z.string().max(160).optional(),
   honeypot: z.string().optional(),
 });
 

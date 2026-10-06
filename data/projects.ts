@@ -20,9 +20,9 @@ export const projects: Project[] = [
     year: "2026",
     status: "Portfolio project",
     description:
-      "A full-stack banking application with customer, employee and admin roles, KYC workflows, transactions, audit logging, notifications and PDF statements.",
+      "Full-stack banking system supporting customer, employee, and admin roles. Features KYC verification, funds transfers, audit logs, alerts, and PDF account statements.",
     approach:
-      "React + Vite front end over an Express REST API and MongoDB/Mongoose. JWT auth with an HTTP-only refresh cookie, role and permission checks, Decimal128 money handling inside MongoDB transactions, idempotency keys, helmet and input validation, and a department-based organisation model (loans, insurance, collections, sales, IT security). Includes unit tests, Docker/nginx config and GitHub Actions CI.",
+      "Built with React, Vite, Express, and MongoDB. Uses JWT authentication with HTTP-only refresh cookies and role-based permissions. Financial operations rely on Decimal128 precision within MongoDB multi-document transactions, idempotency keys, Helmet security headers, and request validation. Includes department-scoped access controls, Docker/nginx deployment, and GitHub Actions CI.",
     tags: ["React","Vite","Node.js","Express","MongoDB","JWT","Docker","GitHub Actions"],
     href: "https://github.com/121198a/bank-management-system",
   },
@@ -33,9 +33,9 @@ export const projects: Project[] = [
     year: "2026",
     status: "Portfolio project",
     description:
-      "A Next.js web platform with a marketing site, authentication flows, a CMS and role-based founder and investor dashboards.",
+      "A Next.js platform featuring a public landing site, secure login flows, a lightweight CMS, and dedicated dashboards for founders and investors.",
     approach:
-      "Next.js 15 App Router in TypeScript with Supabase, Zod validation, sanitised CMS content, HMAC-signed session tokens and role-routing middleware. Covered by a 69-case automated test suite.",
+      "Next.js 15 App Router in TypeScript with Supabase database integration and Zod schema validation. Includes sanitized CMS content rendering, HMAC-signed session tokens, and role-based middleware routing. Covered by a 69-case automated test suite.",
     tags: ["Next.js","TypeScript","React","Supabase","Tailwind CSS","Framer Motion"],
     href: "https://github.com/121198a/ventureflow-web",
   },
@@ -46,7 +46,7 @@ export const projects: Project[] = [
     year: "2026",
     status: "Portfolio project",
     description:
-      "A React admin panel with token-based login, protected routes, paginated searchable data tables and a Level Activity builder.",
+      "A React administration panel with secure token authentication and protected routes. Includes searchable, paginated data tables alongside an interactive activity builder.",
     approach:
       "React 19 + Vite + Tailwind 4 + React Router 7. A single Axios client handles configurable auth strategies and centralised error handling. It consumes an external backend API, which is not part of this repository.",
     tags: ["React","Vite","Tailwind CSS","React Router","Axios"],
@@ -59,9 +59,9 @@ export const projects: Project[] = [
     year: "2026",
     status: "Portfolio project",
     description:
-      "A food-ordering prototype with a 269-dish data-driven menu, cart, Razorpay checkout, table reservations and an admin order view.",
+      "A food-ordering web app featuring a 269-item digital menu, shopping cart, Razorpay payments, table reservations, and an admin order dashboard.",
     approach:
-      "Next.js App Router in TypeScript with a Zustand cart, server-side price recomputation at checkout, Mongoose models for orders and reservations, and a rule-based menu assistant that needs no paid API. Authentication is not implemented.",
+      "Built with Next.js App Router, TypeScript, and Zustand for cart state management. Features server-side price recalculation at checkout, Mongoose database models, and an offline rule-based menu assistant. Authentication is not implemented.",
     tags: ["Next.js","TypeScript","MongoDB","Razorpay","Zustand","Framer Motion"],
     href: "https://github.com/121198a/sharma-kitchen",
   },
@@ -74,7 +74,7 @@ export const projects: Project[] = [
     description:
       "A network-operations monitoring lab with async SNMP polling, UDP syslog ingestion, deduplicated alerting and a React dashboard.",
     approach:
-      "FastAPI + SQLAlchemy/SQLite with JWT/bcrypt role-based auth, a 60-second async polling loop that raises and auto-resolves device-down alerts, a UDP syslog receiver and a React/Vite dashboard. SNMP trap receiving is not yet implemented.",
+      "Built with FastAPI, SQLAlchemy, SQLite, and a React/Vite dashboard. Features JWT and bcrypt authentication, an asynchronous 60-second polling engine for automated device status alerts, and a UDP syslog receiver. SNMP trap receiving is not yet implemented.",
     tags: ["Python","FastAPI","SQLAlchemy","SNMP","React","pytest"],
     href: "https://github.com/121198a/enterprise-it-operations-and-windows-infrastructure-management",
   },

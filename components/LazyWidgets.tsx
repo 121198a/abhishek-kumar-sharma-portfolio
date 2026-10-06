@@ -6,7 +6,6 @@ import dynamic from "next/dynamic";
 // compete with the hero for main-thread time. ssr:false needs a client wrapper.
 const AIChat = dynamic(() => import("@/components/AIChat"), { ssr: false });
 const CookieBanner = dynamic(() => import("@/components/CookieBanner"), { ssr: false });
-const BackToTop = dynamic(() => import("@/components/ui/BackToTop"), { ssr: false });
 
 export default function LazyWidgets({
   aiEnabled,
@@ -17,7 +16,6 @@ export default function LazyWidgets({
 }) {
   return (
     <>
-      <BackToTop />
       <AIChat aiEnabled={aiEnabled} />
       <CookieBanner analyticsEnabled={analyticsEnabled} />
     </>

@@ -2,6 +2,7 @@ export type ExperienceEntry = {
   year: string;
   role: string;
   org: string;
+  location?: string;
   body: string;
   current?: boolean;
 };
@@ -15,6 +16,7 @@ export const experience: ExperienceEntry[] = [
     year: "2026",
     role: "Frontend Developer Intern",
     org: "Infopulse Technology",
+    location: "Ahmedabad, Gujarat, India",
     body: "Developing responsive and interactive web applications using React.js, JavaScript, HTML5 and CSS3. Building reusable UI components, integrating REST APIs, optimizing application performance, and collaborating with cross-functional teams to deliver scalable, user-focused solutions.",
     current: true,
   },

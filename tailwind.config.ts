@@ -1,28 +1,29 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: "class",
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
-        bg: "#0a0a0b",
-        panel: "#111113",
-        panel2: "#17171a",
-        ink: "#f5f5f2",
-        muted: "#a1a1a6",
-        purple: "#6f93ff",
-        violet: "#3f66f5",
-        pink: "#a9bfff",
-        line: "rgba(255,255,255,.09)",
+        bg: "var(--bg)",
+        panel: "var(--panel)",
+        panel2: "var(--panel2)",
+        ink: "var(--ink)",
+        muted: "var(--muted)",
+        purple: "var(--purple)",
+        violet: "var(--violet)",
+        pink: "var(--pink)",
+        line: "var(--line)",
       },
       fontFamily: {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
       },
       boxShadow: {
-        glow: "0 0 50px rgba(111,147,255,.18)",
-        "glow-lg": "0 0 80px rgba(111,147,255,.28)",
-        "glow-cyan": "0 0 60px rgba(56,189,248,.22)",
-        "3d": "0 25px 50px -12px rgba(0,0,0,.7), 0 0 30px rgba(111,147,255,.15)",
+        glow: "0 0 35px rgba(59, 130, 246, 0.12)",
+        "glow-lg": "0 0 60px rgba(59, 130, 246, 0.20)",
+        "glow-cyan": "0 0 50px rgba(56, 189, 248, 0.16)",
+        "3d": "0 20px 40px -15px rgba(0,0,0,0.6)",
       },
       animation: {
         "float-slow": "float 8s ease-in-out infinite",

@@ -16,47 +16,35 @@ export default function AIIntro() {
     <section className="py-24 sm:py-32 relative">
       <div className="mx-auto max-w-shell px-6 sm:px-8">
         <Reveal>
-          <div
-            className="relative overflow-hidden rounded-3xl border border-purple/35 p-8 sm:p-12"
-            style={{
-              background:
-                "radial-gradient(circle at 85% 20%, rgba(85, 125, 247, 0.18) 0%, transparent 60%), linear-gradient(135deg, rgba(25, 25, 29, 0.85) 0%, rgba(16, 16, 18, 0.92) 100%)",
-            }}
-          >
-            {/* Ambient Background Glow */}
-            <div
-              className="absolute -right-16 -top-16 h-[320px] w-[320px] rounded-full pointer-events-none"
-              style={{ background: "rgba(85, 125, 247, 0.22)", filter: "blur(90px)" }}
-            />
-
+          <div className="relative overflow-hidden rounded-3xl border border-line bg-panel2/80 p-8 sm:p-12">
             <div className="relative z-10 grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
               <div>
-                <span className="inline-flex items-center gap-2 rounded-full border border-purple/30 bg-purple/15 px-3 py-1 text-xs font-semibold text-[#b4c6fe]">
+                <span className="inline-flex items-center gap-2 rounded-full border border-purple/30 bg-purple/10 px-3 py-1 text-xs font-semibold text-purple">
                   <span className="h-1.5 w-1.5 rounded-full bg-purple animate-ping" />
-                  ✦ AI Assistant Mode
+                  Portfolio Assistant
                 </span>
 
-                <h3 className="mt-4 text-2xl sm:text-4xl font-black tracking-[-0.03em] text-white">
-                  Chat with <span className="gradient-text">Abhishek AI</span>
+                <h3 className="mt-4 text-2xl sm:text-3xl font-black tracking-[-0.03em] text-ink">
+                  Interactive <span className="gradient-text">Portfolio Knowledge Base</span>
                 </h3>
 
                 <p className="mt-3 max-w-xl text-sm sm:text-base leading-relaxed text-muted">
                   Ask about verified technical skills, full-stack projects, internship experience,
-                  research publications, or recruiter fit. Grounded strictly in factual portfolio data with
+                  research publications, or recruiter evaluations. Grounded strictly in factual portfolio data with
                   deterministic fallback if offline.
                 </p>
 
                 {/* Example prompt pills */}
                 <div className="mt-6">
-                  <span className="text-xs uppercase tracking-wider text-muted font-semibold block mb-2.5">
-                    Click an example prompt to try:
+                  <span className="text-xs text-muted font-semibold block mb-2.5">
+                    Click an example query to explore:
                   </span>
                   <div className="flex flex-wrap gap-2">
                     {EXAMPLE_PROMPTS.map((prompt) => (
                       <OpenChatButton question={prompt}
                         key={prompt}
                         type="button"
-                        className="rounded-full border border-purple/25 bg-white/[0.03] px-3.5 py-1.5 text-xs text-[#b4c6fe] transition hover:border-purple hover:bg-purple/20 hover:text-white"
+                        className="btn-ghost"
                       >
                         &ldquo;{prompt}&rdquo;
                       </OpenChatButton>
@@ -69,13 +57,14 @@ export default function AIIntro() {
               <div className="flex flex-col items-start lg:items-end justify-center gap-4">
                 <OpenChatButton
                   type="button"
-                  className="glow inline-flex items-center gap-2.5 rounded-2xl px-6 py-4 text-sm font-bold text-white transition hover:scale-105"
-                  style={{ background: "linear-gradient(135deg, #3f66f5 0%, #2d52dc 100%)" }}
+                  className="btn-primary"
                 >
-                  <span className="text-lg">✦</span>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M2 3a1 1 0 011-1h10a1 1 0 011 1v8a1 1 0 01-1 1H5.5L2 14.5V3z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
                   <span>Launch Assistant</span>
                 </OpenChatButton>
-                <span className="text-[11px] text-muted text-center lg:text-right">
+                <span className="text-xs text-muted text-center lg:text-right">
                   Runs lightweight edge queries · Zero tracking of private questions
                 </span>
               </div>

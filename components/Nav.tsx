@@ -1,17 +1,19 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { profile } from "@/data/profile";
 import { trackEvent } from "@/lib/analytics";
 import { useSmoothScroll } from "@/components/providers/SmoothScrollProvider";
+import ThemeToggle from "@/components/ui/ThemeToggle";
+import MotionToggle from "@/components/ui/MotionToggle";
 
 const NAV_LINKS = [
   { href: "#about", label: "About" },
-  { href: "#capabilities", label: "Capabilities" },
+  { href: "#experience", label: "Experiences" },
   { href: "#projects", label: "Projects" },
-  { href: "#skills", label: "Skills & Experience" },
+  { href: "#designs", label: "Designs" },
   { href: "#education", label: "Education" },
-  { href: "#contact", label: "Contact" },
 ];
 
 export default function Nav() {
@@ -110,8 +112,10 @@ export default function Nav() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 h-[76px] transition-all duration-300 ${
-        scrolled
+      className={`nav-header ${open ? "nav-header-open" : ""} ${
+        open
+          ? "bg-bg border-b border-line"
+          : scrolled
           ? "bg-panel/85 backdrop-blur-xl border-b border-line shadow-lg shadow-black/25"
           : "bg-bg/40 backdrop-blur-md border-b border-transparent"
       }`}
@@ -127,15 +131,15 @@ export default function Nav() {
           className="group flex items-center gap-3 font-extrabold tracking-wide"
         >
           <span
-            className="grid h-9 w-9 place-items-center rounded-xl border border-purple/40 bg-gradient-to-br from-purple to-violet text-white font-black text-base shadow-md transition-transform duration-300 group-hover:scale-105"
+            className="grid h-9 w-9 place-items-center rounded-xl border border-white/10 bg-panel2 text-ink font-bold text-sm shadow-sm transition-transform duration-300 group-hover:scale-105"
           >
             A
           </span>
           <span className="flex flex-col leading-none">
-            <span className="text-white text-base tracking-tight font-bold group-hover:text-purple transition-colors">
+            <span className="text-ink text-base tracking-tight font-bold group-hover:text-purple transition-colors">
               {profile.name.split(" ")[0]}
             </span>
-            <span className="text-[9px] font-medium tracking-[0.18em] text-muted uppercase mt-0.5">
+            <span className="text-xs font-medium text-muted mt-0.5">
               {profile.shortTitle}
             </span>
           </span>
@@ -153,10 +157,10 @@ export default function Nav() {
                 key={link.href}
                 href={link.href}
                 onClick={(e) => handleNavClick(e, link.href)}
-                className={`relative px-3.5 py-1.5 text-xs font-semibold rounded-full transition-all duration-200 ${
+                className={`nav-link ${
                   isActive
-                    ? "text-white bg-purple/20 shadow-sm border border-purple/30"
-                    : "text-muted hover:text-white hover:bg-white/[0.04]"
+                    ? "text-ink bg-purple/20 shadow-sm border border-purple/30"
+                    : "text-muted hover:text-ink hover:bg-white/[0.04]"
                 }`}
               >
                 {link.label}
@@ -166,21 +170,23 @@ export default function Nav() {
         </nav>
 
         {/* Desktop Actions */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-2.5">
+          <ThemeToggle />
+          <MotionToggle />
+
           <a
             href={profile.resumeHref}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => trackEvent("resume_download")}
-            className="rounded-lg border border-purple/40 px-4 py-2 text-xs font-semibold text-white/90 transition-all duration-200 hover:border-purple hover:bg-purple/10 hover:text-white"
+            className="btn-secondary"
           >
             Resume ↓
           </a>
           <a
             href="#contact"
             onClick={(e) => handleNavClick(e, "#contact")}
-            className="glow rounded-lg px-4 py-2 text-xs font-bold text-white transition-all duration-200 hover:opacity-95 hover:scale-[1.02]"
-            style={{ background: "linear-gradient(135deg, #3f66f5 0%, #2d52dc 100%)" }}
+            className="btn-primary"
           >
             Let&apos;s Talk
           </a>
@@ -194,41 +200,46 @@ export default function Nav() {
           aria-expanded={open}
           aria-controls="mobile-nav"
           aria-label={open ? "Close navigation menu" : "Open navigation menu"}
-          className="relative flex h-10 w-10 flex-col items-center justify-center gap-1.5 rounded-lg border border-line bg-panel2/80 p-2 text-white transition hover:border-purple/50 md:hidden"
+          className="btn-icon md:hidden flex-col gap-1.5"
         >
           <span
-            className={`h-0.5 w-5 bg-white transition-transform duration-300 ${
+            className={`h-0.5 w-5 bg-ink transition-transform duration-300 ${
               open ? "translate-y-2 rotate-45" : ""
             }`}
           />
           <span
-            className={`h-0.5 w-5 bg-white transition-opacity duration-300 ${
+            className={`h-0.5 w-5 bg-ink transition-opacity duration-300 ${
               open ? "opacity-0" : "opacity-100"
             }`}
           />
           <span
-            className={`h-0.5 w-5 bg-white transition-transform duration-300 ${
+            className={`h-0.5 w-5 bg-ink transition-transform duration-300 ${
               open ? "-translate-y-2 -rotate-45" : ""
             }`}
           />
         </button>
       </div>
 
-      {/* Mobile Drawer Navigation */}
-      {open && (
+      {/* Mobile Drawer Navigation (with 3 subtle animated moving background light layers) */}
+      {open && createPortal(
         <div
           id="mobile-nav"
           ref={mobileMenuRef}
-         
           role="dialog"
           aria-modal="true"
           aria-label="Mobile navigation"
-          className="fixed inset-x-0 top-[76px] bottom-0 z-50 flex flex-col justify-between overflow-y-auto bg-bg/95 backdrop-blur-2xl border-t border-line p-6 md:hidden"
+          className="fixed inset-x-0 top-[76px] bottom-0 z-[80] flex flex-col justify-between overflow-y-auto border-t border-line bg-bg p-6 shadow-2xl md:hidden"
         >
-          <div className="flex flex-col gap-2">
-            <span className="text-[10px] font-bold tracking-[0.2em] text-[#84a2fc] uppercase mb-2">
-              Menu Navigation
-            </span>
+          <div className="flex flex-col gap-2 relative z-10">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-semibold text-purple">
+                Navigation
+              </span>
+              <div className="flex items-center gap-2">
+                <ThemeToggle />
+                <MotionToggle />
+              </div>
+            </div>
             {NAV_LINKS.map((link) => {
               const isActive = activeSection === link.href.slice(1);
               return (
@@ -236,20 +247,20 @@ export default function Nav() {
                   key={link.href}
                   href={link.href}
                   onClick={(e) => handleNavClick(e, link.href)}
-                  className={`flex items-center justify-between rounded-xl px-4 py-3.5 text-base font-semibold transition ${
+                  className={`nav-drawer-link ${
                     isActive
-                      ? "bg-purple/20 text-white border border-purple/35"
-                      : "text-muted hover:bg-white/[0.04] hover:text-white"
+                      ? "bg-purple/20 text-ink border border-purple/35 font-bold"
+                      : "text-muted hover:bg-white/[0.04] hover:text-ink"
                   }`}
                 >
                   <span>{link.label}</span>
-                  <span className="text-xs text-purple/70">→</span>
+                  <span className="text-xs text-purple">→</span>
                 </a>
               );
             })}
           </div>
 
-          <div className="mt-8 border-t border-line pt-6 flex flex-col gap-3">
+          <div className="mt-8 border-t border-line pt-6 flex flex-col gap-3 relative z-10">
             <a
               href={profile.resumeHref}
               target="_blank"
@@ -258,44 +269,21 @@ export default function Nav() {
                 trackEvent("resume_download");
                 setOpen(false);
               }}
-              className="flex items-center justify-center rounded-xl border border-purple/50 bg-panel py-3 text-sm font-semibold text-white transition hover:bg-purple/10"
+              className="btn-secondary w-full"
             >
               Download Resume ↓
             </a>
             <a
               href="#contact"
               onClick={(e) => handleNavClick(e, "#contact")}
-              className="glow flex items-center justify-center rounded-xl py-3 text-sm font-bold text-white"
-              style={{ background: "linear-gradient(135deg, #3f66f5 0%, #2d52dc 100%)" }}
+              className="btn-primary w-full"
             >
               Let&apos;s Connect
             </a>
 
-            <div className="mt-4 flex items-center justify-center gap-6 text-xs text-muted">
-              <a
-                href={profile.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => trackEvent("github_click")}
-                className="inline-flex min-h-11 items-center hover:text-white"
-              >
-                GitHub ↗
-              </a>
-              <a
-                href={profile.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => trackEvent("linkedin_click")}
-                className="inline-flex min-h-11 items-center hover:text-white"
-              >
-                LinkedIn ↗
-              </a>
-              <a href={`mailto:${profile.email}`} className="inline-flex min-h-11 items-center hover:text-white">
-                Email ↗
-              </a>
-            </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </header>
   );

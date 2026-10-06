@@ -2,7 +2,7 @@
 
 Date: 2026-10-03; fully re-run 2026-10-04 against the build exactly as shipped (no portrait, no video) - 46 of 46 still pass. Tool: headless Chromium (Playwright) against the production build.
 
-**What this is:** each device from the project brief was emulated by its approximate CSS viewport size. For every one, three pages were loaded: home (portrait), home (landscape = width and height swapped) and a case-study page (portrait). A device "passes" only if all three have: no horizontal overflow, no element extending past the right edge, no interactive element smaller than 24x24 CSS px, exactly one `<h1>`, and no console/page errors.
+**What this is:** each device from the project brief was emulated by its approximate CSS viewport size. For every one, two homepage states were loaded: home (portrait) and home (landscape = width and height swapped). A device "passes" only if both homepage states have: no horizontal overflow, no element extending past the right edge, no interactive element smaller than 24x24 CSS px, exactly one `<h1>`, and no console/page errors.
 
 **What this is NOT:** real hardware testing. Viewport sizes are approximate values from common device presets and published specs (foldable sizes especially), not measured. It does not exercise iOS Safari (address-bar resizing, safe areas/notch, 100vh behaviour), Samsung Internet, or the Facebook in-app browser on Android, which was not tested at all. Re-check on real devices or BrowserStack/Sauce free trials before claiming device support.
 

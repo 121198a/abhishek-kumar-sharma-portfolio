@@ -47,7 +47,7 @@ export default function ScrollProgress() {
       className="fixed top-0 left-0 right-0 z-[100] h-[2.5px] pointer-events-none bg-transparent"
     >
       <div
-        className="h-full bg-gradient-to-r from-purple via-violet to-pink transition-transform duration-75 ease-out origin-left"
+        className="h-full bg-purple transition-transform duration-75 ease-out origin-left"
         style={{ transform: `scaleX(${progress / 100})` }}
       />
     </div>

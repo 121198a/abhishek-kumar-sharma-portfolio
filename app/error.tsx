@@ -36,14 +36,13 @@ export default function ErrorBoundary({
         <button
           type="button"
           onClick={() => reset()}
-          className="glow rounded-xl px-6 py-3 text-xs font-bold text-white transition hover:scale-105"
-          style={{ background: "linear-gradient(135deg, #3f66f5 0%, #2d52dc 100%)" }}
+          className="btn-primary"
         >
           Try Again
         </button>
         <Link
           href="/"
-          className="rounded-xl border border-line bg-white/[0.03] px-6 py-3 text-xs font-semibold text-muted transition hover:border-purple/40 hover:text-white"
+          className="btn-secondary"
         >
           Go Home
         </Link>

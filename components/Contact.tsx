@@ -1,27 +1,94 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { profile } from "@/data/profile";
 import { trackEvent } from "@/lib/analytics";
 import Reveal from "@/components/motion/Reveal";
+import { Mail, Phone, MapPin, Github, Linkedin, Send, Check } from "@/components/ui/Icons";
 
 interface ContactProps {
   contactEnabled: boolean;
 }
 
+const DRAFT_STORAGE_KEY = "contact_form_draft_v2";
+
 export default function Contact({ contactEnabled }: ContactProps) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    phone: "",
+    subject: "",
     message: "",
     honeypot: "",
   });
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [isDraftRestored, setIsDraftRestored] = useState(false);
+  const isLoadedRef = useRef(false);
+
+  // Restore non-sensitive draft from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(DRAFT_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === "object") {
+          const name = typeof parsed.name === "string" ? parsed.name : "";
+          const email = typeof parsed.email === "string" ? parsed.email : "";
+          const phone = typeof parsed.phone === "string" ? parsed.phone : "";
+          const subject = typeof parsed.subject === "string" ? parsed.subject : "";
+          const message = typeof parsed.message === "string" ? parsed.message : "";
+          setFormData({ name, email, phone, subject, message, honeypot: "" });
+          if (name || email || message || phone || subject) {
+            setIsDraftRestored(true);
+          }
+        }
+      }
+    } catch {
+      // Safe fallback if localStorage is disabled
+    }
+  }, []);
+
+  // Persist draft changes only after initial mount
+  useEffect(() => {
+    if (!isLoadedRef.current) {
+      isLoadedRef.current = true;
+      return;
+    }
+    try {
+      if (formData.name || formData.email || formData.message || formData.phone || formData.subject) {
+        localStorage.setItem(
+          DRAFT_STORAGE_KEY,
+          JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            subject: formData.subject,
+            message: formData.message,
+          })
+        );
+      } else {
+        localStorage.removeItem(DRAFT_STORAGE_KEY);
+        setIsDraftRestored(false);
+      }
+    } catch {
+      // Safe fallback
+    }
+  }, [formData.name, formData.email, formData.phone, formData.subject, formData.message]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleClearDraft = () => {
+    try {
+      localStorage.removeItem(DRAFT_STORAGE_KEY);
+    } catch {
+      // Safe fallback
+    }
+    setFormData({ name: "", email: "", phone: "", subject: "", message: "", honeypot: "" });
+    setIsDraftRestored(false);
   };
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -38,6 +105,8 @@ export default function Contact({ contactEnabled }: ContactProps) {
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
+          phone: formData.phone || undefined,
+          subject: formData.subject || undefined,
           message: formData.message,
           honeypot: formData.honeypot,
         }),
@@ -55,7 +124,13 @@ export default function Contact({ contactEnabled }: ContactProps) {
 
       setStatus("success");
       trackEvent("contact_submit");
-      setFormData({ name: "", email: "", message: "", honeypot: "" });
+      try {
+        localStorage.removeItem(DRAFT_STORAGE_KEY);
+      } catch {
+        // Safe fallback
+      }
+      setFormData({ name: "", email: "", phone: "", subject: "", message: "", honeypot: "" });
+      setIsDraftRestored(false);
     } catch {
       setStatus("error");
       setErrorMessage(
@@ -73,20 +148,14 @@ export default function Contact({ contactEnabled }: ContactProps) {
     <section id="contact" className="py-24 sm:py-32 relative">
       <div className="mx-auto max-w-shell px-6 sm:px-8">
         <Reveal>
-          <div
-            className="relative overflow-hidden rounded-3xl border border-line bg-panel2/80 p-8 sm:p-12 lg:p-16 shadow-2xl"
-            style={{
-              background:
-                "radial-gradient(circle at 10% 20%, rgba(58, 103, 237, 0.14) 0%, transparent 50%), linear-gradient(135deg, rgba(20, 20, 23, 0.9) 0%, rgba(12, 12, 15, 0.95) 100%)",
-            }}
-          >
+          <div className="relative overflow-hidden rounded-3xl border border-line bg-panel2/80 p-8 sm:p-12 lg:p-16 shadow-2xl">
             <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
               {/* Left Column: Context & Direct Contact Options */}
               <div>
-                <span className="text-[11px] font-bold tracking-[0.2em] text-[#84a2fc] uppercase">
+                <span className="text-xs font-semibold text-purple">
                   Let&apos;s Connect
                 </span>
-                <h2 className="mt-3 text-[clamp(2.25rem,5vw,4.25rem)] font-black leading-[0.98] tracking-[-0.04em] text-white">
+                <h2 className="mt-3 text-[clamp(1.85rem,4vw,3rem)] font-black leading-[1.02] tracking-[-0.035em] text-ink">
                   Let&apos;s build <span className="gradient-text">something great</span> together.
                 </h2>
 
@@ -99,57 +168,82 @@ export default function Contact({ contactEnabled }: ContactProps) {
                 <div className="mt-8 space-y-3.5">
                   <a
                     href={`mailto:${profile.email}`}
-                    className="group flex items-center gap-3.5 rounded-2xl border border-line/80 bg-white/[0.02] p-4 transition-all duration-200 hover:border-purple/50 hover:bg-purple/[0.06]"
+                    className="group flex items-center gap-3.5 rounded-2xl border border-line bg-panel p-4 transition-all duration-200 hover:border-purple/50"
                   >
                     <div className="grid h-10 w-10 place-items-center rounded-xl bg-purple/15 text-purple font-semibold">
-                      ✉
+                      <Mail className="h-5 w-5" />
                     </div>
                     <div>
-                      <span className="text-[10px] font-semibold uppercase tracking-wider text-muted block">
+                      <span className="text-xs font-semibold text-muted block">
                         Direct Email
                       </span>
-                      <strong className="text-sm font-semibold text-white group-hover:text-[#b4c6fe] transition-colors">
+                      <strong className="text-sm font-semibold text-ink group-hover:text-purple transition-colors">
                         {profile.email}
                       </strong>
                     </div>
                   </a>
 
-                  <div className="flex flex-wrap gap-3">
+                  <a
+                    href={profile.phoneHref}
+                    className="group flex items-center gap-3.5 rounded-2xl border border-line bg-panel p-4 transition-all duration-200 hover:border-purple/50"
+                  >
+                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-purple/15 text-purple font-semibold">
+                      <Phone className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <span className="text-xs font-semibold text-muted block">
+                        Phone Contact
+                      </span>
+                      <strong className="text-sm font-semibold text-ink group-hover:text-purple transition-colors">
+                        {profile.phone}
+                      </strong>
+                    </div>
+                  </a>
+
+                  <div className="flex items-center gap-3.5 rounded-2xl border border-line bg-panel p-4">
+                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-purple/15 text-purple font-semibold">
+                      <MapPin className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <span className="text-xs font-semibold text-muted block">
+                        Current Location
+                      </span>
+                      <strong className="text-sm font-semibold text-ink">
+                        {profile.currentLocation}
+                      </strong>
+                      <span className="mt-1 block text-xs text-muted">
+                        Permanent: {profile.permanentLocation}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-3 pt-2">
                     <a
                       href={profile.github}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => trackEvent("github_click")}
-                      className="inline-flex items-center gap-2 rounded-xl border border-line bg-white/[0.02] px-4 py-2.5 text-xs font-semibold text-muted transition hover:border-purple/40 hover:text-white"
+                      className="btn-secondary"
                     >
+                      <Github className="h-4 w-4" />
                       <span>GitHub</span>
-                      <span>↗</span>
                     </a>
                     <a
                       href={profile.linkedin}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => trackEvent("linkedin_click")}
-                      className="inline-flex items-center gap-2 rounded-xl border border-line bg-white/[0.02] px-4 py-2.5 text-xs font-semibold text-muted transition hover:border-purple/40 hover:text-white"
+                      className="btn-secondary"
                     >
+                      <Linkedin className="h-4 w-4" />
                       <span>LinkedIn</span>
-                      <span>↗</span>
-                    </a>
-                    <a
-                      href={profile.resumeHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() => trackEvent("resume_download")}
-                      className="inline-flex items-center gap-2 rounded-xl border border-line bg-white/[0.02] px-4 py-2.5 text-xs font-semibold text-muted transition hover:border-purple/40 hover:text-white"
-                    >
-                      <span>Resume ↓</span>
                     </a>
                   </div>
                 </div>
               </div>
 
               {/* Right Column: Contact Form */}
-              <div className="rounded-2xl border border-line/90 bg-panel/90 p-6 sm:p-8">
+              <div className="rounded-2xl border border-line bg-panel p-6 sm:p-8">
                 {!contactEnabled ? (
                   <div className="p-6 text-center">
                     <p className="text-sm text-muted">
@@ -157,8 +251,7 @@ export default function Contact({ contactEnabled }: ContactProps) {
                     </p>
                     <a
                       href={`mailto:${profile.email}`}
-                      className="glow mt-4 inline-block rounded-xl px-5 py-2.5 text-xs font-bold text-white"
-                      style={{ background: "linear-gradient(135deg, #3f66f5 0%, #2d52dc 100%)" }}
+                      className="btn-primary mt-4"
                     >
                       Email {profile.email}
                     </a>
@@ -166,9 +259,9 @@ export default function Contact({ contactEnabled }: ContactProps) {
                 ) : status === "success" ? (
                   <div className="py-8 text-center flex flex-col items-center">
                     <div className="grid h-12 w-12 place-items-center rounded-full bg-[#86efac]/20 text-2xl text-[#86efac] mb-4">
-                      ✓
+                      <Check className="h-6 w-6" />
                     </div>
-                    <h3 className="text-lg font-bold text-white">
+                    <h3 className="text-lg font-bold text-ink">
                       Message Delivered!
                     </h3>
                     <p className="mt-2 max-w-sm text-xs text-muted leading-relaxed">
@@ -177,7 +270,7 @@ export default function Contact({ contactEnabled }: ContactProps) {
                     <button
                       type="button"
                       onClick={handleReset}
-                      className="mt-6 rounded-xl border border-line px-4 py-2 text-xs font-semibold text-white transition hover:border-purple hover:bg-purple/10"
+                      className="btn-secondary mt-6"
                     >
                       Send Another Note
                     </button>
@@ -190,46 +283,96 @@ export default function Contact({ contactEnabled }: ContactProps) {
                       name="honeypot"
                       tabIndex={-1}
                       autoComplete="off"
+                      aria-label="Leave this field blank"
                       value={formData.honeypot}
                       onChange={handleChange}
                       className="hidden"
                       aria-hidden="true"
                     />
 
-                    {/* Name Input */}
-                    <div>
-                      <label htmlFor="contact-name" className="block text-xs font-semibold text-muted mb-1.5">
-                        Your Name <span className="text-pink">*</span>
-                      </label>
-                      <input
-                        id="contact-name"
-                        name="name"
-                        type="text"
-                        required
-                        maxLength={100}
-                        placeholder="e.g. Alex Smith"
-                        value={formData.name}
-                        onChange={handleChange}
-                        className="w-full rounded-xl border border-line bg-white/[0.03] px-4 py-3 text-sm text-white placeholder-muted/50 outline-none transition duration-200 focus:border-purple focus:ring-1 focus:ring-purple/50"
-                      />
+                    {isDraftRestored && (
+                      <div className="flex items-center justify-between rounded-lg border border-purple/30 bg-purple/10 px-3 py-1.5 text-xs text-purple">
+                        <span>Draft restored from browser storage</span>
+                        <button
+                          type="button"
+                          onClick={handleClearDraft}
+                          className="font-semibold underline hover:text-ink"
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Name & Email Row */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label htmlFor="contact-name" className="block text-xs font-semibold text-muted mb-1.5">
+                          Your Name <span className="text-pink">*</span>
+                        </label>
+                        <input
+                          id="contact-name"
+                          name="name"
+                          type="text"
+                          required
+                          maxLength={100}
+                          placeholder="Enter Your Name"
+                          value={formData.name}
+                          onChange={handleChange}
+                          className="input-field"
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="contact-email" className="block text-xs font-semibold text-muted mb-1.5">
+                          Email Address <span className="text-pink">*</span>
+                        </label>
+                        <input
+                          id="contact-email"
+                          name="email"
+                          type="email"
+                          required
+                          maxLength={120}
+                          placeholder="example@company.com"
+                          value={formData.email}
+                          onChange={handleChange}
+                          className="input-field"
+                        />
+                      </div>
                     </div>
 
-                    {/* Email Input */}
-                    <div>
-                      <label htmlFor="contact-email" className="block text-xs font-semibold text-muted mb-1.5">
-                        Email Address <span className="text-pink">*</span>
-                      </label>
-                      <input
-                        id="contact-email"
-                        name="email"
-                        type="email"
-                        required
-                        maxLength={120}
-                        placeholder="alex@company.com"
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="w-full rounded-xl border border-line bg-white/[0.03] px-4 py-3 text-sm text-white placeholder-muted/50 outline-none transition duration-200 focus:border-purple focus:ring-1 focus:ring-purple/50"
-                      />
+                    {/* Phone & Subject Row (Requirement 13) */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label htmlFor="contact-phone" className="block text-xs font-semibold text-muted mb-1.5">
+                          Phone Number <span className="text-muted/60 font-normal"></span>
+                        </label>
+                        <input
+                          id="contact-phone"
+                          name="phone"
+                          type="tel"
+                          maxLength={40}
+                          placeholder="+1 (555) 000-0000"
+                          value={formData.phone}
+                          onChange={handleChange}
+                          className="input-field"
+                        />
+                      </div>
+
+                      <div>
+                        <label htmlFor="contact-subject" className="block text-xs font-semibold text-muted mb-1.5">
+                          Subject <span className="text-muted/60 font-normal"></span>
+                        </label>
+                        <input
+                          id="contact-subject"
+                          name="subject"
+                          type="text"
+                          maxLength={160}
+                          placeholder="Project Inquiry / Opportunity"
+                          value={formData.subject}
+                          onChange={handleChange}
+                          className="input-field"
+                        />
+                      </div>
                     </div>
 
                     {/* Message Input */}
@@ -238,7 +381,7 @@ export default function Contact({ contactEnabled }: ContactProps) {
                         <label htmlFor="contact-message" className="text-xs font-semibold text-muted">
                           Your Message <span className="text-pink">*</span>
                         </label>
-                        <span className="text-[10px] text-muted font-mono">
+                        <span className="text-xs text-muted font-mono">
                           {formData.message.length}/2000
                         </span>
                       </div>
@@ -251,7 +394,7 @@ export default function Contact({ contactEnabled }: ContactProps) {
                         placeholder="Tell me about your team, project or inquiry..."
                         value={formData.message}
                         onChange={handleChange}
-                        className="w-full rounded-xl border border-line bg-white/[0.03] px-4 py-3 text-sm text-white placeholder-muted/50 outline-none transition duration-200 focus:border-purple focus:ring-1 focus:ring-purple/50 resize-y"
+                        className="input-field resize-y"
                       />
                     </div>
 
@@ -263,7 +406,7 @@ export default function Contact({ contactEnabled }: ContactProps) {
                           href={`mailto:${profile.email}?subject=Direct Portfolio Message&body=${encodeURIComponent(
                             formData.message
                           )}`}
-                          className="mt-1.5 inline-block font-semibold underline hover:text-white"
+                          className="mt-1.5 inline-block font-semibold underline hover:text-ink"
                         >
                           Click here to send directly via your email client
                         </a>
@@ -274,16 +417,18 @@ export default function Contact({ contactEnabled }: ContactProps) {
                     <button
                       type="submit"
                       disabled={status === "submitting"}
-                      className="glow flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold text-white transition-all disabled:opacity-60"
-                      style={{ background: "linear-gradient(135deg, #3f66f5 0%, #2d52dc 100%)" }}
+                      className="btn-primary w-full"
                     >
                       {status === "submitting" ? (
                         <>
-                          <span className="h-4 w-4 rounded-full border-2 border-white/20 border-t-white animate-spin" />
+                          <span className="h-4 w-4 rounded-full border-2 border-bg/40 border-t-bg animate-spin" />
                           <span>Delivering Message...</span>
                         </>
                       ) : (
-                        <span>Send Message</span>
+                        <>
+                          <span>Send Message</span>
+                          <Send className="h-4 w-4" />
+                        </>
                       )}
                     </button>
                   </form>

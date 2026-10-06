@@ -12,7 +12,6 @@
     "test:recruiter": "tsx tests/run-retrieval-tests.ts",
     "test:smoke": "tsx tests/smoke-test.ts",
     "cost:check": "node scripts/cost-check.mjs",
-    "test:content": "tsx tests/case-studies.ts",
     "test:github": "tsx tests/github.ts",
     "media:optimize": "node scripts/optimize-media.mjs",
     "test:media": "tsx tests/media.ts",
@@ -20,10 +19,13 @@
     "test:validation": "tsx tests/validation.ts"
   },
   "dependencies": {
+    "lenis": "^1.3.26",
+    "lucide-react": "^1.52.0",
     "next": "15.5.27",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "resend": "^4.0.0",
+    "simple-icons": "^16.34.0",
     "zod": "^4.6.5"
   },
   "devDependencies": {

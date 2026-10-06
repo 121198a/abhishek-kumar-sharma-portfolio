@@ -5,7 +5,7 @@ Date: 2026-10-03. Tools: axe-core (current npm release; rule sets WCAG 2.0/2.1/2
 ## Results
 | Check | Result |
 |---|---|
-| axe-core, 15 page states (home at 1440/375/280/768 px, each with the "Full Stack" filter selected and with the chat dialog open; three case-study pages at 375 px) | 0 violations |
+| axe-core, 12 page states (home at 1440/375/280/768 px, with the "Full Stack" filter selected and with the chat dialog open) | 0 violations |
 | Lighthouse accessibility (home, mobile) | 100 |
 | Keyboard: 86 tab stops on the home page (one full cycle) | every stop has a visible focus indicator; none hidden or zero-size; no positive `tabindex` |
 | Landmarks / language | one `<main>`, one `<nav>`, `lang="en"` |

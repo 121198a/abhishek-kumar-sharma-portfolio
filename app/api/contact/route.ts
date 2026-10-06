@@ -44,6 +44,8 @@ export async function POST(req: NextRequest) {
   // subject line (which embeds `name`) — see lib/validate.ts.
   const name = stripControlChars(clampLength(parsed.data.name.trim(), 120));
   const email = parsed.data.email.trim();
+  const phone = parsed.data.phone ? stripControlChars(clampLength(parsed.data.phone.trim(), 40)) : "";
+  const subjectText = parsed.data.subject ? stripControlChars(clampLength(parsed.data.subject.trim(), 160)) : "";
   const message = clampLength(parsed.data.message.trim(), 2000);
 
   const ip = getClientIp(req.headers);
@@ -67,12 +69,13 @@ export async function POST(req: NextRequest) {
 
   try {
     const resend = new Resend(apiKey);
+    const emailSubject = subjectText ? `[Portfolio] ${subjectText} (from ${name})` : `Portfolio contact from ${name}`;
     const { error } = await resend.emails.send({
       from,
       to,
       replyTo: email,
-      subject: `Portfolio contact from ${name}`,
-      text: `Name: ${name}\nEmail: ${email}\nSource: Portfolio Contact Form\n\nMessage:\n${message}`,
+      subject: emailSubject,
+      text: `Name: ${name}\nEmail: ${email}${phone ? `\nPhone: ${phone}` : ""}${subjectText ? `\nSubject: ${subjectText}` : ""}\nSource: Portfolio Contact Form\n\nMessage:\n${message}`,
     });
 
     if (error) {

@@ -80,7 +80,7 @@ function RevealObserved({
       };
 
   return (
-    <div ref={ref} style={style} className={className}>
+    <div ref={ref} data-reveal="true" style={style} className={className}>
       {children}
     </div>
   );

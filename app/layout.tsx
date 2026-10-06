@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { profile } from "@/data/profile";
 import { siteConfig } from "@/lib/site";
+import { MotionPreferenceProvider } from "@/components/providers/MotionPreferenceProvider";
 import "./globals.css";
 
 // next/font self-hosts Google Fonts at build time — no runtime request to
@@ -61,7 +62,12 @@ const jsonLd = {
       url: siteConfig.url,
       email: profile.email,
       sameAs: [profile.github, profile.linkedin],
-      address: { "@type": "PostalAddress", addressRegion: profile.location },
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "Ahmedabad",
+        addressRegion: "Gujarat",
+        addressCountry: "India",
+      },
       alumniOf: "C.V. Raman Global University",
     },
     {
@@ -79,8 +85,20 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={`${inter.variable} dark`} suppressHydrationWarning>
       <head>
+        <script
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='light'||(!t&&window.matchMedia('(prefers-color-scheme: light)').matches)){document.documentElement.classList.remove('dark')}else{document.documentElement.classList.add('dark')}}catch(e){}})()`,
+          }}
+        />
+        <script
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var p=localStorage.getItem('portfolio-motion-preference');if(p==='enabled'){document.documentElement.classList.add('motion-enabled')}else if(p==='reduced'||(!p&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)){document.documentElement.classList.add('motion-reduced')}}catch(e){}})()`,
+          }}
+        />
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
@@ -94,7 +112,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to main content
         </a>
-        {children}
+        <MotionPreferenceProvider>{children}</MotionPreferenceProvider>
       </body>
     </html>
   );

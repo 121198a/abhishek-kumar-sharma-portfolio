@@ -28,7 +28,7 @@ export default function Designs() {
 
         {designs.length === 0 ? (
           <Reveal delay={0.1}>
-            <div className="rounded-2xl border border-line bg-panel2/50 p-8 sm:p-12 text-center text-muted">
+            <div className="rounded-xl border border-line bg-panel2/50 p-8 sm:p-12 text-center text-muted">
               <span className="text-xs font-bold text-purple uppercase tracking-wider block mb-2">
                 In Preparation
               </span>

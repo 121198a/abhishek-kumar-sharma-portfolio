@@ -165,7 +165,7 @@ export default function InteractiveCardSlider<T>({
                   onClick={() => handleCardClick(key)}
                   className="snap-start shrink-0 w-[82vw] max-w-[320px] cursor-pointer transition-transform duration-200 active:scale-[0.98] group flex flex-col justify-between"
                 >
-                  <div className="h-full rounded-2xl border border-line bg-panel2/80 p-0 overflow-hidden shadow-lg transition-all duration-300 group-hover:border-purple/50 group-hover:shadow-purple/10">
+                  <div className="h-full overflow-hidden">
                     {renderCard(item, index, false)}
                   </div>
                 </div>
@@ -207,7 +207,7 @@ export default function InteractiveCardSlider<T>({
           Shown when a specific card is tapped.
           Displays complete content, scrollable if long, with clear `<` exit control.
         */
-        <div className="sticky top-[84px] z-30 rounded-2xl border border-line bg-panel2 shadow-2xl backdrop-blur-2xl transition-all duration-300 overflow-hidden">
+        <div className="sticky top-[84px] z-30 rounded-xl border border-line bg-panel2 shadow-xl backdrop-blur-2xl transition-all duration-300 overflow-hidden">
           {/* Detail View Header with `<` Exit / Back Control */}
           <div className="flex items-center justify-between border-b border-line bg-panel px-4 py-3">
             <button

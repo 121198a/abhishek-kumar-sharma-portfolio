@@ -125,20 +125,20 @@ export default function CustomCursor() {
       {/* Precision Core Dot */}
       <div
         ref={dotRef}
-        className="fixed top-0 left-0 -ml-1 -mt-1 h-2 w-2 rounded-full bg-purple transition-transform duration-75 will-change-transform"
+        className="cursor-dot"
       />
 
       {/* Trailing Dynamic Ring */}
       <div
         ref={ringRef}
-        className={`fixed top-0 left-0 flex items-center justify-center rounded-full will-change-transform transition-[width,height,background-color,border-color] duration-200 ${
+        className={`cursor-ring ${
           cursorVariant === "project"
-            ? "-ml-12 -mt-12 h-24 w-24 border border-purple/60 bg-panel/80 text-[10px] font-bold tracking-widest text-purple backdrop-blur-sm shadow-xl"
+            ? "cursor-ring-project"
             : cursorVariant === "hover"
             ? cursorText
-              ? "-ml-8 -mt-8 h-16 w-16 border border-purple bg-panel/85 text-[9px] font-bold tracking-wider text-ink backdrop-blur-sm shadow-lg"
-              : "-ml-5 -mt-5 h-10 w-10 border border-purple/50 bg-purple/10"
-            : "-ml-3 -mt-3 h-6 w-6 border border-ink/30 bg-transparent"
+              ? "cursor-ring-hover-text"
+              : "cursor-ring-hover"
+            : "cursor-ring-default"
         }`}
       >
         {cursorText && (

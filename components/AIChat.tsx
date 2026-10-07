@@ -262,7 +262,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
           role="dialog"
           aria-label="Abhishek AI Assistant"
           aria-modal="false"
-          className="fixed bottom-[88px] right-6 z-[60] flex w-[390px] max-w-[calc(100vw-32px)] flex-col overflow-hidden rounded-2xl border border-line bg-panel shadow-2xl backdrop-blur-2xl"
+          className="fixed bottom-[88px] right-6 z-[60] flex w-[390px] max-w-[calc(100vw-32px)] flex-col overflow-hidden rounded-xl border border-line bg-panel shadow-xl backdrop-blur-2xl"
         >
           {/* Header */}
           <div className="flex items-center justify-between border-b border-line bg-panel2 px-4 py-3.5">

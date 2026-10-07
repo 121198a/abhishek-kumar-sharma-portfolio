@@ -36,15 +36,15 @@ export default function Education() {
                   {/* Timeline Node Icon (Desktop) */}
                   <div
                     aria-hidden="true"
-                    className="grid shrink-0 z-10 h-16 w-16 place-items-center rounded-2xl border border-line bg-panel2 shadow-lg transition-all duration-300 group-hover:border-purple/50 group-hover:scale-105"
+                    className="grid shrink-0 z-10 h-14 w-14 place-items-center rounded-xl border border-line bg-panel2 shadow-xs transition-all duration-300 group-hover:border-purple/50 group-hover:scale-105"
                   >
-                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-purple/10 text-purple font-mono font-bold text-xs">
+                    <div className="grid h-9 w-9 place-items-center rounded-lg bg-purple/10 text-purple font-mono font-bold text-xs">
                       {index === 0 ? "01" : index === 1 ? "02" : "03"}
                     </div>
                   </div>
 
                   {/* Main Education Card */}
-                  <article className="flex-1 w-full rounded-2xl border border-line bg-panel2/70 p-6 sm:p-8 backdrop-blur-sm transition-all duration-300 hover:border-purple/40 hover:shadow-2xl hover:shadow-purple/5">
+                  <article className="flex-1 w-full rounded-xl border border-line bg-panel2/70 p-6 sm:p-8 backdrop-blur-sm transition-all duration-300 hover:border-purple/40 hover:shadow-lg hover:shadow-purple/5">
                     {/* Top Row: Year, Score, Level Badges */}
                     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line/60 pb-4">
                       <div className="flex items-center gap-2.5">

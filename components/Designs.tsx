@@ -71,7 +71,7 @@ export default function Designs() {
 
 function DesignCard({ item, isSliderView = false }: { item: DesignItem; isSliderView?: boolean }) {
   return (
-    <article className="group relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-line bg-panel2/70 p-6 transition-all duration-300 hover:border-purple/40">
+    <article className="group portfolio-card p-6">
       <div>
         <div className="flex items-center justify-between border-b border-line/60 pb-3">
           <span className="text-xs font-bold uppercase tracking-wider text-purple">

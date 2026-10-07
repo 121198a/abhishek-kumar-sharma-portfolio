@@ -115,12 +115,12 @@ export default function Nav() {
 
   return (
     <header
-      className={`nav-header ${open ? "nav-header-open" : ""} ${
+      className={`nav-header ${
         open
-          ? "bg-bg border-b border-line"
+          ? "nav-header-open bg-bg border-b border-line"
           : scrolled
-          ? "bg-panel/90 backdrop-blur-xl border-b border-line shadow-sm shadow-black/5 dark:shadow-black/25"
-          : "bg-bg/40 backdrop-blur-md border-b border-transparent"
+          ? "nav-header-scrolled"
+          : "nav-header-transparent"
       }`}
     >
       <div className="mx-auto flex h-full max-w-shell items-center justify-between px-6 sm:px-8">
@@ -133,9 +133,7 @@ export default function Nav() {
           }}
           className="group flex items-center gap-3 font-extrabold tracking-wide"
         >
-          <span
-            className="grid h-9 w-9 place-items-center rounded-xl border border-line bg-panel2 text-ink font-bold text-sm shadow-xs transition-transform duration-300 group-hover:scale-105"
-          >
+          <span className="nav-logo-badge">
             A
           </span>
           <span className="flex flex-col leading-none">

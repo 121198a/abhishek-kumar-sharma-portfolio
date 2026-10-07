@@ -68,7 +68,7 @@ export default function About() {
           {/* Right Column: Verified Credentials & Engagement */}
           <div className="flex flex-col gap-6">
             <Reveal delay={0.2}>
-              <div className="rounded-xl border border-line bg-panel p-6 shadow-xs">
+              <div className="border-t-2 border-purple bg-panel/30 pt-6 px-1">
                 <div className="flex items-center justify-end">
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-[#86efac]/10 px-2.5 py-0.5 text-xs font-bold text-[#86efac]">
                     <span className="h-1.5 w-1.5 rounded-full bg-[#86efac] animate-pulse" />

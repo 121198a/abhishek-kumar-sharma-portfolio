@@ -214,7 +214,7 @@ export default function InteractiveCardSlider<T>({
               type="button"
               onClick={handleCloseDetail}
               aria-label="Exit detail view and return to card slider"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-line bg-panel2 px-3 py-1.5 text-xs font-bold text-ink hover:border-purple/50 hover:text-purple transition-all active:scale-95 shadow-sm"
+              className="nav-back-btn active:scale-95"
             >
               <span className="text-purple text-base leading-none font-black">‹</span>
               <span>Back to Slider</span>
@@ -234,7 +234,7 @@ export default function InteractiveCardSlider<T>({
                     if (prevItem) setSelectedKey(getItemKey(prevItem, selectedIndex - 1));
                   }}
                   aria-label="Previous item"
-                  className="grid h-7 w-7 place-items-center rounded-lg border border-line bg-panel2 text-xs font-bold text-ink disabled:opacity-30 disabled:cursor-not-allowed hover:border-purple/40 transition-colors"
+                  className="slider-arrow-btn"
                 >
                   ‹
                 </button>
@@ -246,7 +246,7 @@ export default function InteractiveCardSlider<T>({
                     if (nextItem) setSelectedKey(getItemKey(nextItem, selectedIndex + 1));
                   }}
                   aria-label="Next item"
-                  className="grid h-7 w-7 place-items-center rounded-lg border border-line bg-panel2 text-xs font-bold text-ink disabled:opacity-30 disabled:cursor-not-allowed hover:border-purple/40 transition-colors"
+                  className="slider-arrow-btn"
                 >
                   ›
                 </button>

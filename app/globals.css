@@ -46,7 +46,7 @@
   --gradient-mid: #818cf8;
   --gradient-end: #60a5fa;
   --button-start: #2563eb;
-  --button-end: #4f46e5;
+  --button-end: #1d4ed8;
   --bg: var(--background);
   --panel: var(--surface);
   --panel2: var(--surface-strong);
@@ -261,7 +261,209 @@ body {
     transform: scale(1.25);
   }
 
-  /* Custom Cursor Utilities */
+  /* Navigation & Header Utilities */
+  .nav-header-scrolled {
+    background: color-mix(in srgb, var(--panel) 90%, transparent);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  }
+  .nav-header-transparent {
+    background: color-mix(in srgb, var(--bg) 40%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid transparent;
+  }
+  .nav-logo-badge {
+    display: grid;
+    height: 2.25rem;
+    width: 2.25rem;
+    place-items: center;
+    border-radius: 0.75rem;
+    border: 1px solid var(--line);
+    background: var(--panel2);
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 0.875rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    transition: transform 0.3s ease;
+  }
+  .group:hover .nav-logo-badge {
+    transform: scale(1.05);
+  }
+  .nav-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    border: 1px solid var(--line);
+    background: var(--panel2);
+    padding: 0.375rem 0.875rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--muted);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .nav-back-btn:hover {
+    border-color: var(--purple);
+    color: var(--ink);
+  }
+  .slider-arrow-btn {
+    display: grid;
+    height: 1.75rem;
+    width: 1.75rem;
+    place-items: center;
+    border-radius: 0.5rem;
+    border: 1px solid var(--line);
+    background: var(--panel2);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--ink);
+    transition: border-color 0.2s ease;
+  }
+  .slider-arrow-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+  .slider-arrow-btn:not(:disabled):hover {
+    border-color: var(--purple);
+  }
+
+  /* Chat Component Utilities */
+  .chat-dialog {
+    position: fixed;
+    bottom: 88px;
+    right: 1.5rem;
+    z-index: 60;
+    display: flex;
+    width: 390px;
+    max-width: calc(100vw - 32px);
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 0.75rem;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(24px);
+  }
+  .chat-mode-btn {
+    border-radius: 0.5rem;
+    padding: 0.25rem 0.625rem;
+    font-weight: 600;
+    color: var(--muted);
+    transition: color 0.2s ease, background-color 0.2s ease;
+  }
+  .chat-mode-btn:hover {
+    color: var(--ink);
+  }
+  .chat-mode-btn-active {
+    background: var(--purple);
+    color: #ffffff !important;
+  }
+  .chat-input {
+    flex: 1 1 0%;
+    border-radius: 0.75rem;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .chat-input::placeholder {
+    color: var(--muted);
+    opacity: 0.6;
+  }
+  .chat-input:focus {
+    border-color: var(--purple);
+  }
+  .chat-send-btn {
+    display: flex;
+    height: 2.25rem;
+    width: 2.25rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.75rem;
+    background: var(--purple);
+    color: #ffffff;
+    transition: filter 0.2s ease;
+  }
+  .chat-send-btn:hover {
+    filter: brightness(1.1);
+  }
+  .chat-send-btn:disabled {
+    opacity: 0.4;
+  }
+
+  /* Country Selector Utilities */
+  .country-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 0.375rem;
+    z-index: 50;
+    width: 16rem;
+    max-width: calc(100vw - 2.5rem);
+    border-radius: 0.75rem;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    padding: 0.5rem;
+    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(24px);
+  }
+  @media (min-width: 640px) {
+    .country-dropdown {
+      width: 18rem;
+    }
+  }
+  .country-search-input {
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid var(--line);
+    background: var(--panel2);
+    padding: 0.375rem 0.625rem;
+    font-size: 0.75rem;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .country-search-input:focus {
+    border-color: var(--purple);
+  }
+  .country-option {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 0.5rem;
+    padding: 0.375rem 0.625rem;
+    font-size: 0.75rem;
+    text-align: left;
+    color: var(--ink);
+    transition: background-color 0.2s ease;
+  }
+  .country-option:hover {
+    background: var(--panel2);
+  }
+  .country-option-active {
+    background: rgba(79, 70, 229, 0.15);
+    color: var(--purple);
+    font-weight: 600;
+  }
+
+  /* Design Showcase Card */
+  .design-card {
+    position: relative;
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    border-top: 1px solid var(--line);
+    padding-top: 1.5rem;
+  }
   .cursor-dot {
     position: fixed;
     top: 0;

@@ -178,17 +178,17 @@ export default function Contact({ contactEnabled }: ContactProps) {
                   Drop a message below or reach out directly.
                 </p>
 
-                {/* Direct Contact Cards */}
-                <div className="mt-8 space-y-3.5">
+                {/* Direct Contact List */}
+                <div className="mt-8 divide-y divide-line border-y border-line">
                   <a
                     href={`mailto:${profile.email}`}
-                    className="group flex items-center gap-3.5 rounded-xl border border-line bg-panel p-4 transition-all duration-200 hover:border-purple/50"
+                    className="group flex items-center gap-3.5 py-3.5 transition-colors hover:text-purple"
                   >
-                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-purple/15 text-purple font-semibold">
-                      <Mail className="h-5 w-5" />
+                    <div className="grid h-9 w-9 place-items-center rounded-lg bg-panel2 text-purple font-semibold shrink-0">
+                      <Mail className="h-4 w-4" />
                     </div>
                     <div>
-                      <span className="text-xs font-semibold text-muted block">
+                      <span className="text-[11px] font-semibold text-muted block">
                         Direct Email
                       </span>
                       <strong className="text-sm font-semibold text-ink group-hover:text-purple transition-colors">
@@ -199,13 +199,13 @@ export default function Contact({ contactEnabled }: ContactProps) {
 
                   <a
                     href={profile.phoneHref}
-                    className="group flex items-center gap-3.5 rounded-xl border border-line bg-panel p-4 transition-all duration-200 hover:border-purple/50"
+                    className="group flex items-center gap-3.5 py-3.5 transition-colors hover:text-purple"
                   >
-                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-purple/15 text-purple font-semibold">
-                      <Phone className="h-5 w-5" />
+                    <div className="grid h-9 w-9 place-items-center rounded-lg bg-panel2 text-purple font-semibold shrink-0">
+                      <Phone className="h-4 w-4" />
                     </div>
                     <div>
-                      <span className="text-xs font-semibold text-muted block">
+                      <span className="text-[11px] font-semibold text-muted block">
                         Phone Contact
                       </span>
                       <strong className="text-sm font-semibold text-ink group-hover:text-purple transition-colors">
@@ -214,22 +214,23 @@ export default function Contact({ contactEnabled }: ContactProps) {
                     </div>
                   </a>
 
-                  <div className="flex items-center gap-3.5 rounded-xl border border-line bg-panel p-4">
-                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-purple/15 text-purple font-semibold">
-                      <MapPin className="h-5 w-5" />
+                  <div className="flex items-center gap-3.5 py-3.5">
+                    <div className="grid h-9 w-9 place-items-center rounded-lg bg-panel2 text-purple font-semibold shrink-0">
+                      <MapPin className="h-4 w-4" />
                     </div>
                     <div>
-                      <span className="text-xs font-semibold text-muted block">
+                      <span className="text-[11px] font-semibold text-muted block">
                         Current Location
                       </span>
                       <strong className="text-sm font-semibold text-ink">
                         {profile.currentLocation}
                       </strong>
-                      <span className="mt-1 block text-xs text-muted">
+                      <span className="mt-0.5 block text-xs text-muted">
                         Permanent: {profile.permanentLocation}
                       </span>
                     </div>
                   </div>
+                </div>
 
                   <div className="flex flex-wrap gap-3 pt-2">
                     <a
@@ -253,7 +254,6 @@ export default function Contact({ contactEnabled }: ContactProps) {
                       <span>LinkedIn</span>
                     </a>
                   </div>
-                </div>
               </div>
 
               {/* Right Column: Contact Form */}
@@ -568,7 +568,7 @@ function CountrySelector({
         <div
           role="listbox"
           aria-label="Select Country"
-          className="absolute top-full left-0 mt-1.5 z-50 w-64 sm:w-72 max-w-[calc(100vw-2.5rem)] rounded-xl border border-line bg-panel p-2 shadow-2xl backdrop-blur-2xl animate-fade-in"
+          className="country-dropdown"
         >
           {/* Search Input */}
           <div className="relative mb-1.5">
@@ -579,7 +579,7 @@ function CountrySelector({
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search country or code..."
               aria-label="Search country or code"
-              className="w-full rounded-lg border border-line bg-panel2 px-2.5 py-1.5 text-xs text-ink placeholder:text-muted/60 outline-none focus:border-purple transition"
+              className="country-search-input"
             />
           </div>
 
@@ -603,10 +603,8 @@ function CountrySelector({
                       setOpen(false);
                       setSearch("");
                     }}
-                    className={`flex items-center justify-between w-full px-2.5 py-1.5 rounded-lg text-xs transition-colors text-left ${
-                      isSelected
-                        ? "bg-purple/15 text-purple font-semibold"
-                        : "text-ink hover:bg-panel2"
+                    className={`country-option ${
+                      isSelected ? "country-option-active" : ""
                     }`}
                   >
                     <div className="flex items-center gap-2 truncate">

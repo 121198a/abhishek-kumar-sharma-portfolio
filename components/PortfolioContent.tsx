@@ -93,7 +93,7 @@ export default function PortfolioContent({ video, contactEnabled }: PortfolioCon
               type="button"
               onClick={navigateToHero}
               aria-label="Return to full continuous portfolio view"
-              className="group inline-flex items-center gap-2 rounded-full border border-line bg-panel2 px-3.5 py-1.5 text-xs font-semibold text-muted hover:border-purple/40 hover:text-ink transition-all shadow-sm"
+              className="group nav-back-btn"
             >
               <span className="text-purple group-hover:-translate-x-0.5 transition-transform">←</span>
               <span>Back</span>

@@ -23,7 +23,7 @@ export default function Footer() {
     <footer className="relative mt-20 border-t border-line bg-panel2/60 pt-16 pb-14 text-muted">
       <div className="mx-auto max-w-shell px-6 sm:px-8">
         {/* Pre-footer Callout */}
-        <div className="mb-14 rounded-xl border border-line bg-panel p-8 sm:p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div className="mb-14 border-y border-line py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div>
             <span className="text-xs font-bold uppercase tracking-[0.18em] text-purple">
               Looking Ahead

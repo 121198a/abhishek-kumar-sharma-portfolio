@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { profile } from "@/data/profile";
+import { countryCodes, type CountryCode } from "@/data/country-codes";
 import { trackEvent } from "@/lib/analytics";
 import Reveal from "@/components/motion/Reveal";
 import { Mail, Phone, MapPin, Github, Linkedin, Send, Check } from "@/components/ui/Icons";
@@ -21,6 +22,9 @@ export default function Contact({ contactEnabled }: ContactProps) {
     message: "",
     honeypot: "",
   });
+  const [selectedCountry, setSelectedCountry] = useState<CountryCode>(
+    countryCodes.find((c) => c.code === "IN") || countryCodes[0]
+  );
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [isDraftRestored, setIsDraftRestored] = useState(false);
@@ -36,9 +40,17 @@ export default function Contact({ contactEnabled }: ContactProps) {
           const name = typeof parsed.name === "string" ? parsed.name : "";
           const email = typeof parsed.email === "string" ? parsed.email : "";
           const phone = typeof parsed.phone === "string" ? parsed.phone : "";
+          const savedCountry = typeof parsed.countryCode === "string" ? parsed.countryCode : "IN";
+          const matchedCountry =
+            countryCodes.find((c) => c.code === savedCountry || c.dialCode === savedCountry) ||
+            countryCodes.find((c) => c.code === "IN") ||
+            countryCodes[0];
           const subject = typeof parsed.subject === "string" ? parsed.subject : "";
           const message = typeof parsed.message === "string" ? parsed.message : "";
           setFormData({ name, email, phone, subject, message, honeypot: "" });
+          if (matchedCountry) {
+            setSelectedCountry(matchedCountry);
+          }
           if (name || email || message || phone || subject) {
             setIsDraftRestored(true);
           }
@@ -62,6 +74,7 @@ export default function Contact({ contactEnabled }: ContactProps) {
           JSON.stringify({
             name: formData.name,
             email: formData.email,
+            countryCode: selectedCountry.code,
             phone: formData.phone,
             subject: formData.subject,
             message: formData.message,
@@ -74,7 +87,7 @@ export default function Contact({ contactEnabled }: ContactProps) {
     } catch {
       // Safe fallback
     }
-  }, [formData.name, formData.email, formData.phone, formData.subject, formData.message]);
+  }, [formData.name, formData.email, selectedCountry, formData.phone, formData.subject, formData.message]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -99,13 +112,17 @@ export default function Contact({ contactEnabled }: ContactProps) {
     setErrorMessage("");
 
     try {
+      const fullPhone = formData.phone.trim()
+        ? `${selectedCountry.dialCode} ${formData.phone.trim()}`
+        : undefined;
+
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
-          phone: formData.phone || undefined,
+          phone: fullPhone,
           subject: formData.subject || undefined,
           message: formData.message,
           honeypot: formData.honeypot,
@@ -149,13 +166,10 @@ export default function Contact({ contactEnabled }: ContactProps) {
       <div className="mx-auto max-w-shell px-6 sm:px-8">
         <Reveal>
           <div className="relative overflow-hidden rounded-3xl border border-line bg-panel2/80 p-8 sm:p-12 lg:p-16 shadow-2xl">
-            <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
+            <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
               {/* Left Column: Context & Direct Contact Options */}
               <div>
-                <span className="text-xs font-semibold text-purple">
-                  Let&apos;s Connect
-                </span>
-                <h2 className="mt-3 text-[clamp(1.85rem,4vw,3rem)] font-black leading-[1.02] tracking-[-0.035em] text-ink">
+                <h2 className="text-[clamp(1.85rem,4vw,3rem)] font-black leading-[1.02] tracking-[-0.035em] text-ink">
                   Let&apos;s build <span className="gradient-text">something great</span> together.
                 </h2>
 
@@ -307,7 +321,7 @@ export default function Contact({ contactEnabled }: ContactProps) {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label htmlFor="contact-name" className="block text-xs font-semibold text-muted mb-1.5">
-                          Your Name <span className="text-pink">*</span>
+                          Your Name <span className="text-purple">*</span>
                         </label>
                         <input
                           id="contact-name"
@@ -324,7 +338,7 @@ export default function Contact({ contactEnabled }: ContactProps) {
 
                       <div>
                         <label htmlFor="contact-email" className="block text-xs font-semibold text-muted mb-1.5">
-                          Email Address <span className="text-pink">*</span>
+                          Email Address <span className="text-purple">*</span>
                         </label>
                         <input
                           id="contact-email"
@@ -340,27 +354,33 @@ export default function Contact({ contactEnabled }: ContactProps) {
                       </div>
                     </div>
 
-                    {/* Phone & Subject Row (Requirement 13) */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Phone & Subject Row */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-start">
                       <div>
                         <label htmlFor="contact-phone" className="block text-xs font-semibold text-muted mb-1.5">
-                          Phone Number <span className="text-muted/60 font-normal"></span>
+                          Phone Number
                         </label>
-                        <input
-                          id="contact-phone"
-                          name="phone"
-                          type="tel"
-                          maxLength={40}
-                          placeholder="+1 (555) 000-0000"
-                          value={formData.phone}
-                          onChange={handleChange}
-                          className="input-field"
-                        />
+                        <div className="flex gap-2 items-center">
+                          <CountrySelector
+                            selected={selectedCountry}
+                            onSelect={(c) => setSelectedCountry(c)}
+                          />
+                          <input
+                            id="contact-phone"
+                            name="phone"
+                            type="tel"
+                            maxLength={30}
+                            placeholder="Enter phone number"
+                            value={formData.phone}
+                            onChange={handleChange}
+                            className="input-field flex-1 min-w-0 h-11 text-xs sm:text-sm"
+                          />
+                        </div>
                       </div>
 
                       <div>
                         <label htmlFor="contact-subject" className="block text-xs font-semibold text-muted mb-1.5">
-                          Subject <span className="text-muted/60 font-normal"></span>
+                          Subject
                         </label>
                         <input
                           id="contact-subject"
@@ -370,7 +390,7 @@ export default function Contact({ contactEnabled }: ContactProps) {
                           placeholder="Project Inquiry / Opportunity"
                           value={formData.subject}
                           onChange={handleChange}
-                          className="input-field"
+                          className="input-field h-11"
                         />
                       </div>
                     </div>
@@ -379,7 +399,7 @@ export default function Contact({ contactEnabled }: ContactProps) {
                     <div>
                       <div className="flex items-center justify-between mb-1.5">
                         <label htmlFor="contact-message" className="text-xs font-semibold text-muted">
-                          Your Message <span className="text-pink">*</span>
+                          Your Message <span className="text-purple">*</span>
                         </label>
                         <span className="text-xs text-muted font-mono">
                           {formData.message.length}/2000
@@ -439,5 +459,170 @@ export default function Contact({ contactEnabled }: ContactProps) {
         </Reveal>
       </div>
     </section>
+  );
+}
+
+/**
+ * Country flag image with emoji fallback
+ */
+function CountryFlag({ code, flag }: { code: string; flag: string }) {
+  const [imgError, setImgError] = useState(false);
+
+  if (imgError) {
+    return <span className="text-xs leading-none shrink-0">{flag}</span>;
+  }
+
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={`https://flagcdn.com/w40/${code.toLowerCase()}.png`}
+      alt=""
+      width={18}
+      height={13}
+      onError={() => setImgError(true)}
+      className="h-3.5 w-[18px] object-cover rounded-[2px] shrink-0 shadow-xs"
+      loading="lazy"
+    />
+  );
+}
+
+/**
+ * Clean, compact Country Flag + Calling Code Selector
+ * Displays [ 🇮🇳 +91 ▼ ] with instant searchable country list.
+ */
+function CountrySelector({
+  selected,
+  onSelect,
+}: {
+  selected: CountryCode;
+  onSelect: (country: CountryCode) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const containerRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Close dropdown on outside click or Escape
+  useEffect(() => {
+    if (!open) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+        setSearch("");
+      }
+    }
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setOpen(false);
+        setSearch("");
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
+
+  // Auto-focus search input when opening dropdown
+  useEffect(() => {
+    if (open) {
+      setTimeout(() => searchInputRef.current?.focus(), 60);
+    }
+  }, [open]);
+
+  const filtered = search.trim()
+    ? countryCodes.filter(
+        (c) =>
+          c.name.toLowerCase().includes(search.toLowerCase()) ||
+          c.dialCode.includes(search) ||
+          c.code.toLowerCase().includes(search.toLowerCase())
+      )
+    : countryCodes;
+
+  return (
+    <div ref={containerRef} className="relative shrink-0">
+      {/* Trigger Button: [ 🇮🇳 +91 ▼ ] */}
+      <button
+        type="button"
+        onClick={() => setOpen((prev) => !prev)}
+        aria-expanded={open}
+        aria-haspopup="listbox"
+        aria-label={`Selected country: ${selected.name} (${selected.dialCode}). Click to choose country.`}
+        className="flex items-center justify-between gap-1 h-11 w-[78px] sm:w-[84px] px-2 rounded-xl border border-line bg-panel2/60 text-xs font-semibold text-ink hover:border-purple/50 focus:border-purple focus:ring-1 focus:ring-purple transition-all select-none shadow-xs"
+      >
+        <span className="flex items-center gap-1.5 min-w-0">
+          <CountryFlag code={selected.code} flag={selected.flag} />
+          <span className="font-mono text-xs text-ink truncate">
+            {selected.dialCode}
+          </span>
+        </span>
+        <span className="text-[8px] text-muted shrink-0 transition-transform duration-200">
+          {open ? "▲" : "▼"}
+        </span>
+      </button>
+
+      {/* Dropdown Menu */}
+      {open && (
+        <div
+          role="listbox"
+          aria-label="Select Country"
+          className="absolute top-full left-0 mt-1.5 z-50 w-64 sm:w-72 max-w-[calc(100vw-2.5rem)] rounded-xl border border-line bg-panel p-2 shadow-2xl backdrop-blur-2xl animate-fade-in"
+        >
+          {/* Search Input */}
+          <div className="relative mb-1.5">
+            <input
+              ref={searchInputRef}
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search country or code..."
+              aria-label="Search country or code"
+              className="w-full rounded-lg border border-line bg-panel2 px-2.5 py-1.5 text-xs text-ink placeholder:text-muted/60 outline-none focus:border-purple transition"
+            />
+          </div>
+
+          {/* Scrollable Country List */}
+          <div className="max-h-56 overflow-y-auto overscroll-contain space-y-0.5 pr-1">
+            {filtered.length === 0 ? (
+              <div className="py-3 text-center text-xs text-muted">
+                No country found
+              </div>
+            ) : (
+              filtered.map((c) => {
+                const isSelected = c.code === selected.code;
+                return (
+                  <button
+                    key={`${c.code}-${c.dialCode}`}
+                    type="button"
+                    role="option"
+                    aria-selected={isSelected}
+                    onClick={() => {
+                      onSelect(c);
+                      setOpen(false);
+                      setSearch("");
+                    }}
+                    className={`flex items-center justify-between w-full px-2.5 py-1.5 rounded-lg text-xs transition-colors text-left ${
+                      isSelected
+                        ? "bg-purple/15 text-purple font-semibold"
+                        : "text-ink hover:bg-panel2"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 truncate">
+                      <CountryFlag code={c.code} flag={c.flag} />
+                      <span className="truncate">{c.name}</span>
+                    </div>
+                    <span className="font-mono text-xs text-muted shrink-0 ml-2">
+                      {c.dialCode}
+                    </span>
+                  </button>
+                );
+              })
+            )}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

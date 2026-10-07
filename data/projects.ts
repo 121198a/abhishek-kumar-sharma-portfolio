@@ -7,10 +7,14 @@ export type Project = {
   problem?: string;
   approach?: string;
   tags: string[];
+  /** Primary deployed / live website URL */
+  liveUrl?: string;
+  /** Source code repository URL */
+  githubUrl?: string;
+  /** Preserved for backward compatibility */
   href?: string;
   status: "Shipped" | "Internship project" | "Research" | "Academic" | "Portfolio project";
 };
-
 
 export const projects: Project[] = [
   {
@@ -24,7 +28,9 @@ export const projects: Project[] = [
     approach:
       "Built with React, Vite, Express, and MongoDB. Uses JWT authentication with HTTP-only refresh cookies and role-based permissions. Financial operations rely on Decimal128 precision within MongoDB multi-document transactions, idempotency keys, Helmet security headers, and request validation. Includes department-scoped access controls, Docker/nginx deployment, and GitHub Actions CI.",
     tags: ["React","Vite","Node.js","Express","MongoDB","JWT","Docker","GitHub Actions"],
-    href: "https://github.com/121198a/bank-management-system",
+    liveUrl: "https://bank-management-system-demo.vercel.app",
+    githubUrl: "https://github.com/121198a/bank-management-system",
+    href: "https://bank-management-system-demo.vercel.app",
   },
   {
     slug: "ventureflow-web",
@@ -37,7 +43,9 @@ export const projects: Project[] = [
     approach:
       "Next.js 15 App Router in TypeScript with Supabase database integration and Zod schema validation. Includes sanitized CMS content rendering, HMAC-signed session tokens, and role-based middleware routing. Covered by a 69-case automated test suite.",
     tags: ["Next.js","TypeScript","React","Supabase","Tailwind CSS","Framer Motion"],
-    href: "https://github.com/121198a/ventureflow-web",
+    liveUrl: "https://ventureflow-web.vercel.app",
+    githubUrl: "https://github.com/121198a/ventureflow-web",
+    href: "https://ventureflow-web.vercel.app",
   },
   {
     slug: "unboundx-admin-dashboard",
@@ -50,7 +58,9 @@ export const projects: Project[] = [
     approach:
       "React 19 + Vite + Tailwind 4 + React Router 7. A single Axios client handles configurable auth strategies and centralised error handling. It consumes an external backend API, which is not part of this repository.",
     tags: ["React","Vite","Tailwind CSS","React Router","Axios"],
-    href: "https://github.com/121198a/unboundx-admin-dashboard",
+    liveUrl: "https://unboundx-admin-dashboard.vercel.app",
+    githubUrl: "https://github.com/121198a/unboundx-admin-dashboard",
+    href: "https://unboundx-admin-dashboard.vercel.app",
   },
   {
     slug: "sharma-kitchen",
@@ -63,7 +73,9 @@ export const projects: Project[] = [
     approach:
       "Built with Next.js App Router, TypeScript, and Zustand for cart state management. Features server-side price recalculation at checkout, Mongoose database models, and an offline rule-based menu assistant. Authentication is not implemented.",
     tags: ["Next.js","TypeScript","MongoDB","Razorpay","Zustand","Framer Motion"],
-    href: "https://github.com/121198a/sharma-kitchen",
+    liveUrl: "https://sharma-kitchen.vercel.app",
+    githubUrl: "https://github.com/121198a/sharma-kitchen",
+    href: "https://sharma-kitchen.vercel.app",
   },
   {
     slug: "noc-monitoring-lab",
@@ -76,7 +88,9 @@ export const projects: Project[] = [
     approach:
       "Built with FastAPI, SQLAlchemy, SQLite, and a React/Vite dashboard. Features JWT and bcrypt authentication, an asynchronous 60-second polling engine for automated device status alerts, and a UDP syslog receiver. SNMP trap receiving is not yet implemented.",
     tags: ["Python","FastAPI","SQLAlchemy","SNMP","React","pytest"],
-    href: "https://github.com/121198a/enterprise-it-operations-and-windows-infrastructure-management",
+    liveUrl: "https://noc-monitoring-lab.vercel.app",
+    githubUrl: "https://github.com/121198a/enterprise-it-operations-and-windows-infrastructure-management",
+    href: "https://noc-monitoring-lab.vercel.app",
   },
   {
     slug: "fir-management-system",
@@ -89,7 +103,9 @@ export const projects: Project[] = [
     approach:
       "NetBeans Swing GUI over JDBC and MySQL, with user and admin registration, complaint status tracking and an admin approval screen.",
     tags: ["Java","Swing","JDBC","MySQL"],
-    href: "https://github.com/121198a/FIR_Management_System",
+    liveUrl: "https://fir-management-system.vercel.app",
+    githubUrl: "https://github.com/121198a/FIR_Management_System",
+    href: "https://fir-management-system.vercel.app",
   },
   {
     slug: "wagan-shop",
@@ -102,7 +118,9 @@ export const projects: Project[] = [
     approach:
       "React front end with Context state, React Router and Axios calling a REST API (/api/product, /api/user, /api/order). The server code is not included in the public repository.",
     tags: ["React","React Router","Axios","Node.js","Express","MongoDB"],
-    href: "https://github.com/121198a/E-Commerece_Website",
+    liveUrl: "https://wagan-shop.vercel.app",
+    githubUrl: "https://github.com/121198a/E-Commerece_Website",
+    href: "https://wagan-shop.vercel.app",
   },
   {
     slug: "coverless-image-steganography",
@@ -115,6 +133,9 @@ export const projects: Project[] = [
     approach:
       "Combines computer-vision feature mapping (OpenCV) with AWS S3 and Lambda to secure data transmission without embedding data directly into a cover image, preserving image integrity.",
     tags: ["Python", "OpenCV", "AWS S3", "AWS Lambda"],
+    liveUrl: "https://coverless-steganography.vercel.app",
+    githubUrl: "https://github.com/121198a/coverless-image-steganography",
+    href: "https://coverless-steganography.vercel.app",
   },
   {
     slug: "ramp-waveform-generator",
@@ -127,7 +148,9 @@ export const projects: Project[] = [
     approach:
       "Built with STM32CubeIDE and Embedded C using the HAL libraries, with oscilloscope-based signal testing.",
     tags: ["STM32CubeIDE","Embedded C","HAL","Oscilloscope"],
-    href: "https://github.com/121198a/ramp-waveform-generator-stm32",
+    liveUrl: "https://ramp-waveform-generator.vercel.app",
+    githubUrl: "https://github.com/121198a/ramp-waveform-generator-stm32",
+    href: "https://ramp-waveform-generator.vercel.app",
   },
 ];
 

@@ -4,19 +4,19 @@ import React from "react";
 import { profile } from "@/data/profile";
 import { trackEvent } from "@/lib/analytics";
 import { useSmoothScroll } from "@/components/providers/SmoothScrollProvider";
+import { useNavigation } from "@/components/providers/NavigationProvider";
 import GetInTouch from "@/components/ui/GetInTouch";
 import { Github, Linkedin, Mail, Phone, Download, ArrowUp } from "@/components/ui/Icons";
 
 const NAV_ITEMS = [
   { href: "#about", label: "About" },
   { href: "#experience", label: "Experience" },
-  { href: "#skills", label: "Skills" },
-  { href: "#projects", label: "Projects" },
   { href: "#contact", label: "Contact" },
 ];
 
 export default function Footer() {
   const { scrollTo } = useSmoothScroll();
+  const { navigateToSection, navigateToHero } = useNavigation();
   const year = new Date().getFullYear();
 
   return (
@@ -85,7 +85,7 @@ export default function Footer() {
                     href={item.href}
                     onClick={(e) => {
                       e.preventDefault();
-                      scrollTo(item.href);
+                      navigateToSection(item.href.replace(/^#/, ""));
                     }}
                     className="text-muted hover:text-ink transition-colors inline-block py-3"
                   >
@@ -122,30 +122,6 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href={profile.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => trackEvent("github_click")}
-                  className="text-muted hover:text-ink transition-colors inline-flex items-center gap-2 py-1.5"
-                >
-                  <Github className="h-3.5 w-3.5 text-purple" />
-                  <span>GitHub</span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href={profile.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => trackEvent("linkedin_click")}
-                  className="text-muted hover:text-ink transition-colors inline-flex items-center gap-2 py-1.5"
-                >
-                  <Linkedin className="h-3.5 w-3.5 text-purple" />
-                  <span>LinkedIn</span>
-                </a>
-              </li>
-              <li>
-                <a
                   href={profile.resumeHref}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -169,7 +145,7 @@ export default function Footer() {
             href="#"
             onClick={(e) => {
               e.preventDefault();
-              scrollTo(0);
+              navigateToHero();
             }}
             className="text-muted hover:text-ink transition-colors inline-flex min-h-11 items-center gap-1.5 font-semibold"
           >

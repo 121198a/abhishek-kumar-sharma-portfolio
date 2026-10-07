@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { profile } from "@/data/profile";
 import { projects } from "@/data/projects";
 import { skills } from "@/data/skills";
@@ -29,6 +29,14 @@ type HeroProps = {
 
 export default function Hero({ video = null }: HeroProps) {
   const bgVideoRef = useRef<HTMLVideoElement>(null);
+  const [hasAnimated, setHasAnimated] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setHasAnimated(true);
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Background video source path
   const videoSrc = video?.sources?.[0]?.src ?? "/videos/hero/hero-1080.mp4";
@@ -69,7 +77,7 @@ export default function Hero({ video = null }: HeroProps) {
   }, [videoSrc]);
 
   return (
-    <section className="relative overflow-hidden pt-24 pb-12 sm:pt-28 sm:pb-16 min-h-[600px] flex flex-col justify-center">
+    <section className={`relative overflow-hidden pt-24 pb-12 sm:pt-28 sm:pb-16 min-h-[600px] flex flex-col justify-center ${hasAnimated ? "hero-animated" : ""}`}>
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-0 overflow-hidden"

@@ -42,7 +42,7 @@ const nextConfig = {
           {
             key: "Content-Security-Policy-Report-Only",
             value:
-              "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'",
+              "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://flagcdn.com; font-src 'self' data:; connect-src 'self'",
           },
           {
             key: "Permissions-Policy",

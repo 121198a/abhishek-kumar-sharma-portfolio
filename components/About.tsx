@@ -69,10 +69,7 @@ export default function About() {
           <div className="flex flex-col gap-6">
             <Reveal delay={0.2}>
               <div className="rounded-2xl border border-line bg-panel2/60 p-7 shadow-lg">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-purple">
-                    Active Engagement
-                  </span>
+                <div className="flex items-center justify-end">
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-[#86efac]/10 px-2.5 py-0.5 text-xs font-bold text-[#86efac]">
                     <span className="h-1.5 w-1.5 rounded-full bg-[#86efac] animate-pulse" />
                     Present

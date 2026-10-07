@@ -12,6 +12,7 @@ import { ragRetrieve } from "@/lib/rag";
 import { readJsonObject } from "@/lib/request-guard";
 import { SESSION_COOKIE, readSessionCount, buildSessionCookie, sessionCookieOptions } from "@/lib/session-cap";
 import { findProjectBySlug, projectContextSummary, type Project } from "@/data/projects";
+import { formatAiResponse } from "@/lib/format";
 
 export const runtime = "nodejs";
 
@@ -65,6 +66,14 @@ Never claim that Abhishek has professional experience with a technology unless i
 appears in the verified information below.
 
 Keep the tone professional, confident, helpful and recruiter-friendly.
+
+FORMATTING AND TONE REQUIREMENTS:
+- Write in clean, natural, professional English without unnecessary Markdown emphasis.
+- DO NOT use bold asterisks (like **React.js** or **Node.js**) around technologies, tools, skills, or phrases.
+- DO NOT format technologies or skills in bracketed bold lists like [**React.js**, **Next.js**].
+- Mention technologies naturally inside sentences (for example: "Abhishek has experience with React.js, Next.js, and Node.js.").
+- Do not use markdown decorations, hashtags, or excessive bolding.
+- Prefer clear paragraphs and natural sentences with high readability.
 
 Never infer or estimate numbers that are not explicitly documented, such as
 user counts, performance metrics, production traffic, team size, revenue,
@@ -270,7 +279,7 @@ function fallbackResponse(
   precomputedCategory?: string
 ) {
   return NextResponse.json({
-    reply: localFaqLookup(message, mode, selectedProject),
+    reply: formatAiResponse(localFaqLookup(message, mode, selectedProject)),
     mode: "fallback",
     reason,
     category: precomputedCategory ?? classifyForAnalytics(message, mode, selectedProject),
@@ -396,7 +405,7 @@ async function handleChat(req: NextRequest, cookieCount: number) {
   if (canAnswerLocally(message, mode, selectedProject, structuredHits)) {
     console.log(`[chat] local_answer_bypass category=${structuredHits[0].category}`);
     return NextResponse.json({
-      reply: structuredHits[0].answer,
+      reply: formatAiResponse(structuredHits[0].answer),
       mode: "ai",
       category: structuredHits[0].category,
     });
@@ -665,7 +674,7 @@ async function handleChat(req: NextRequest, cookieCount: number) {
     // -------------------------------------------------------
 
     return NextResponse.json({
-      reply: reply.trim(),
+      reply: formatAiResponse(reply.trim()),
       mode: "ai",
       category: categoryFor(structuredHits, selectedProject),
     });

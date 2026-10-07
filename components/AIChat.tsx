@@ -8,6 +8,7 @@ import {
   type OpenAiChatDetail,
 } from "@/lib/project-ai-event";
 import { trackEvent, mapFallbackReason } from "@/lib/analytics";
+import { formatAiResponse } from "@/lib/format";
 
 type Msg = {
   role: "user" | "bot";
@@ -270,7 +271,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
                 AI
               </span>
               <div>
-                <span className="text-xs font-bold text-white block leading-tight">
+                <span className="text-xs font-bold text-ink block leading-tight">
                   Abhishek AI
                 </span>
                 <span className="text-xs text-muted block">
@@ -284,13 +285,13 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
               <span
                 className={`badge-status ${
                   offline
-                    ? "bg-yellow-500/15 text-yellow-300 border border-yellow-500/30"
-                    : "bg-green-500/15 text-green-300 border border-green-500/30"
+                    ? "bg-amber-500/15 text-amber-600 dark:text-amber-300 border border-amber-500/30"
+                    : "bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 border border-emerald-500/30"
                 }`}
               >
                 <span
                   className={`h-1.5 w-1.5 rounded-full ${
-                    offline ? "bg-yellow-400" : "bg-green-400 animate-pulse"
+                    offline ? "bg-amber-500" : "bg-emerald-500 animate-pulse"
                   }`}
                 />
                 <span>{offline ? "OFFLINE / LOCAL" : "ONLINE"}</span>
@@ -302,7 +303,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
                 onClick={handleClearChat}
                 title="Clear conversation"
                 aria-label="Clear conversation"
-                className="rounded-lg p-1.5 text-muted hover:bg-white/10 hover:text-white transition-colors text-xs"
+                className="rounded-lg p-1.5 text-muted hover:bg-line/40 hover:text-ink transition-colors text-xs"
               >
                 ↺
               </button>
@@ -312,7 +313,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
                 type="button"
                 onClick={() => setOpen(false)}
                 aria-label="Close assistant"
-                className="rounded-lg p-1.5 text-muted hover:bg-white/10 hover:text-white transition-colors text-xs"
+                className="rounded-lg p-1.5 text-muted hover:bg-line/40 hover:text-ink transition-colors text-xs"
               >
                 ✕
               </button>
@@ -323,7 +324,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
           <div
             role="group"
             aria-label="Chat persona mode"
-            className="flex items-center justify-between border-b border-line bg-panel2/50 px-3 py-2 text-xs"
+            className="flex items-center justify-between border-b border-line bg-panel2/60 px-3 py-2 text-xs"
           >
             <div className="flex items-center gap-1.5">
               <button
@@ -332,8 +333,8 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
                 aria-pressed={mode === "general"}
                 className={`rounded-lg px-2.5 py-1 font-semibold transition ${
                   mode === "general"
-                    ? "bg-purple/20 text-white border border-purple/30"
-                    : "text-muted hover:text-white"
+                    ? "bg-purple text-white shadow-sm"
+                    : "text-muted hover:text-ink"
                 }`}
               >
                 General
@@ -347,29 +348,29 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
                 aria-pressed={mode === "recruiter"}
                 className={`rounded-lg px-2.5 py-1 font-semibold transition ${
                   mode === "recruiter"
-                    ? "bg-purple/20 text-white border border-purple/30"
-                    : "text-muted hover:text-white"
+                    ? "bg-purple text-white shadow-sm"
+                    : "text-muted hover:text-ink"
                 }`}
               >
                 Recruiter Mode
               </button>
             </div>
-            <span className="text-xs text-muted">
+            <span className="text-xs text-muted font-medium">
               {mode === "recruiter" ? "Fact → Evidence" : "General"}
             </span>
           </div>
 
           {/* Selected Project Focus Banner */}
           {selectedProject && (
-            <div className="flex items-center justify-between border-b border-line bg-purple/15 px-3 py-1.5 text-xs">
-              <span className="truncate text-purple">
-                Active Context: <strong>{selectedProject.name}</strong>
+            <div className="flex items-center justify-between border-b border-line bg-purple/10 px-3 py-1.5 text-xs">
+              <span className="truncate text-purple font-medium">
+                Active Context: <strong className="font-bold">{selectedProject.name}</strong>
               </span>
               <button
                 type="button"
                 onClick={() => setSelectedProject(null)}
                 aria-label="Clear project focus"
-                className="rounded-full px-1.5 text-xs text-muted hover:text-white"
+                className="rounded-full px-1.5 text-xs text-muted hover:text-ink"
               >
                 ✕
               </button>
@@ -379,9 +380,6 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
           {/* Messages Container with scroll prevention */}
           <div
             ref={bodyRef}
-            // role="log" makes new assistant replies (and the "analyzing" status) get
-            // announced politely by screen readers; tabIndex lets keyboard users
-            // scroll the history.
             role="log"
             aria-label="Conversation with Abhishek's assistant"
             aria-relevant="additions text"
@@ -398,18 +396,18 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
                 <div
                   className={`chat-bubble ${
                     message.role === "user"
-                      ? "rounded-br-sm bg-purple/35 text-white border border-purple/40"
-                      : "rounded-bl-sm border border-line bg-white/[0.04] text-[#e8ebf4]"
+                      ? "chat-bubble-user rounded-br-sm shadow-sm"
+                      : "chat-bubble-bot rounded-bl-sm shadow-sm"
                   }`}
                 >
-                  {message.text}
+                  {formatAiResponse(message.text)}
                 </div>
               </div>
             ))}
 
             {/* Thinking / Loading indicator */}
             {sending && (
-              <div className="flex items-center gap-1.5 rounded-2xl rounded-bl-sm border border-line bg-white/[0.04] px-3.5 py-2.5 w-fit">
+              <div className="flex items-center gap-1.5 rounded-2xl rounded-bl-sm border border-line bg-panel2 px-3.5 py-2.5 w-fit">
                 <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-purple animate-bounce" />
                 <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-purple animate-bounce [animation-delay:0.15s]" />
                 <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-purple animate-bounce [animation-delay:0.3s]" />
@@ -429,7 +427,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
                       key={q}
                       type="button"
                       onClick={() => sendQuery(q)}
-                      className="text-left rounded-xl border border-line/60 bg-white/[0.02] px-3 py-1.5 text-xs text-muted hover:border-purple/40 hover:bg-purple/10 hover:text-white transition"
+                      className="text-left rounded-xl border border-line bg-panel2/80 px-3 py-1.5 text-xs text-ink/80 hover:border-purple/50 hover:bg-purple/10 hover:text-ink transition"
                     >
                       &ldquo;{q}&rdquo;
                     </button>
@@ -453,7 +451,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
                         setOpen(false);
                         if (link.href === "/resume.pdf") trackEvent("resume_download");
                       }}
-                      className="rounded-full border border-purple/30 bg-purple/10 px-2.5 py-1 text-xs font-medium text-[#b4c6fe] hover:border-purple hover:bg-purple/20 transition"
+                      className="rounded-full border border-purple/30 bg-purple/10 px-2.5 py-1 text-xs font-semibold text-purple hover:bg-purple/20 transition"
                     >
                       {link.label}
                     </a>
@@ -466,7 +464,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
           {/* Input Form */}
           <form
             onSubmit={handleFormSubmit}
-            className="flex items-center border-t border-line bg-panel2/60 p-2 gap-2"
+            className="flex items-center border-t border-line bg-panel2 p-2.5 gap-2"
           >
             <input
               ref={inputRef}
@@ -477,14 +475,14 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
               autoComplete="off"
               maxLength={400}
               disabled={sending}
-              className="flex-1 rounded-xl border border-line/80 bg-white/[0.03] px-3 py-2.5 text-xs text-white placeholder-muted/50 outline-none focus:border-purple transition disabled:opacity-50"
+              className="flex-1 rounded-xl border border-line bg-panel px-3 py-2 text-xs text-ink placeholder:text-muted/60 outline-none focus:border-purple focus:ring-1 focus:ring-purple transition disabled:opacity-50"
             />
 
             <button
               type="submit"
               disabled={sending || !input.trim()}
               aria-label="Send message"
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet text-white transition hover:bg-violet/90 disabled:opacity-40"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-purple text-white transition hover:brightness-110 active:scale-95 disabled:opacity-40"
             >
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                 <path

@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { profile } from "@/data/profile";
 import { trackEvent } from "@/lib/analytics";
 import { useSmoothScroll } from "@/components/providers/SmoothScrollProvider";
+import { useNavigation } from "@/components/providers/NavigationProvider";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import MotionToggle from "@/components/ui/MotionToggle";
 
@@ -21,6 +22,7 @@ export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("");
   const { scrollTo } = useSmoothScroll();
+  const { isolatedSection, navigateToSection, navigateToHero } = useNavigation();
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
@@ -104,7 +106,8 @@ export default function Nav() {
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (href.startsWith("#")) {
       e.preventDefault();
-      scrollTo(href);
+      const section = href.replace(/^#/, "");
+      navigateToSection(section);
       setOpen(false);
       menuButtonRef.current?.focus();
     }
@@ -126,7 +129,7 @@ export default function Nav() {
           href="#"
           onClick={(e) => {
             e.preventDefault();
-            scrollTo(0);
+            navigateToHero();
           }}
           className="group flex items-center gap-3 font-extrabold tracking-wide"
         >
@@ -151,7 +154,8 @@ export default function Nav() {
           className="hidden lg:flex items-center gap-1 rounded-full border border-line/60 bg-white/[0.03] px-3 py-1.5 backdrop-blur-sm"
         >
           {NAV_LINKS.map((link) => {
-            const isActive = activeSection === link.href.slice(1);
+            const linkId = link.href.slice(1);
+            const isActive = isolatedSection ? isolatedSection === linkId : activeSection === linkId;
             return (
               <a
                 key={link.href}
@@ -241,7 +245,8 @@ export default function Nav() {
               </div>
             </div>
             {NAV_LINKS.map((link) => {
-              const isActive = activeSection === link.href.slice(1);
+              const linkId = link.href.slice(1);
+              const isActive = isolatedSection ? isolatedSection === linkId : activeSection === linkId;
               return (
                 <a
                   key={link.href}

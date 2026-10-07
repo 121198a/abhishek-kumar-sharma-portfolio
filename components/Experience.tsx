@@ -10,7 +10,6 @@ export default function Experience() {
       <div className="mx-auto max-w-shell px-6 sm:px-8">
         <Reveal>
           <SectionHeading
-            eyebrow="Work & Research History"
             title={
               <>
                 Verified <span className="gradient-text">Experience &amp; Roles</span>

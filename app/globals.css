@@ -274,11 +274,12 @@ body {
     border-bottom: 1px solid transparent;
   }
   .nav-logo-badge {
-    display: grid;
+    display: flex;
     height: 2.25rem;
     width: 2.25rem;
-    place-items: center;
-    border-radius: 0.75rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
     border: 1px solid var(--line);
     background: var(--panel2);
     color: var(--ink);
@@ -1147,12 +1148,12 @@ html.motion-reduced .hero-ambient-alt {
 
 .contact-social {
   position: relative;
-  display: grid;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 34px;
   height: 38px;
   flex-shrink: 0;
-  place-items: center;
-  border-radius: 50%;
   color: var(--contact-ink);
   text-decoration: none;
   transition: background 240ms ease, transform 240ms ease;

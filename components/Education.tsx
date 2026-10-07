@@ -26,7 +26,7 @@ export default function Education() {
           {/* Vertical Timeline Guide Line */}
           <div
             aria-hidden="true"
-            className="absolute left-[27px] top-6 bottom-6 w-[2px] bg-line"
+            className="absolute left-[21px] top-6 bottom-6 w-[2px] bg-line"
           />
 
           <div className="space-y-8 sm:space-y-10">
@@ -36,11 +36,9 @@ export default function Education() {
                   {/* Timeline Node Icon (Desktop) */}
                   <div
                     aria-hidden="true"
-                    className="grid shrink-0 z-10 h-14 w-14 place-items-center rounded-lg border border-line bg-panel transition-colors group-hover:border-purple"
+                    className="flex shrink-0 z-10 h-11 w-11 items-center justify-center rounded-full border border-line bg-panel text-xs font-mono font-bold text-purple transition-colors group-hover:border-purple"
                   >
-                    <div className="font-mono font-bold text-xs text-purple">
-                      {index === 0 ? "01" : index === 1 ? "02" : "03"}
-                    </div>
+                    {index === 0 ? "01" : index === 1 ? "02" : "03"}
                   </div>
 
                   {/* Main Education Timeline Entry */}

@@ -119,7 +119,7 @@ export default function Nav() {
         open
           ? "bg-bg border-b border-line"
           : scrolled
-          ? "bg-panel/85 backdrop-blur-xl border-b border-line shadow-lg shadow-black/25"
+          ? "bg-panel/90 backdrop-blur-xl border-b border-line shadow-sm shadow-black/5 dark:shadow-black/25"
           : "bg-bg/40 backdrop-blur-md border-b border-transparent"
       }`}
     >
@@ -134,7 +134,7 @@ export default function Nav() {
           className="group flex items-center gap-3 font-extrabold tracking-wide"
         >
           <span
-            className="grid h-9 w-9 place-items-center rounded-xl border border-white/10 bg-panel2 text-ink font-bold text-sm shadow-sm transition-transform duration-300 group-hover:scale-105"
+            className="grid h-9 w-9 place-items-center rounded-xl border border-line bg-panel2 text-ink font-bold text-sm shadow-xs transition-transform duration-300 group-hover:scale-105"
           >
             A
           </span>
@@ -151,7 +151,7 @@ export default function Nav() {
         {/* Desktop Navigation Links */}
         <nav
           aria-label="Primary navigation"
-          className="hidden lg:flex items-center gap-1 rounded-full border border-line/60 bg-white/[0.03] px-3 py-1.5 backdrop-blur-sm"
+          className="hidden lg:flex items-center gap-1 rounded-full border border-line bg-panel2/60 px-3 py-1.5 backdrop-blur-sm"
         >
           {NAV_LINKS.map((link) => {
             const linkId = link.href.slice(1);
@@ -163,8 +163,8 @@ export default function Nav() {
                 onClick={(e) => handleNavClick(e, link.href)}
                 className={`nav-link ${
                   isActive
-                    ? "text-ink bg-purple/20 shadow-sm border border-purple/30"
-                    : "text-muted hover:text-ink hover:bg-white/[0.04]"
+                    ? "text-ink bg-purple/15 shadow-xs border border-purple/30"
+                    : "text-muted hover:text-ink hover:bg-panel2/80"
                 }`}
               >
                 {link.label}

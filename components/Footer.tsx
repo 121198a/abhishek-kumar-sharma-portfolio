@@ -54,7 +54,7 @@ export default function Footer() {
           <div>
             <div className="flex items-center gap-3">
               <span
-                className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-panel text-ink font-bold text-sm shadow-sm"
+                className="grid h-8 w-8 place-items-center rounded-lg border border-line bg-panel2 text-ink font-bold text-sm shadow-xs"
               >
                 A
               </span>

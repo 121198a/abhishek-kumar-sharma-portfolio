@@ -271,7 +271,7 @@ export default function Contact({ contactEnabled }: ContactProps) {
                     </a>
                   </div>
                 ) : status === "success" ? (
-                  <div className="py-8 text-center flex flex-col items-center">
+                  <div className="py-8 text-center flex flex-col items-center" role="status">
                     <div className="grid h-12 w-12 place-items-center rounded-full bg-[#86efac]/20 text-2xl text-[#86efac] mb-4">
                       <Check className="h-6 w-6" />
                     </div>
@@ -401,7 +401,7 @@ export default function Contact({ contactEnabled }: ContactProps) {
                         <label htmlFor="contact-message" className="text-xs font-semibold text-muted">
                           Your Message <span className="text-purple">*</span>
                         </label>
-                        <span className="text-xs text-muted font-mono">
+                        <span className="text-xs text-muted font-mono" aria-live="polite">
                           {formData.message.length}/2000
                         </span>
                       </div>
@@ -420,7 +420,7 @@ export default function Contact({ contactEnabled }: ContactProps) {
 
                     {/* Error Banner */}
                     {status === "error" && (
-                      <div className="rounded-xl border border-pink/30 bg-pink/10 p-3 text-xs text-[#fca5a5]">
+                      <div className="rounded-xl border border-pink/30 bg-pink/10 p-3 text-xs text-[#fca5a5]" role="alert">
                         <p>{errorMessage}</p>
                         <a
                           href={`mailto:${profile.email}?subject=Direct Portfolio Message&body=${encodeURIComponent(

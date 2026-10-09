@@ -329,7 +329,7 @@ export default function Contact({ contactEnabled }: ContactProps) {
                           type="text"
                           required
                           maxLength={100}
-                          placeholder="Enter Your Name"
+                          placeholder="Enter your name"
                           value={formData.name}
                           onChange={handleChange}
                           className="input-field"

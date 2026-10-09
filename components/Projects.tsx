@@ -34,7 +34,7 @@ export default function Projects() {
             <div
               role="tablist"
               aria-label="Filter projects by category"
-              className="flex flex-wrap gap-2 rounded-xl border border-line bg-panel2/60 p-1.5"
+              className="flex flex-wrap gap-2 rounded-2xl border border-line bg-panel2/60 p-1.5"
             >
               {projectCategories.map((c) => {
                 const count = c === "All" ? projects.length : projects.filter((p) => p.category === c).length;
@@ -106,10 +106,10 @@ function ProjectCard({ project: p, isSliderView = false }: { project: Project; i
         : "subtle";
 
   return (
-    <article className="group portfolio-card">
+    <article className="group relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-line bg-panel2/70 transition-all duration-300 hover:border-purple/40">
       <div>
         {/* Header Preview Banner */}
-        <div className="relative flex h-[80px] items-center justify-between border-b border-line bg-panel/30 px-6">
+        <div className="relative flex h-[90px] items-center justify-between border-b border-line bg-white/[0.02] px-6">
           <div className="flex items-center gap-2.5">
             <span className="rounded-md border border-line bg-panel px-2.5 py-0.5 text-xs font-mono text-muted">
               {p.year}

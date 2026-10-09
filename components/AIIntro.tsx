@@ -16,12 +16,12 @@ export default function AIIntro() {
     <section className="py-24 sm:py-32 relative">
       <div className="mx-auto max-w-shell px-6 sm:px-8">
         <Reveal>
-          <div className="relative overflow-hidden rounded-xl border border-line bg-panel2/80 p-8 sm:p-12">
+          <div className="relative overflow-hidden rounded-3xl border border-line bg-panel2/80 p-8 sm:p-12">
             <div className="relative z-10 grid grid-cols-1 gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
               <div>
-                <span className="inline-flex items-center gap-2 rounded-full border border-line bg-panel px-3 py-1 text-xs font-semibold text-ink">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                  Portfolio Knowledge Base
+                <span className="inline-flex items-center gap-2 rounded-full border border-purple/30 bg-purple/10 px-3 py-1 text-xs font-semibold text-purple">
+                  <span className="h-1.5 w-1.5 rounded-full bg-purple animate-ping" />
+                  Portfolio Assistant
                 </span>
 
                 <h3 className="mt-4 text-2xl sm:text-3xl font-black tracking-[-0.03em] text-ink">
@@ -62,7 +62,7 @@ export default function AIIntro() {
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                     <path d="M2 3a1 1 0 011-1h10a1 1 0 011 1v8a1 1 0 01-1 1H5.5L2 14.5V3z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
-                  <span>Open Knowledge Base</span>
+                  <span>Launch Assistant</span>
                 </OpenChatButton>
                 <span className="text-xs text-muted text-center lg:text-right">
                   Runs lightweight edge queries · Zero tracking of private questions

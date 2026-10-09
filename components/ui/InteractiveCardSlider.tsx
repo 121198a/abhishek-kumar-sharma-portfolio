@@ -165,7 +165,7 @@ export default function InteractiveCardSlider<T>({
                   onClick={() => handleCardClick(key)}
                   className="snap-start shrink-0 w-[82vw] max-w-[320px] cursor-pointer transition-transform duration-200 active:scale-[0.98] group flex flex-col justify-between"
                 >
-                  <div className="h-full overflow-hidden">
+                  <div className="h-full rounded-2xl border border-line bg-panel2/80 p-0 overflow-hidden shadow-lg transition-all duration-300 group-hover:border-purple/50 group-hover:shadow-purple/10">
                     {renderCard(item, index, false)}
                   </div>
                 </div>
@@ -207,14 +207,14 @@ export default function InteractiveCardSlider<T>({
           Shown when a specific card is tapped.
           Displays complete content, scrollable if long, with clear `<` exit control.
         */
-        <div className="sticky top-[84px] z-30 rounded-xl border border-line bg-panel2 shadow-xl backdrop-blur-2xl transition-all duration-300 overflow-hidden">
+        <div className="sticky top-[84px] z-30 rounded-2xl border border-line bg-panel2 shadow-2xl backdrop-blur-2xl transition-all duration-300 overflow-hidden">
           {/* Detail View Header with `<` Exit / Back Control */}
           <div className="flex items-center justify-between border-b border-line bg-panel px-4 py-3">
             <button
               type="button"
               onClick={handleCloseDetail}
               aria-label="Exit detail view and return to card slider"
-              className="nav-back-btn active:scale-95"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-line bg-panel2 px-3 py-1.5 text-xs font-bold text-ink hover:border-purple/50 hover:text-purple transition-all active:scale-95 shadow-sm"
             >
               <span className="text-purple text-base leading-none font-black">‹</span>
               <span>Back to Slider</span>
@@ -234,7 +234,7 @@ export default function InteractiveCardSlider<T>({
                     if (prevItem) setSelectedKey(getItemKey(prevItem, selectedIndex - 1));
                   }}
                   aria-label="Previous item"
-                  className="slider-arrow-btn"
+                  className="grid h-7 w-7 place-items-center rounded-lg border border-line bg-panel2 text-xs font-bold text-ink disabled:opacity-30 disabled:cursor-not-allowed hover:border-purple/40 transition-colors"
                 >
                   ‹
                 </button>
@@ -246,7 +246,7 @@ export default function InteractiveCardSlider<T>({
                     if (nextItem) setSelectedKey(getItemKey(nextItem, selectedIndex + 1));
                   }}
                   aria-label="Next item"
-                  className="slider-arrow-btn"
+                  className="grid h-7 w-7 place-items-center rounded-lg border border-line bg-panel2 text-xs font-bold text-ink disabled:opacity-30 disabled:cursor-not-allowed hover:border-purple/40 transition-colors"
                 >
                   ›
                 </button>

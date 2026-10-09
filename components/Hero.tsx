@@ -82,6 +82,8 @@ export default function Hero({ video = null }: HeroProps) {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
       >
+        <div className="hero-ambient" />
+        <div className="hero-ambient-alt" />
         <video
           ref={bgVideoRef}
           src={videoSrc}

@@ -26,10 +26,10 @@ export default function Experience() {
                 {/* Timeline node */}
                 <div
                   aria-hidden="true"
-                  className={`absolute -left-[31px] sm:-left-[47px] top-1.5 flex h-6 w-6 items-center justify-center rounded-full border border-line bg-panel transition-transform duration-300 group-hover:scale-125 ${
+                  className={`timeline-marker ${
                     entry.current
                       ? "border-purple bg-purple/10 text-purple"
-                      : "text-muted"
+                      : ""
                   }`}
                 >
                   <span

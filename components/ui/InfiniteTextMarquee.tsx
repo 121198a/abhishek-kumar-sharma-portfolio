@@ -41,7 +41,7 @@ export default function InfiniteTextMarquee({
         {[...repeated, ...repeated].map((text, idx) => (
           <div
             key={`${text}-${idx}`}
-            className="flex shrink-0 items-center gap-4 px-3 font-mono text-[10px] font-semibold uppercase tracking-[0.38em] text-muted sm:text-xs"
+            className="marquee-item"
           >
             <span>{text}</span>
             <span className="h-1.5 w-1.5 rounded-full bg-purple/60" />

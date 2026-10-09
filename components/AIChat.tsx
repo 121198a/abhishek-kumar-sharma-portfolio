@@ -241,7 +241,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
             trackEvent("ai_chat_started");
           }
         }}
-        aria-label={open ? "Close Abhishek AI assistant" : "Open Abhishek AI assistant"}
+        aria-label={open ? "Close portfolio chat" : "Open portfolio chat"}
         className="chat-launcher"
       >
         <span className="transition-transform duration-200">
@@ -260,22 +260,22 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
         <div
          
           role="dialog"
-          aria-label="Abhishek AI Assistant"
+          aria-label="Portfolio Knowledge Guide"
           aria-modal="false"
-          className="fixed bottom-[88px] right-6 z-[60] flex w-[390px] max-w-[calc(100vw-32px)] flex-col overflow-hidden rounded-2xl border border-line bg-panel shadow-2xl backdrop-blur-2xl"
+          className="chat-dialog"
         >
           {/* Header */}
           <div className="flex items-center justify-between border-b border-line bg-panel2 px-4 py-3.5">
             <div className="flex items-center gap-2.5">
               <span className="grid h-7 w-7 place-items-center rounded-lg border border-line bg-panel text-xs font-bold text-purple">
-                AI
+                KB
               </span>
               <div>
                 <span className="text-xs font-bold text-ink block leading-tight">
-                  Abhishek AI
+                  Portfolio Guide
                 </span>
                 <span className="text-xs text-muted block">
-                  Portfolio Assistant
+                  Verified Documentation
                 </span>
               </div>
             </div>
@@ -312,7 +312,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                aria-label="Close assistant"
+                aria-label="Close dialog"
                 className="rounded-lg p-1.5 text-muted hover:bg-line/40 hover:text-ink transition-colors text-xs"
               >
                 ✕
@@ -331,11 +331,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
                 type="button"
                 onClick={() => setMode("general")}
                 aria-pressed={mode === "general"}
-                className={`rounded-lg px-2.5 py-1 font-semibold transition ${
-                  mode === "general"
-                    ? "bg-purple text-white shadow-sm"
-                    : "text-muted hover:text-ink"
-                }`}
+                className={`chat-mode-btn ${mode === "general" ? "chat-mode-btn-active" : ""}`}
               >
                 General
               </button>
@@ -346,11 +342,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
                   setMode("recruiter");
                 }}
                 aria-pressed={mode === "recruiter"}
-                className={`rounded-lg px-2.5 py-1 font-semibold transition ${
-                  mode === "recruiter"
-                    ? "bg-purple text-white shadow-sm"
-                    : "text-muted hover:text-ink"
-                }`}
+                className={`chat-mode-btn ${mode === "recruiter" ? "chat-mode-btn-active" : ""}`}
               >
                 Recruiter Mode
               </button>
@@ -475,14 +467,14 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
               autoComplete="off"
               maxLength={400}
               disabled={sending}
-              className="flex-1 rounded-xl border border-line bg-panel px-3 py-2 text-xs text-ink placeholder:text-muted/60 outline-none focus:border-purple focus:ring-1 focus:ring-purple transition disabled:opacity-50"
+              className="chat-input"
             />
 
             <button
               type="submit"
               disabled={sending || !input.trim()}
               aria-label="Send message"
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-purple text-white transition hover:brightness-110 active:scale-95 disabled:opacity-40"
+              className="chat-send-btn"
             >
               <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
                 <path

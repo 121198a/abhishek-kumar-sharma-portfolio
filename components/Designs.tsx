@@ -28,7 +28,7 @@ export default function Designs() {
 
         {designs.length === 0 ? (
           <Reveal delay={0.1}>
-            <div className="rounded-2xl border border-line bg-panel2/50 p-8 sm:p-12 text-center text-muted">
+            <div className="rounded-xl border border-line bg-panel2/50 p-8 sm:p-12 text-center text-muted">
               <span className="text-xs font-bold text-purple uppercase tracking-wider block mb-2">
                 In Preparation
               </span>
@@ -71,7 +71,7 @@ export default function Designs() {
 
 function DesignCard({ item, isSliderView = false }: { item: DesignItem; isSliderView?: boolean }) {
   return (
-    <article className="group relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-line bg-panel2/70 p-6 transition-all duration-300 hover:border-purple/40">
+    <article className="group portfolio-card p-6">
       <div>
         <div className="flex items-center justify-between border-b border-line/60 pb-3">
           <span className="text-xs font-bold uppercase tracking-wider text-purple">

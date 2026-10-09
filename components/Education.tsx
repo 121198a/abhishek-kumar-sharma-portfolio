@@ -26,7 +26,7 @@ export default function Education() {
           {/* Vertical Timeline Guide Line */}
           <div
             aria-hidden="true"
-            className="absolute left-[31px] top-6 bottom-6 w-[2px] bg-gradient-to-b from-purple/40 via-line to-transparent"
+            className="absolute left-[21px] top-6 bottom-6 w-[2px] bg-line"
           />
 
           <div className="space-y-8 sm:space-y-10">
@@ -36,15 +36,13 @@ export default function Education() {
                   {/* Timeline Node Icon (Desktop) */}
                   <div
                     aria-hidden="true"
-                    className="grid shrink-0 z-10 h-16 w-16 place-items-center rounded-2xl border border-line bg-panel2 shadow-lg transition-all duration-300 group-hover:border-purple/50 group-hover:scale-105"
+                    className="flex shrink-0 z-10 h-11 w-11 items-center justify-center rounded-full border border-line bg-panel text-xs font-mono font-bold text-purple transition-colors group-hover:border-purple"
                   >
-                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-purple/10 text-purple font-mono font-bold text-xs">
-                      {index === 0 ? "01" : index === 1 ? "02" : "03"}
-                    </div>
+                    {index === 0 ? "01" : index === 1 ? "02" : "03"}
                   </div>
 
-                  {/* Main Education Card */}
-                  <article className="flex-1 w-full rounded-2xl border border-line bg-panel2/70 p-6 sm:p-8 backdrop-blur-sm transition-all duration-300 hover:border-purple/40 hover:shadow-2xl hover:shadow-purple/5">
+                  {/* Main Education Timeline Entry */}
+                  <article className="flex-1 w-full border-b border-line pb-8">
                     {/* Top Row: Year, Score, Level Badges */}
                     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line/60 pb-4">
                       <div className="flex items-center gap-2.5">

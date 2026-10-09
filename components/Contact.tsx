@@ -165,7 +165,7 @@ export default function Contact({ contactEnabled }: ContactProps) {
     <section id="contact" className="py-24 sm:py-32 relative">
       <div className="mx-auto max-w-shell px-6 sm:px-8">
         <Reveal>
-          <div className="relative overflow-hidden rounded-3xl border border-line bg-panel2/80 p-8 sm:p-12 lg:p-16 shadow-2xl">
+          <div className="relative overflow-hidden rounded-xl border border-line bg-panel2/80 p-8 sm:p-12 lg:p-16 shadow-lg">
             <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
               {/* Left Column: Context & Direct Contact Options */}
               <div>
@@ -178,17 +178,17 @@ export default function Contact({ contactEnabled }: ContactProps) {
                   Drop a message below or reach out directly.
                 </p>
 
-                {/* Direct Contact Cards */}
-                <div className="mt-8 space-y-3.5">
+                {/* Direct Contact List */}
+                <div className="mt-8 divide-y divide-line border-y border-line">
                   <a
                     href={`mailto:${profile.email}`}
-                    className="group flex items-center gap-3.5 rounded-2xl border border-line bg-panel p-4 transition-all duration-200 hover:border-purple/50"
+                    className="group flex items-center gap-3.5 py-3.5 transition-colors hover:text-purple"
                   >
-                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-purple/15 text-purple font-semibold">
-                      <Mail className="h-5 w-5" />
+                    <div className="grid h-9 w-9 place-items-center rounded-lg bg-panel2 text-purple font-semibold shrink-0">
+                      <Mail className="h-4 w-4" />
                     </div>
                     <div>
-                      <span className="text-xs font-semibold text-muted block">
+                      <span className="text-[11px] font-semibold text-muted block">
                         Direct Email
                       </span>
                       <strong className="text-sm font-semibold text-ink group-hover:text-purple transition-colors">
@@ -199,13 +199,13 @@ export default function Contact({ contactEnabled }: ContactProps) {
 
                   <a
                     href={profile.phoneHref}
-                    className="group flex items-center gap-3.5 rounded-2xl border border-line bg-panel p-4 transition-all duration-200 hover:border-purple/50"
+                    className="group flex items-center gap-3.5 py-3.5 transition-colors hover:text-purple"
                   >
-                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-purple/15 text-purple font-semibold">
-                      <Phone className="h-5 w-5" />
+                    <div className="grid h-9 w-9 place-items-center rounded-lg bg-panel2 text-purple font-semibold shrink-0">
+                      <Phone className="h-4 w-4" />
                     </div>
                     <div>
-                      <span className="text-xs font-semibold text-muted block">
+                      <span className="text-[11px] font-semibold text-muted block">
                         Phone Contact
                       </span>
                       <strong className="text-sm font-semibold text-ink group-hover:text-purple transition-colors">
@@ -214,22 +214,23 @@ export default function Contact({ contactEnabled }: ContactProps) {
                     </div>
                   </a>
 
-                  <div className="flex items-center gap-3.5 rounded-2xl border border-line bg-panel p-4">
-                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-purple/15 text-purple font-semibold">
-                      <MapPin className="h-5 w-5" />
+                  <div className="flex items-center gap-3.5 py-3.5">
+                    <div className="grid h-9 w-9 place-items-center rounded-lg bg-panel2 text-purple font-semibold shrink-0">
+                      <MapPin className="h-4 w-4" />
                     </div>
                     <div>
-                      <span className="text-xs font-semibold text-muted block">
+                      <span className="text-[11px] font-semibold text-muted block">
                         Current Location
                       </span>
                       <strong className="text-sm font-semibold text-ink">
                         {profile.currentLocation}
                       </strong>
-                      <span className="mt-1 block text-xs text-muted">
+                      <span className="mt-0.5 block text-xs text-muted">
                         Permanent: {profile.permanentLocation}
                       </span>
                     </div>
                   </div>
+                </div>
 
                   <div className="flex flex-wrap gap-3 pt-2">
                     <a
@@ -253,11 +254,10 @@ export default function Contact({ contactEnabled }: ContactProps) {
                       <span>LinkedIn</span>
                     </a>
                   </div>
-                </div>
               </div>
 
               {/* Right Column: Contact Form */}
-              <div className="rounded-2xl border border-line bg-panel p-6 sm:p-8">
+              <div className="rounded-xl border border-line bg-panel p-6 sm:p-8">
                 {!contactEnabled ? (
                   <div className="p-6 text-center">
                     <p className="text-sm text-muted">
@@ -329,7 +329,7 @@ export default function Contact({ contactEnabled }: ContactProps) {
                           type="text"
                           required
                           maxLength={100}
-                          placeholder="Enter Your Name"
+                          placeholder="Enter your name"
                           value={formData.name}
                           onChange={handleChange}
                           className="input-field"
@@ -465,18 +465,18 @@ export default function Contact({ contactEnabled }: ContactProps) {
 /**
  * Country flag image with emoji fallback
  */
-function CountryFlag({ code, flag }: { code: string; flag: string }) {
+function CountryFlag({ code, flag, name }: { code: string; flag: string; name?: string }) {
   const [imgError, setImgError] = useState(false);
 
   if (imgError) {
-    return <span className="text-xs leading-none shrink-0">{flag}</span>;
+    return <span className="text-xs leading-none shrink-0" aria-label={name ? `${name} flag` : `${code} flag`}>{flag}</span>;
   }
 
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={`https://flagcdn.com/w40/${code.toLowerCase()}.png`}
-      alt=""
+      alt={name ? `${name} flag` : `${code} flag`}
       width={18}
       height={13}
       onError={() => setImgError(true)}
@@ -550,10 +550,10 @@ function CountrySelector({
         aria-expanded={open}
         aria-haspopup="listbox"
         aria-label={`Selected country: ${selected.name} (${selected.dialCode}). Click to choose country.`}
-        className="flex items-center justify-between gap-1 h-11 w-[78px] sm:w-[84px] px-2 rounded-xl border border-line bg-panel2/60 text-xs font-semibold text-ink hover:border-purple/50 focus:border-purple focus:ring-1 focus:ring-purple transition-all select-none shadow-xs"
+        className="country-select-btn"
       >
         <span className="flex items-center gap-1.5 min-w-0">
-          <CountryFlag code={selected.code} flag={selected.flag} />
+          <CountryFlag code={selected.code} flag={selected.flag} name={selected.name} />
           <span className="font-mono text-xs text-ink truncate">
             {selected.dialCode}
           </span>
@@ -568,7 +568,7 @@ function CountrySelector({
         <div
           role="listbox"
           aria-label="Select Country"
-          className="absolute top-full left-0 mt-1.5 z-50 w-64 sm:w-72 max-w-[calc(100vw-2.5rem)] rounded-xl border border-line bg-panel p-2 shadow-2xl backdrop-blur-2xl animate-fade-in"
+          className="country-dropdown"
         >
           {/* Search Input */}
           <div className="relative mb-1.5">
@@ -579,7 +579,7 @@ function CountrySelector({
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search country or code..."
               aria-label="Search country or code"
-              className="w-full rounded-lg border border-line bg-panel2 px-2.5 py-1.5 text-xs text-ink placeholder:text-muted/60 outline-none focus:border-purple transition"
+              className="country-search-input"
             />
           </div>
 
@@ -603,14 +603,12 @@ function CountrySelector({
                       setOpen(false);
                       setSearch("");
                     }}
-                    className={`flex items-center justify-between w-full px-2.5 py-1.5 rounded-lg text-xs transition-colors text-left ${
-                      isSelected
-                        ? "bg-purple/15 text-purple font-semibold"
-                        : "text-ink hover:bg-panel2"
+                    className={`country-option ${
+                      isSelected ? "country-option-active" : ""
                     }`}
                   >
                     <div className="flex items-center gap-2 truncate">
-                      <CountryFlag code={c.code} flag={c.flag} />
+                      <CountryFlag code={c.code} flag={c.flag} name={c.name} />
                       <span className="truncate">{c.name}</span>
                     </div>
                     <span className="font-mono text-xs text-muted shrink-0 ml-2">

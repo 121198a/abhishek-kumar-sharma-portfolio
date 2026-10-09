@@ -23,7 +23,7 @@ export default function Footer() {
     <footer className="relative mt-20 border-t border-line bg-panel2/60 pt-16 pb-14 text-muted">
       <div className="mx-auto max-w-shell px-6 sm:px-8">
         {/* Pre-footer Callout */}
-        <div className="mb-14 rounded-2xl border border-line bg-panel p-8 sm:p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div className="mb-14 border-y border-line py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div>
             <span className="text-xs font-bold uppercase tracking-[0.18em] text-purple">
               Looking Ahead
@@ -54,7 +54,7 @@ export default function Footer() {
           <div>
             <div className="flex items-center gap-3">
               <span
-                className="grid h-8 w-8 place-items-center rounded-lg border border-white/10 bg-panel text-ink font-bold text-sm shadow-sm"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-line bg-panel2 text-ink font-bold text-sm shadow-xs"
               >
                 A
               </span>
@@ -78,7 +78,7 @@ export default function Footer() {
             <h4 className="text-xs font-bold uppercase tracking-[0.16em] text-ink">
               Navigation
             </h4>
-            <ul className="mt-4 space-y-2.5 text-xs">
+            <ul className="mt-3.5 space-y-1.5 text-xs">
               {NAV_ITEMS.map((item) => (
                 <li key={item.href}>
                   <a
@@ -87,7 +87,7 @@ export default function Footer() {
                       e.preventDefault();
                       navigateToSection(item.href.replace(/^#/, ""));
                     }}
-                    className="text-muted hover:text-ink transition-colors inline-block py-3"
+                    className="text-muted hover:text-ink transition-colors inline-block py-0.5"
                   >
                     {item.label}
                   </a>
@@ -101,11 +101,11 @@ export default function Footer() {
             <h4 className="text-xs font-bold uppercase tracking-[0.16em] text-ink">
               Direct Links
             </h4>
-            <ul className="mt-4 space-y-2.5 text-xs">
+            <ul className="mt-3.5 space-y-1.5 text-xs">
               <li>
                 <a
                   href={`mailto:${profile.email}`}
-                  className="text-muted hover:text-ink transition-colors inline-flex items-center gap-2 py-1.5"
+                  className="text-muted hover:text-ink transition-colors inline-flex items-center gap-2 py-0.5"
                 >
                   <Mail className="h-3.5 w-3.5 text-purple" />
                   <span className="truncate">{profile.email}</span>
@@ -114,7 +114,7 @@ export default function Footer() {
               <li>
                 <a
                   href={profile.phoneHref}
-                  className="text-muted hover:text-ink transition-colors inline-flex items-center gap-2 py-1.5"
+                  className="text-muted hover:text-ink transition-colors inline-flex items-center gap-2 py-0.5"
                 >
                   <Phone className="h-3.5 w-3.5 text-purple" />
                   <span>{profile.phone}</span>
@@ -126,7 +126,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => trackEvent("resume_download")}
-                  className="text-muted hover:text-ink transition-colors inline-flex items-center gap-2 py-1.5"
+                  className="text-muted hover:text-ink transition-colors inline-flex items-center gap-2 py-0.5"
                 >
                   <Download className="h-3.5 w-3.5 text-purple" />
                   <span>Resume (PDF) ↓</span>

@@ -241,7 +241,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
             trackEvent("ai_chat_started");
           }
         }}
-        aria-label={open ? "Close Abhishek AI assistant" : "Open Abhishek AI assistant"}
+        aria-label={open ? "Close conversation" : "Ask questions about Abhishek"}
         className="chat-launcher"
       >
         <span className="transition-transform duration-200">
@@ -260,7 +260,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
         <div
          
           role="dialog"
-          aria-label="Abhishek AI Assistant"
+          aria-label="Portfolio Q&A"
           aria-modal="false"
           className="fixed bottom-[88px] right-6 z-[60] flex w-[390px] max-w-[calc(100vw-32px)] flex-col overflow-hidden rounded-2xl border border-line bg-panel shadow-2xl backdrop-blur-2xl"
         >
@@ -268,14 +268,14 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
           <div className="flex items-center justify-between border-b border-line bg-panel2 px-4 py-3.5">
             <div className="flex items-center gap-2.5">
               <span className="grid h-7 w-7 place-items-center rounded-lg border border-line bg-panel text-xs font-bold text-purple">
-                AI
+                Q&amp;A
               </span>
               <div>
                 <span className="text-xs font-bold text-ink block leading-tight">
-                  Abhishek AI
+                  Portfolio Q&amp;A
                 </span>
                 <span className="text-xs text-muted block">
-                  Portfolio Assistant
+                  Knowledge Base
                 </span>
               </div>
             </div>
@@ -312,7 +312,7 @@ export default function AIChat({ aiEnabled }: { aiEnabled: boolean }) {
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                aria-label="Close assistant"
+                aria-label="Close chat"
                 className="rounded-lg p-1.5 text-muted hover:bg-line/40 hover:text-ink transition-colors text-xs"
               >
                 ✕

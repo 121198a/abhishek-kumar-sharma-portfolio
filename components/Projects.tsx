@@ -34,7 +34,7 @@ export default function Projects() {
             <div
               role="tablist"
               aria-label="Filter projects by category"
-              className="flex flex-wrap gap-2 rounded-2xl border border-line bg-panel2/60 p-1.5"
+              className="flex flex-wrap gap-2 rounded-xl border border-line bg-panel2/40 p-1.5"
             >
               {projectCategories.map((c) => {
                 const count = c === "All" ? projects.length : projects.filter((p) => p.category === c).length;
@@ -66,7 +66,7 @@ export default function Projects() {
 
         {/* Project Cards: Large Screen (Desktop) vs Mobile Screen */}
         {visible.length === 0 ? (
-          <div className="rounded-2xl border border-line bg-panel2/40 p-12 text-center text-muted">
+          <div className="rounded-xl border border-line bg-panel2/40 p-12 text-center text-muted">
             No projects found in this category.
           </div>
         ) : (
@@ -106,7 +106,7 @@ function ProjectCard({ project: p, isSliderView = false }: { project: Project; i
         : "subtle";
 
   return (
-    <article className="group relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border border-line bg-panel2/70 transition-all duration-300 hover:border-purple/40">
+    <article className="project-card group">
       <div>
         {/* Header Preview Banner */}
         <div className="relative flex h-[90px] items-center justify-between border-b border-line bg-white/[0.02] px-6">

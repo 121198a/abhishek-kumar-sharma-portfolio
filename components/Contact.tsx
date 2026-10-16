@@ -165,7 +165,7 @@ export default function Contact({ contactEnabled }: ContactProps) {
     <section id="contact" className="py-24 sm:py-32 relative">
       <div className="mx-auto max-w-shell px-6 sm:px-8">
         <Reveal>
-          <div className="relative overflow-hidden rounded-3xl border border-line bg-panel2/80 p-8 sm:p-12 lg:p-16 shadow-2xl">
+          <div className="contact-hero-wrapper">
             <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
               {/* Left Column: Context & Direct Contact Options */}
               <div>
@@ -179,13 +179,13 @@ export default function Contact({ contactEnabled }: ContactProps) {
                 </p>
 
                 {/* Direct Contact Cards */}
-                <div className="mt-8 space-y-3.5">
+                <div className="mt-8 space-y-3">
                   <a
                     href={`mailto:${profile.email}`}
-                    className="group flex items-center gap-3.5 rounded-2xl border border-line bg-panel p-4 transition-all duration-200 hover:border-purple/50"
+                    className="group flex items-center gap-3.5 rounded-xl border border-line bg-panel p-3.5 transition-all duration-200 hover:border-purple/50"
                   >
-                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-purple/15 text-purple font-semibold">
-                      <Mail className="h-5 w-5" />
+                    <div className="grid h-9 w-9 place-items-center rounded-lg bg-purple/15 text-purple font-semibold">
+                      <Mail className="h-4.5 w-4.5" />
                     </div>
                     <div>
                       <span className="text-xs font-semibold text-muted block">
@@ -199,10 +199,10 @@ export default function Contact({ contactEnabled }: ContactProps) {
 
                   <a
                     href={profile.phoneHref}
-                    className="group flex items-center gap-3.5 rounded-2xl border border-line bg-panel p-4 transition-all duration-200 hover:border-purple/50"
+                    className="group flex items-center gap-3.5 rounded-xl border border-line bg-panel p-3.5 transition-all duration-200 hover:border-purple/50"
                   >
-                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-purple/15 text-purple font-semibold">
-                      <Phone className="h-5 w-5" />
+                    <div className="grid h-9 w-9 place-items-center rounded-lg bg-purple/15 text-purple font-semibold">
+                      <Phone className="h-4.5 w-4.5" />
                     </div>
                     <div>
                       <span className="text-xs font-semibold text-muted block">
@@ -214,9 +214,9 @@ export default function Contact({ contactEnabled }: ContactProps) {
                     </div>
                   </a>
 
-                  <div className="flex items-center gap-3.5 rounded-2xl border border-line bg-panel p-4">
-                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-purple/15 text-purple font-semibold">
-                      <MapPin className="h-5 w-5" />
+                  <div className="flex items-center gap-3.5 rounded-xl border border-line bg-panel p-3.5">
+                    <div className="grid h-9 w-9 place-items-center rounded-lg bg-purple/15 text-purple font-semibold">
+                      <MapPin className="h-4.5 w-4.5" />
                     </div>
                     <div>
                       <span className="text-xs font-semibold text-muted block">
@@ -257,7 +257,7 @@ export default function Contact({ contactEnabled }: ContactProps) {
               </div>
 
               {/* Right Column: Contact Form */}
-              <div className="rounded-2xl border border-line bg-panel p-6 sm:p-8">
+              <div className="contact-form-panel">
                 {!contactEnabled ? (
                   <div className="p-6 text-center">
                     <p className="text-sm text-muted">
@@ -476,7 +476,7 @@ function CountryFlag({ code, flag }: { code: string; flag: string }) {
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src={`https://flagcdn.com/w40/${code.toLowerCase()}.png`}
-      alt=""
+      alt={`${code} country flag`}
       width={18}
       height={13}
       onError={() => setImgError(true)}
@@ -550,7 +550,7 @@ function CountrySelector({
         aria-expanded={open}
         aria-haspopup="listbox"
         aria-label={`Selected country: ${selected.name} (${selected.dialCode}). Click to choose country.`}
-        className="flex items-center justify-between gap-1 h-11 w-[78px] sm:w-[84px] px-2 rounded-xl border border-line bg-panel2/60 text-xs font-semibold text-ink hover:border-purple/50 focus:border-purple focus:ring-1 focus:ring-purple transition-all select-none shadow-xs"
+        className="country-selector-trigger"
       >
         <span className="flex items-center gap-1.5 min-w-0">
           <CountryFlag code={selected.code} flag={selected.flag} />

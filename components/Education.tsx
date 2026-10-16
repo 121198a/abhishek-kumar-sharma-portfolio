@@ -26,7 +26,7 @@ export default function Education() {
           {/* Vertical Timeline Guide Line */}
           <div
             aria-hidden="true"
-            className="absolute left-[31px] top-6 bottom-6 w-[2px] bg-gradient-to-b from-purple/40 via-line to-transparent"
+            className="absolute left-[31px] top-6 bottom-6 w-[2px] bg-gradient-to-b from-line/80 via-line/40 to-transparent"
           />
 
           <div className="space-y-8 sm:space-y-10">
@@ -36,19 +36,19 @@ export default function Education() {
                   {/* Timeline Node Icon (Desktop) */}
                   <div
                     aria-hidden="true"
-                    className="grid shrink-0 z-10 h-16 w-16 place-items-center rounded-2xl border border-line bg-panel2 shadow-lg transition-all duration-300 group-hover:border-purple/50 group-hover:scale-105"
+                    className="education-milestone-marker"
                   >
-                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-purple/10 text-purple font-mono font-bold text-xs">
+                    <div className="grid h-9 w-9 place-items-center rounded-full bg-purple/10 text-purple font-mono font-bold text-xs">
                       {index === 0 ? "01" : index === 1 ? "02" : "03"}
                     </div>
                   </div>
 
                   {/* Main Education Card */}
-                  <article className="flex-1 w-full rounded-2xl border border-line bg-panel2/70 p-6 sm:p-8 backdrop-blur-sm transition-all duration-300 hover:border-purple/40 hover:shadow-2xl hover:shadow-purple/5">
+                  <article className="education-card">
                     {/* Top Row: Year, Score, Level Badges */}
                     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line/60 pb-4">
                       <div className="flex items-center gap-2.5">
-                        <span className="inline-flex items-center gap-1.5 font-mono text-xs font-bold text-purple bg-purple/10 px-3 py-1 rounded-full border border-purple/20">
+                        <span className="badge-date">
                           <Calendar className="h-3 w-3" />
                           <span>{item.year}</span>
                         </span>
@@ -131,10 +131,10 @@ export default function Education() {
  */
 function MobileEducationCard({ item, index }: { item: EducationEntry; index: number }) {
   return (
-    <div className="p-5 flex flex-col justify-between h-full space-y-3">
+    <article className="education-card p-5 space-y-3">
       <div>
         <div className="flex items-center justify-between border-b border-line/60 pb-2.5">
-          <span className="inline-flex items-center gap-1 font-mono text-[11px] font-bold text-purple bg-purple/10 px-2 py-0.5 rounded-full border border-purple/20">
+          <span className="badge-date">
             <Calendar className="h-3 w-3" />
             <span>{item.year}</span>
           </span>
@@ -170,7 +170,7 @@ function MobileEducationCard({ item, index }: { item: EducationEntry; index: num
           )}
         </div>
       )}
-    </div>
+    </article>
   );
 }
 

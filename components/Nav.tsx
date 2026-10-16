@@ -133,9 +133,7 @@ export default function Nav() {
           }}
           className="group flex items-center gap-3 font-extrabold tracking-wide"
         >
-          <span
-            className="grid h-9 w-9 place-items-center rounded-xl border border-white/10 bg-panel2 text-ink font-bold text-sm shadow-sm transition-transform duration-300 group-hover:scale-105"
-          >
+          <span className="nav-logo-badge">
             A
           </span>
           <span className="flex flex-col leading-none">
@@ -151,7 +149,7 @@ export default function Nav() {
         {/* Desktop Navigation Links */}
         <nav
           aria-label="Primary navigation"
-          className="hidden lg:flex items-center gap-1 rounded-full border border-line/60 bg-white/[0.03] px-3 py-1.5 backdrop-blur-sm"
+          className="nav-pill-bar"
         >
           {NAV_LINKS.map((link) => {
             const linkId = link.href.slice(1);
@@ -232,7 +230,7 @@ export default function Nav() {
           role="dialog"
           aria-modal="true"
           aria-label="Mobile navigation"
-          className="fixed inset-x-0 top-[76px] bottom-0 z-[80] flex flex-col justify-between overflow-y-auto border-t border-line bg-bg p-6 shadow-2xl md:hidden"
+          className="nav-drawer-panel"
         >
           <div className="flex flex-col gap-2 relative z-10">
             <div className="flex items-center justify-between mb-2">

@@ -23,6 +23,14 @@ const nextConfig = {
   // Disable Next.js dev indicator logo in development
   devIndicators: false,
 
+  // Prevent Windows PackFileCacheStrategy ENOENT rename collisions on .pack.gz_
+  webpack(config, { dev }) {
+    if (dev) {
+      config.cache = false;
+    }
+    return config;
+  },
+
   // Security headers. The enforced CSP contains only directives that cannot
   // break hydration. The full policy ships as Report-Only: open DevTools >
   // Console on the deployed site, confirm there are no violations, then

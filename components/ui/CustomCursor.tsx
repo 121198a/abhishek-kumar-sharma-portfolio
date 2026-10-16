@@ -131,7 +131,7 @@ export default function CustomCursor() {
       {/* Trailing Dynamic Ring */}
       <div
         ref={ringRef}
-        className={`fixed top-0 left-0 flex items-center justify-center rounded-full will-change-transform transition-[width,height,background-color,border-color] duration-200 ${
+        className={`cursor-ring ${
           cursorVariant === "project"
             ? "-ml-12 -mt-12 h-24 w-24 border border-purple/60 bg-panel/80 text-[10px] font-bold tracking-widest text-purple backdrop-blur-sm shadow-xl"
             : cursorVariant === "hover"

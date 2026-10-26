@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Emberdoor — Log in or create an account</title>
+    <meta
+      name="description"
+      content="Log in, create an account or reset your password with Emberdoor. A playful, keyboard-friendly sign-in experience with a door-opening mascot."
+    />
+    <meta name="application-name" content="Emberdoor" />
+    <meta name="author" content="Emberdoor" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="theme-color" content="#07040f" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="canonical" href="%SITE_URL%/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Emberdoor" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:url" content="%SITE_URL%/" />
+    <meta property="og:title" content="Emberdoor — Log in or create an account" />
+    <meta
+      property="og:description"
+      content="Log in, create an account or reset your password with Emberdoor."
+    />
+    <meta property="og:image" content="%SITE_URL%/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="A pink arched door with a glowing knob next to the Emberdoor name" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Emberdoor — Log in or create an account" />
+    <meta
+      name="twitter:description"
+      content="Log in, create an account or reset your password with Emberdoor."
+    />
+    <meta name="twitter:image" content="%SITE_URL%/og-image.png" />
+    <meta name="twitter:image:alt" content="A pink arched door with a glowing knob next to the Emberdoor name" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Emberdoor",
+        "description": "Log in, create an account or reset your password with Emberdoor.",
+        "url": "%SITE_URL%/",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Any",
+        "inLanguage": "en"
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>Emberdoor needs JavaScript to run. Please enable it and reload.</noscript>
+
+    <!--
+      Draft bridge (real persistence, runs before React loads).
+      The pre-rendered form fields are visible and typeable before the JS bundle
+      arrives. This script (1) refills them from the saved draft and (2) saves
+      what the visitor types in that window to localStorage. React reads the same
+      keys when it mounts (src/lib/storage.js) and calls stop() so only one
+      writer is active afterwards.
+      Storage keys: "emberdoor:v1:draft:<form>" (JSON) + "emberdoor:v1:draft-stamps".
+      Allow-list: sign-up name/email and reset-password email ONLY. Passwords,
+      password confirmation, terms consent and the login form are deliberately
+      never handled here (credentials/consent must not be persisted in browser storage).
+    -->
+    <script>
+      (function () {
+        var PREFIX = "emberdoor:v1:draft:";
+        var STAMPS = "emberdoor:v1:draft-stamps";
+        var TTL = 7 * 24 * 60 * 60 * 1000;
+        var FIELDS = {
+          "su-name": ["signup", "name"],
+          "su-em": ["signup", "email"],
+          "fg-em": ["forgot", "email"],
+        };
+        var store;
+        try {
+          store = window.localStorage;
+          store.getItem(PREFIX);
+        } catch (e) {
+          return; // storage blocked: the form still works, just without drafts
+        }
+
+        function readObject(key) {
+          try {
+            var raw = store.getItem(key);
+            var data = raw ? JSON.parse(raw) : null;
+            return data && typeof data === "object" && !Array.isArray(data) ? data : null;
+          } catch (e) {
+            try { store.removeItem(key); } catch (e2) {}
+            return null;
+          }
+        }
+        function write(key, value) {
+          try { store.setItem(key, JSON.stringify(value)); } catch (e) {}
+        }
+
+        // 1. Restore (never overwrite something the visitor already typed).
+        var stamps = readObject(STAMPS) || {};
+        Object.keys(FIELDS).forEach(function (id) {
+          var input = document.getElementById(id);
+          var form = FIELDS[id][0], name = FIELDS[id][1];
+          var stamp = stamps[PREFIX + form];
+          if (!input || input.value) return;
+          if (typeof stamp === "number" && Date.now() - stamp > TTL) return; // expired
+          var draft = readObject(PREFIX + form);
+          if (draft && typeof draft[name] === "string") input.value = draft[name];
+        });
+
+        // 2. Save (debounced, delegated so it covers all three pre-rendered forms).
+        var timer = null;
+        var dirty = {};
+        function flush() {
+          clearTimeout(timer);
+          timer = null;
+          Object.keys(dirty).forEach(function (form) {
+            var draft = readObject(PREFIX + form) || {};
+            Object.keys(dirty[form]).forEach(function (name) {
+              draft[name] = dirty[form][name];
+            });
+            var hasText = Object.keys(draft).some(function (n) { return typeof draft[n] === "string" && draft[n]; });
+            var all = readObject(STAMPS) || {};
+            if (hasText) {
+              all[PREFIX + form] = Date.now();
+              write(PREFIX + form, draft);
+            } else {
+              delete all[PREFIX + form];
+              try { store.removeItem(PREFIX + form); } catch (e) {}
+            }
+            if (Object.keys(all).length) write(STAMPS, all);
+            else try { store.removeItem(STAMPS); } catch (e) {}
+          });
+          dirty = {};
+        }
+        function onInput(event) {
+          var target = event.target;
+          var map = target && FIELDS[target.id];
+          if (!map) return;
+          dirty[map[0]] = dirty[map[0]] || {};
+          dirty[map[0]][map[1]] = String(target.value);
+          clearTimeout(timer);
+          timer = setTimeout(flush, 250);
+        }
+        document.addEventListener("input", onInput);
+        window.addEventListener("pagehide", flush);
+
+        // React calls this right before it replaces the pre-rendered markup.
+        window.__emberdoorDraftBridge = {
+          stop: function () {
+            flush();
+            document.removeEventListener("input", onInput);
+            window.removeEventListener("pagehide", flush);
+          },
+        };
+      })();
+    </script>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "name": "Emberdoor",
+  "short_name": "Emberdoor",
+  "description": "Log in, create an account or reset your password with Emberdoor.",
+  "start_url": "/design-projects/auth/door-auth/",
+  "display": "standalone",
+  "background_color": "#07040f",
+  "theme_color": "#07040f",
+  "icons": [
+    {
+      "src": "/design-projects/auth/door-auth/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/design-projects/auth/door-auth/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "scope": "/design-projects/auth/door-auth/"
+}

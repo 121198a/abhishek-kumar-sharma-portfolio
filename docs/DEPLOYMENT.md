@@ -9,8 +9,15 @@ Nothing is purchased automatically. Everything below works on the free `*.vercel
 4. Decide whether `public/resume.pdf` should keep your phone number (it is public).
 5. Confirm facts that are still unverified on the site and in the chatbot: Spring Boot, .NET, AWS S3/Lambda, the steganography paper details, the Infopulse role, project years. Then run `npm run index:knowledge` to rebuild the chatbot embeddings.
 
-## 0b. Dependency check (do this before EVERY deploy)
-Run `npm ci && npm audit --omit=dev`. It must report 0 vulnerabilities. In October 2026 the project had to move from Next.js 15.5.21 to 15.5.27 because of two critical remote-code-execution advisories (details in SECURITY_NOTES.md). Keep `next` on the newest 15.5.x patch (or a supported newer release) and re-check regularly.
+## 0b. Dependency and security check (do this before EVERY deploy)
+
+1. Run `npm ci` from the committed lockfile.
+2. Run `npm audit --omit=dev`. Production dependencies must report 0 vulnerabilities before deployment.
+3. Run `npm audit` and review the complete dependency tree, including development/build-time tools. Record any unresolved finding and its affected dependency path.
+4. Review `SECURITY_NOTES.md` for the latest audit snapshot and historical context. As of 2026-10-23, the full audit reported 9 development-tree findings (7 high, 2 moderate); the production-only audit reported 0. These are historical results, not a substitute for a fresh audit.
+5. Do not use `npm audit fix --force`, downgrade Next.js, or migrate Tailwind major versions just to silence the audit. Verify compatibility and test any proposed dependency remediation separately before changing the project.
+6. Do not deploy if the production audit reports vulnerabilities. If full-audit findings remain, document the advisory, dependency path, severity, exposure, mitigation, owner, and review date in `SECURITY_NOTES.md`; obtain explicit approval for the residual development/build-time risk before release. Recheck the audit immediately before deployment.
+7. After dependency changes, review `package.json` and `package-lock.json` together, run the project's approved tests, and confirm no unrelated staged or unstaged changes were overwritten.
 
 ## 1. Deploy
 1. Push the project to a GitHub repository (do **not** commit `.env.local`; it is git-ignored).

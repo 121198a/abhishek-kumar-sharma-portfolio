@@ -17,6 +17,19 @@
 
 ---
 
+## Current dependency audit snapshot (2026-10-23)
+
+- Installed root versions verified: Next.js 15.5.28, `eslint-config-next` 15.5.28, and Tailwind CSS 3.4.19.
+- Latest verified production-only audit: `npm audit --omit=dev` reported 0 vulnerabilities.
+- Full root audit: 9 development-tree findings (7 high, 2 moderate; 0 critical). The current `npm audit --json` report identifies `braces` (via Tailwind's `chokidar`/`micromatch`/`fast-glob` dependency paths), `postcss-selector-parser`, and related dependent packages.
+- `braces@3.0.3` is within the reported affected range. The npm registry check found no newer `braces` 3.x release.
+- `postcss-selector-parser@6.1.5` is below the audit advisory's patched version `7.1.6`. `postcss-nested@6.2.0` declares `postcss-selector-parser: ^6.1.1`; do not force parser 7.x into this chain without a verified compatible dependency update.
+- npm's suggested fixes involve a major Tailwind CSS 4.3.3 upgrade or an `eslint-config-next` downgrade to 14.2.35. Neither was applied because it could break compatibility with the current Next.js 15 / Tailwind CSS 3 project.
+- No dependency fix was applied during this review. Do not run `npm audit fix --force`. Investigate compatible upstream fixes and plan any Tailwind 4 migration separately.
+- These results were checked on 2026-10-23. Re-run `npm audit --omit=dev` and `npm audit` before deployment; audit results can change.
+- The Phase 13 section below is historical and retains its earlier 2026-10-04 findings and context.
+
+---
 # Phase 13 - security testing and hardening (2026-10-04)
 
 ## Dependency vulnerabilities (the most important finding)

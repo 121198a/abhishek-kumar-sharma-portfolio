@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Sign in · Create account</title>
+  <meta name="description" content="Sign in or create an account with email, Google, Facebook or GitHub.">
+  <link rel="icon" type="image/svg+xml" href="assets/logo-mark.svg">
+
+  <!-- Libraries (local copies so it works offline; CDN equivalents are in README.txt) -->
+  <link rel="stylesheet" href="vendor/daisyui.css"> <!-- daisyUI 5 components -->
+  <link rel="stylesheet" href="vendor/lenis.css"> <!-- Lenis smooth scroll -->
+  <script src="vendor/tailwind-browser.js"></script> <!-- Tailwind CSS 4 (in-browser compiler) -->
+
+  <style type="text/tailwindcss">
+    @theme {
+      --font-sans: "Outfit", "Segoe UI", system-ui, sans-serif;
+      --color-brand: #0ea5e9;
+      --color-brand-dark: #0284c7;
+      --color-ink: #0f172a;
+      --color-muted: #64748b;
+      --color-danger: #ef4444;
+      --color-ok: #10b981;
+    }
+    @font-face { font-family: "Outfit"; src: url("assets/fonts/outfit-latin-wght-normal.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+
+    /* ───────── reusable pieces (Tailwind @apply) ───────── */
+    @layer components {
+      .f-label  { @apply block mb-[6px] text-[12.5px] font-semibold text-slate-700 tracking-[-0.01em]; }
+      .f-input  { @apply block w-full h-[45px] rounded-xl border border-slate-200/90 bg-[#f8fafc] pl-3.5 pr-11 text-[13.5px] text-ink outline-none transition-all placeholder:text-[#9aa1b2] hover:bg-white hover:border-slate-300 focus:bg-white focus:border-brand-dark focus:ring-4 focus:ring-brand/15 focus:shadow-sm; }
+      .f-icon   { @apply absolute right-0 top-0 grid h-[45px] w-[45px] place-items-center text-slate-400 transition-colors; }
+      .f-msg    { @apply block min-h-[18px] pt-1 text-[11.5px] leading-[14px] text-danger opacity-0 -translate-y-[2px]; transition: opacity .12s ease-out, transform .12s ease-out; }
+      .btn-main { @apply relative h-[45px] w-full cursor-pointer select-none rounded-xl border-0 text-[14px] font-semibold text-white shadow-none transition-all; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); box-shadow: 0 1px 2px rgba(0,0,0,0.08), 0 4px 14px rgba(15,23,42,0.2), inset 0 1px 0 rgba(255,255,255,0.14); }
+      .social   { @apply relative flex h-[44px] items-center justify-center gap-2 rounded-xl border border-slate-200/90 bg-white text-[12.5px] font-semibold text-slate-700 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-slate-50/70 hover:shadow-md active:translate-y-0 active:scale-95 disabled:opacity-50 disabled:pointer-events-none; }
+      .rail-btn { @apply flex h-full w-full flex-col items-center justify-center gap-[7px] text-[12.5px] font-medium text-[#7c8ba1] transition-all duration-200; }
+    }
+
+    /* ───────── card geometry + motion choreography ───────── */
+    :root { --nav-w: 108px; --hero-w: 372px; --hero-h: 611px; --over: 40px; --form-w: 460px; --card-h: calc(var(--hero-h) - 2 * var(--over)); --ease-out: cubic-bezier(.16, 1, .3, 1); }
+    body { background: #edf2f7; background-image: radial-gradient(rgba(100, 116, 139, 0.15) 1px, transparent 1px); background-size: 24px 24px; overflow-x: hidden; }
+    :focus-visible { outline: 2px solid #38bdf8; outline-offset: 2px; border-radius: 8px; }
+
+    .bg i { position: absolute; width: 55vmax; height: 55vmax; border-radius: 50%; filter: blur(85px); opacity: .5; animation: drift 22s ease-in-out infinite alternate; pointer-events: none; will-change: transform; transform: translateZ(0); }
+    .bg i:nth-child(1) { left: -10vmax; top: -12vmax; background: #bae6fd; }
+    .bg i:nth-child(2) { right: -14vmax; bottom: -14vmax; background: #e0e7ff; animation-delay: -7s; }
+    .bg i:nth-child(3) { left: 35%; top: 38%; width: 35vmax; height: 35vmax; background: #ccfbf1; opacity: .4; animation-delay: -13s; }
+    @keyframes drift { to { transform: translate3d(6vmax, 4vmax, 0) scale(1.12); } }
+
+    .stage { --s: 1; position: relative; }
+    @media (min-width: 900px) { body { overflow: hidden; } .page { position: fixed; inset: 0; padding: 0; } .stage { transform: scale(var(--s)); } }
+
+    .acard { position: relative; display: flex; width: calc(var(--nav-w) + var(--hero-w) + var(--form-w)); height: var(--card-h); border-radius: 28px; background: #fff; box-shadow: 0 25px 70px -15px rgba(15, 23, 42, 0.1), 0 0 0 1px rgba(226, 232, 240, 0.8), 0 1px 3px rgba(0, 0, 0, 0.04); transform-style: preserve-3d; will-change: transform; }
+    .acard::before { content: ""; position: absolute; inset: 0; border-radius: 28px; pointer-events: none; background: radial-gradient(550px circle at var(--spot-x, 50%) var(--spot-y, 50%), rgba(14, 165, 233, 0.08), transparent 60%); z-index: 5; }
+    .card-nav { position: relative; align-self: stretch; display: flex; flex-direction: column; justify-content: center; width: var(--nav-w); background: #fcfdfe; border-right: 1px solid #f1f5f9; border-radius: 28px 0 0 28px; }
+    .card-nav li { flex: 1 1 auto; display: grid; place-items: center; }
+    .rail-btn:hover { color: var(--color-ink); }
+    .rail-btn.active { color: var(--color-brand-dark); font-weight: 600; }
+    .rail-btn svg { transition: transform .25s var(--ease-out), filter .25s; }
+    .rail-btn:hover svg { transform: scale(1.1); }
+    .rail-btn.active svg { transform: scale(1.12); filter: drop-shadow(0 2px 6px rgba(14, 165, 233, 0.4)); }
+    .active-bar { position: absolute; top: 33.33%; left: 0; height: 33.33%; transform: translate3d(0, 0, 0); transition: transform .45s cubic-bezier(.16, 1, .3, 1); will-change: transform; }
+    .active-bar::after { content: ""; position: absolute; top: 50%; translate: 0 -50%; width: 4.5px; height: 44px; border-radius: 0 6px 6px 0; background: linear-gradient(180deg, #38bdf8, #0284c7); box-shadow: 0 0 12px rgba(14, 165, 233, 0.65); }
+    .acard.signup .active-bar { transform: translate3d(0, 100%, 0); }
+
+    .card-hero { position: relative; flex: 0 0 var(--hero-w); height: var(--hero-h); margin: calc(var(--over) * -1) 0; border-radius: 28px; overflow: hidden; background: #080d1a; box-shadow: 0 30px 70px -15px rgba(15, 23, 42, 0.4), 0 0 40px rgba(14, 165, 233, 0.12), inset 0 0 0 1px rgba(255, 255, 255, 0.15); transition: opacity .4s, transform .5s var(--ease-out); }
+    .card-hero::after { content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none; background: radial-gradient(85% 65% at 50% 50%, rgba(8, 13, 26, 0.45), rgba(8, 13, 26, 0.88)); }
+    .card-hero-bg { position: absolute; inset: 0; background: url("assets/hero-code.jpg") 50% 50% / 100% 100% no-repeat; transform-origin: 50% 40%; transition: transform 1s var(--ease-out); }
+    .acard.signup .card-hero-bg { transform: scale(1.07) translateY(-1.5%); }
+    .card-hero-inner { position: absolute; top: 0; left: 0; right: 0; z-index: 3; transform: translate3d(0, 0, 0); transition: transform .52s cubic-bezier(.16, 1, .3, 1); will-change: transform; }
+    .acard.signup .card-hero-inner { transform: translate3d(0, -50%, 0); }
+    .card-hero-content { height: var(--hero-h); display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; transform: translate3d(0, 12px, 0); transition: opacity .45s cubic-bezier(.16, 1, .3, 1), transform .5s cubic-bezier(.16, 1, .3, 1); will-change: opacity, transform; }
+    .acard.signin .card-hero-content.signin, .acard.signup .card-hero-content.signup { opacity: 1; transform: translate3d(0, 0, 0); }
+    .terms { opacity: .8; transition: all .25s; } .terms:hover, .terms:focus-visible { opacity: 1; }
+
+    .card-form { position: relative; overflow: hidden; flex: 1 1 auto; min-width: 0; border-radius: 0 28px 28px 0; background: #ffffff; }
+    .forms { position: absolute; left: 0; right: 0; top: 0; height: 200%; transform: translate3d(0, 0, 0); transition: transform .52s cubic-bezier(.16, 1, .3, 1); will-change: transform; }
+    .acard.signup .forms { transform: translate3d(0, -50%, 0); }
+    .card-form form { display: flex; flex-direction: column; height: var(--card-h); padding: 26px 36px 24px; opacity: 0; transform: translate3d(0, 14px, 0); pointer-events: none; transition: opacity .35s cubic-bezier(.16, 1, .3, 1), transform .48s cubic-bezier(.16, 1, .3, 1); will-change: opacity, transform; }
+    .acard.signin form.signin, .acard.signup form.signup { opacity: 1; transform: translate3d(0, 0, 0); pointer-events: auto; transition-delay: .05s; }
+    .acard.signin form.signup { opacity: 0; transform: translate3d(0, 14px, 0); pointer-events: none; }
+    .acard.signup form.signin { opacity: 0; transform: translate3d(0, -14px, 0); pointer-events: none; }
+    .bottom { margin-top: auto; }
+
+    /* field states */
+    .field { position: relative; }
+    .field:focus-within .f-icon:not(.pw-toggle) { color: var(--color-brand-dark); }
+    .pw-toggle { transition: color .2s, background-color .2s; }
+    .pw-toggle:hover { color: var(--color-ink); background-color: #f1f5f9; }
+    .field.is-invalid .f-msg { opacity: 1; transform: none; }
+    .field.is-invalid .f-input { border-color: var(--color-danger); background: #fff; box-shadow: 0 0 0 4px rgb(239 68 68 / .12); }
+    .field.is-invalid .f-icon { color: var(--color-danger); }
+    .field.is-valid .f-input { border-color: rgb(16 185 129 / .55); background: #fff; }
+    .field.is-valid .f-icon:not(.pw-toggle) { color: var(--color-ok); }
+    .is-shaking { animation: shake .2s cubic-bezier(.36,.07,.19,.97) both; }
+    @keyframes shake { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+    .meter { position: absolute; right: 0; top: 2px; display: flex; align-items: center; gap: 3.5px; opacity: 0; transition: opacity .2s; }
+    .meter i { width: 18px; height: 3.5px; border-radius: 9999px; background: #e2e8f0; transition: background .2s, transform .2s; }
+    .meter[data-level] { opacity: 1; }
+    .meter[data-level="1"] i:nth-child(1) { background: var(--color-danger); }
+    .meter[data-level="2"] i:nth-child(-n+2) { background: #f59e0b; }
+    .meter[data-level="3"] i { background: var(--color-ok); }
+    .meter::after { content: ""; font-size: 11px; font-weight: 600; margin-left: 5px; }
+    .meter[data-level="1"]::after { content: "Weak"; color: var(--color-danger); }
+    .meter[data-level="2"]::after { content: "Fair"; color: #f59e0b; }
+    .meter[data-level="3"]::after { content: "Strong"; color: var(--color-ok); }
+    .form-msg { display: block; min-height: 20px; padding-bottom: 6px; text-align: center; font-size: 12px; line-height: 15px; color: var(--color-danger); opacity: 0; transition: opacity .12s ease-out; }
+    .form-msg.is-on { opacity: 1; } .form-msg.is-ok { color: var(--color-ok); }
+
+    /* buttons: loading / success */
+    .btn-main > * { grid-area: 1 / 1; transition: opacity .2s, transform .3s var(--ease-out); }
+    .btn-main { display: grid; place-items: center; overflow: hidden; }
+    .btn-main:hover { background: linear-gradient(180deg, #334155 0%, #1e293b 100%); box-shadow: 0 6px 20px rgba(15, 23, 42, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.2); transform: translateY(-1px); }
+    .btn-main:active { transform: translateY(0.5px) scale(0.99); box-shadow: 0 2px 6px rgba(15, 23, 42, 0.2); }
+    .btn-main .spin, .btn-main .tick { opacity: 0; }
+    .btn-main .tick { transform: scale(.4); }
+    .btn-main.is-loading { pointer-events: none; } .btn-main.is-loading .lbl { opacity: 0; transform: translateY(-8px); } .btn-main.is-loading .spin { opacity: 1; }
+    .btn-main.is-success { background: linear-gradient(180deg, #10b981 0%, #059669 100%) !important; box-shadow: 0 4px 18px rgba(16, 185, 129, 0.4) !important; pointer-events: none; } .btn-main.is-success .lbl { opacity: 0; transform: translateY(8px); } .btn-main.is-success .tick { opacity: 1; transform: none; }
+    .social .spin { position: absolute; opacity: 0; }
+    .social.is-loading { opacity: 1 !important; background: #fff; } .social.is-loading > :not(.spin) { opacity: 0; } .social.is-loading .spin { opacity: 1; }
+
+    .done { animation: fade-in .5s ease both; }
+    .done-ring circle { fill: none; stroke: var(--color-ok); stroke-width: 3.5; stroke-linecap: round; stroke-dasharray: 214; stroke-dashoffset: 214; transform: rotate(-90deg); transform-origin: 50% 50%; animation: draw .9s .1s ease-in-out forwards; }
+    .done-ring path { fill: none; stroke: var(--color-ok); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 50; stroke-dashoffset: 50; animation: draw .5s .8s ease-in-out forwards; }
+    @keyframes draw { to { stroke-dashoffset: 0; } } @keyframes fade-in { from { opacity: 0; } }
+    .acard.is-done .card-hero { opacity: 0; transform: scale(.96); pointer-events: none; }
+
+    /* entrance choreography */
+    html:not(.is-ready) .acard { opacity: 0; }
+    .is-ready .acard { animation: card-in .9s var(--ease-out) both; }
+    .is-ready .card-hero { animation: hero-in 1.1s .15s var(--ease-out) both; }
+    .is-ready .card-nav { animation: fade-in .8s .45s both; }
+    .is-ready form.signin > * { animation: rise .7s var(--ease-out) both; }
+    .is-ready form.signin > :nth-child(1) { animation-delay: .5s } .is-ready form.signin > :nth-child(2) { animation-delay: .58s }
+    .is-ready form.signin > :nth-child(3) { animation-delay: .66s } .is-ready form.signin > :nth-child(4) { animation-delay: .74s } .is-ready form.signin > :nth-child(5) { animation-delay: .82s }
+    @keyframes card-in { from { opacity: 0; transform: translateY(28px) scale(.97); } }
+    @keyframes hero-in { from { opacity: 0; transform: translateX(-70px) scale(.96); } }
+    @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+    .toast-in { animation: rise .45s var(--ease-out) both; }
+
+    /* stacked layout (tablet / phone) */
+    @media (max-width: 899px) {
+      .acard { flex-direction: column; width: min(100%, 480px); height: auto; margin: 0 auto; border-radius: 24px; }
+      .card-nav { flex-direction: row; width: 100%; height: 66px; border-bottom: 1px solid #eef0f4; border-right: 0; border-radius: 24px 24px 0 0; }
+      .card-nav li { flex: 1 1 0; } .rail-btn { flex-direction: row; }
+      .active-bar { top: 0; left: 33.33%; width: 33.33%; height: 100%; transform: translate3d(0, 0, 0); transition: transform .45s cubic-bezier(.16, 1, .3, 1); will-change: transform; }
+      .acard.signup .active-bar { transform: translate3d(100%, 0, 0); }
+      .active-bar::after { top: auto; bottom: 0; left: 50%; translate: -50% 0; width: 54px; height: 3.5px; border-radius: 4px 4px 0 0; }
+      .card-hero { flex: none; height: 210px; margin: 14px 14px 0; border-radius: 20px; }
+      .card-hero-bg { background-size: cover; background-position: 50% 66%; }
+      .card-hero::after { background: radial-gradient(70% 55% at 50% 52%, rgba(0,0,0,.68), transparent 100%); }
+      .card-hero-content { height: 210px; }
+      .card-form { flex: none; border-radius: 0 0 24px 24px; }
+      .forms, .acard.signup .forms { position: relative; top: auto; height: auto; display: grid; transition: none; transform: none; }
+      .card-form form { grid-area: 1 / 1; height: auto; padding: 22px 20px; opacity: 0; transform: translate3d(24px, 0, 0); pointer-events: none; transition: opacity .35s ease-in-out, transform .45s cubic-bezier(.16, 1, .3, 1); }
+      .acard.signin form.signin, .acard.signup form.signup { opacity: 1; transform: translate3d(0, 0, 0); pointer-events: auto; }
+      .acard.signin form.signup { transform: translate3d(24px, 0, 0); } .acard.signup form.signin { transform: translate3d(-24px, 0, 0); }
+      .bottom { margin-top: 14px; }
+      .f-input { font-size: 16px; }
+      .social span { display: none; } .social svg { width: 22px; height: 22px; }
+      .done { min-height: 420px; }
+    }
+    @media (max-width: 899px) and (min-width: 480px) { .social span { display: inline; } .social svg { width: 19px; height: 19px; } }
+    @media (prefers-reduced-motion: reduce) {
+      .is-shaking { animation: none !important; }
+    }
+  </style>
+</head>
+
+<body class="font-sans text-ink antialiased">
+  <svg width="0" height="0" class="absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="i-mail" viewBox="0 0 24 24">
+        <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="5" width="18" height="14" rx="3" />
+          <path d="m4 8 8 6 8-6" />
+        </g>
+      </symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24">
+        <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z" />
+          <circle cx="12" cy="12" r="3" />
+        </g>
+      </symbol>
+      <symbol id="i-eye-off" viewBox="0 0 24 24">
+        <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 3l18 18" />
+          <path
+            d="M10.6 6.1A9.6 9.6 0 0 1 12 6c6.4 0 10 6 10 6a17 17 0 0 1-3.2 3.9M6.6 7.6A16.6 16.6 0 0 0 2 12s3.6 6 10 6c1.6 0 3-.3 4.3-.9" />
+          <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" />
+        </g>
+      </symbol>
+      <symbol id="i-user" viewBox="0 0 24 24">
+        <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="4" />
+          <path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" />
+        </g>
+      </symbol>
+      <symbol id="i-user-check" viewBox="0 0 24 24">
+        <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="10" cy="8" r="4" />
+          <path d="M3 20c0-3.5 3-6 7-6 1.3 0 2.5.3 3.5.8" />
+          <path d="m15 18 2 2 4-4.5" />
+        </g>
+      </symbol>
+      <symbol id="i-user-plus" viewBox="0 0 24 24">
+        <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="10" cy="8" r="4" />
+          <path d="M3 20c0-3.5 3-6 7-6 1.5 0 2.8.3 4 .9" />
+          <path d="M18 15v6M15 18h6" />
+        </g>
+      </symbol>
+      <symbol id="i-download" viewBox="0 0 24 24">
+        <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 4v11" />
+          <path d="m7.5 11 4.5 4.5 4.5-4.5" />
+          <path d="M5 20h14" />
+        </g>
+      </symbol>
+      <symbol id="i-file-text" viewBox="0 0 24 24">
+        <g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+          <polyline points="14 2 14 8 20 8" />
+          <line x1="16" y1="13" x2="8" y2="13" />
+          <line x1="16" y1="17" x2="8" y2="17" />
+          <line x1="10" y1="9" x2="8" y2="9" />
+        </g>
+      </symbol>
+      <symbol id="i-check" viewBox="0 0 24 24">
+        <g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m5 12.5 4.5 4.5L19 7.5" />
+        </g>
+      </symbol>
+      <symbol id="i-google" viewBox="0 0 24 24">
+        <path fill="#4285F4"
+          d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z" />
+        <path fill="#34A853"
+          d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09C3.26 21.3 7.31 24 12 24z" />
+        <path fill="#FBBC05"
+          d="M5.27 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62H1.29a11.86 11.86 0 0 0 0 10.76l3.98-3.09z" />
+        <path fill="#EA4335"
+          d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09C6.22 6.86 8.87 4.75 12 4.75z" />
+      </symbol>
+      <symbol id="i-facebook" viewBox="0 0 24 24">
+        <path fill="#1877F2"
+          d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+      </symbol>
+      <symbol id="i-github" viewBox="0 0 24 24">
+        <path fill="currentColor"
+          d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+      </symbol>
+    </defs>
+  </svg>
+
+  <div class="bg fixed inset-0 -z-10 overflow-hidden bg-gradient-to-br from-[#eef2f6] to-[#dfe7ee]" aria-hidden="true">
+    <i></i><i></i><i></i></div>
+
+  <main class="page grid min-h-svh place-items-center px-4 py-6">
+    <div class="stage" id="stage">
+      <div class="acard signin" id="card">
+
+        <!-- left rail -->
+        <ul class="card-nav" role="tablist" aria-label="Account">
+          <li>
+            <div
+              class="group grid h-12 w-12 place-items-center rounded-2xl bg-white shadow-sm border border-slate-100 transition-all duration-300 hover:scale-105 hover:shadow-md cursor-pointer">
+              <img src="assets/logo-mark.svg" alt="Logo" width="34" height="34"
+                class="h-[34px] w-auto transition-transform duration-300 group-hover:rotate-6">
+            </div>
+            <span class="active-bar" aria-hidden="true"></span>
+          </li>
+          <li><button type="button" role="tab" id="tab-signin" aria-controls="panel-signin" aria-selected="true"
+              class="rail-btn signin active"><svg class="h-[22px] w-[22px]" viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-user-check" />
+              </svg><span>Sign In</span></button></li>
+          <li><button type="button" role="tab" id="tab-signup" aria-controls="panel-signup" aria-selected="false"
+              tabindex="-1" class="rail-btn signup"><svg class="h-[22px] w-[22px]" viewBox="0 0 24 24"
+                aria-hidden="true">
+                <use href="#i-user-plus" />
+              </svg><span>Sign Up</span></button></li>
+        </ul>
+
+        <!-- hero -->
+        <div class="card-hero">
+          <div class="card-hero-bg" aria-hidden="true"></div>
+          <div class="card-hero-inner">
+            <div class="card-hero-content signin text-center px-6">
+              <h1 class="mb-2 text-[27px] font-bold tracking-tight text-white">Welcome back</h1>
+              <p class="text-[13.5px] text-white/75 max-w-[270px] leading-relaxed">Enter your credentials to access your
+                account.</p>
+              <a class="terms mt-6 inline-flex items-center gap-1.5 text-xs text-white/75 transition hover:text-white"
+                href="#" data-terms>
+                <svg class="h-3.5 w-3.5" viewBox="0 0 24 24">
+                  <use href="#i-file-text" />
+                </svg>
+                Terms &amp; Conditions
+              </a>
+            </div>
+            <div class="card-hero-content signup text-center px-6" aria-hidden="true">
+              <h2 class="mb-2 text-[27px] font-bold tracking-tight text-white">Join us today</h2>
+              <p class="text-[13.5px] text-white/75 max-w-[270px] leading-relaxed">Create your account to get started.
+              </p>
+              <a class="terms mt-6 inline-flex items-center gap-1.5 text-xs text-white/75 transition hover:text-white"
+                href="#" data-terms>
+                <svg class="h-3.5 w-3.5" viewBox="0 0 24 24">
+                  <use href="#i-file-text" />
+                </svg>
+                Terms &amp; Conditions
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- forms -->
+        <div class="card-form">
+          <div class="forms">
+
+            <!-- SIGN IN -->
+            <form class="signin" id="panel-signin" role="tabpanel" aria-labelledby="tab-signin" novalidate
+              data-form="signin">
+              <div class="mb-3.5">
+                <h2 class="text-[19px] font-bold tracking-tight text-ink">Sign in to your account</h2>
+                <p class="text-[12px] text-muted mt-0.5">Don’t have an account? <a href="#" data-switch="signup"
+                    class="font-semibold text-brand-dark hover:underline">Sign up for free</a></p>
+              </div>
+
+              <div class="field" data-field="email">
+                <label class="f-label" for="si-email">Email</label>
+                <div class="relative"><input class="f-input" id="si-email" name="email" type="email" inputmode="email"
+                    autocomplete="email" placeholder="youremail@gmail.com" aria-describedby="si-email-msg" required>
+                  <span class="f-icon" aria-hidden="true"><svg class="h-[18px] w-[18px]" viewBox="0 0 24 24">
+                      <use href="#i-mail" />
+                    </svg></span>
+                </div>
+                <small class="f-msg" id="si-email-msg" role="alert"></small>
+              </div>
+
+              <div class="field" data-field="password">
+                <label class="f-label" for="si-pass">Password</label>
+                <div class="relative"><input class="f-input" id="si-pass" name="password" type="password"
+                    autocomplete="current-password" placeholder="Enter your password" aria-describedby="si-pass-msg"
+                    required>
+                  <button type="button" class="f-icon pw-toggle rounded-[10px] hover:text-ink cursor-pointer"
+                    data-toggle aria-label="Show password" aria-pressed="false"><svg class="h-[18px] w-[18px]"
+                      viewBox="0 0 24 24">
+                      <use href="#i-eye-off" />
+                    </svg></button>
+                </div>
+                <small class="f-msg" id="si-pass-msg" role="alert"></small>
+              </div>
+
+              <div class="mb-1 flex items-center justify-between text-[12.5px]">
+                <label
+                  class="flex cursor-pointer items-center gap-2 text-slate-600 hover:text-slate-900 select-none"><input
+                    type="checkbox" name="remember" checked
+                    class="checkbox checkbox-xs rounded-[4px] border-slate-300 checked:border-brand-dark checked:bg-brand-dark checked:text-white"><span>Remember
+                    me</span></label>
+                <a href="#" class="font-medium text-brand-dark hover:text-brand transition hover:underline"
+                  data-forgot>Forgot password?</a>
+              </div>
+
+              <div class="bottom">
+                <small class="form-msg" data-form-msg role="alert"></small>
+                <button type="submit" class="btn-main"><span class="lbl">Sign In</span><span
+                    class="spin loading loading-spinner loading-sm" aria-hidden="true"></span><svg
+                    class="tick h-[22px] w-[22px]" viewBox="0 0 24 24" aria-hidden="true">
+                    <use href="#i-check" />
+                  </svg></button>
+                <div class="relative my-3 text-center">
+                  <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-slate-200/80"></div>
+                  </div>
+                  <span
+                    class="relative bg-white px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">or
+                    continue with</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2.5">
+                  <button type="button" class="social cursor-pointer" data-provider="google"
+                    aria-label="Sign in with Google"><svg class="h-[19px] w-[19px] flex-none" viewBox="0 0 24 24"
+                      aria-hidden="true">
+                      <use href="#i-google" />
+                    </svg><span>Google</span><i class="spin loading loading-spinner loading-sm"
+                      aria-hidden="true"></i></button>
+                  <button type="button" class="social cursor-pointer" data-provider="facebook"
+                    aria-label="Sign in with Facebook"><svg class="h-[19px] w-[19px] flex-none" viewBox="0 0 24 24"
+                      aria-hidden="true">
+                      <use href="#i-facebook" />
+                    </svg><span>Facebook</span><i class="spin loading loading-spinner loading-sm"
+                      aria-hidden="true"></i></button>
+                  <button type="button" class="social cursor-pointer" data-provider="github"
+                    aria-label="Sign in with GitHub"><svg class="h-[19px] w-[19px] flex-none" viewBox="0 0 24 24"
+                      aria-hidden="true">
+                      <use href="#i-github" />
+                    </svg><span>GitHub</span><i class="spin loading loading-spinner loading-sm"
+                      aria-hidden="true"></i></button>
+                </div>
+              </div>
+            </form>
+
+            <!-- SIGN UP -->
+            <form class="signup" id="panel-signup" role="tabpanel" aria-labelledby="tab-signup" novalidate
+              data-form="signup">
+              <div class="mb-3.5">
+                <h2 class="text-[19px] font-bold tracking-tight text-ink">Create your account</h2>
+                <p class="text-[12px] text-muted mt-0.5">Already registered? <a href="#" data-switch="signin"
+                    class="font-semibold text-brand-dark hover:underline">Sign in instead</a></p>
+              </div>
+
+              <div class="field" data-field="username">
+                <label class="f-label" for="su-user">Username</label>
+                <div class="relative"><input class="f-input" id="su-user" name="username" type="text"
+                    autocomplete="username" placeholder="myusername" aria-describedby="su-user-msg" required>
+                  <span class="f-icon" aria-hidden="true"><svg class="h-[18px] w-[18px]" viewBox="0 0 24 24">
+                      <use href="#i-user" />
+                    </svg></span>
+                </div>
+                <small class="f-msg" id="su-user-msg" role="alert"></small>
+              </div>
+
+              <div class="field" data-field="email">
+                <label class="f-label" for="su-email">Email</label>
+                <div class="relative"><input class="f-input" id="su-email" name="email" type="email" inputmode="email"
+                    autocomplete="email" placeholder="youremail@gmail.com" aria-describedby="su-email-msg" required>
+                  <span class="f-icon" aria-hidden="true"><svg class="h-[18px] w-[18px]" viewBox="0 0 24 24">
+                      <use href="#i-mail" />
+                    </svg></span>
+                </div>
+                <small class="f-msg" id="su-email-msg" role="alert"></small>
+              </div>
+
+              <div class="field" data-field="password">
+                <label class="f-label" for="su-pass">Password</label>
+                <div class="relative"><input class="f-input" id="su-pass" name="password" type="password"
+                    autocomplete="new-password" placeholder="Create a password" aria-describedby="su-pass-msg" required>
+                  <button type="button" class="f-icon pw-toggle rounded-[10px] hover:text-ink cursor-pointer"
+                    data-toggle aria-label="Show password" aria-pressed="false"><svg class="h-[18px] w-[18px]"
+                      viewBox="0 0 24 24">
+                      <use href="#i-eye-off" />
+                    </svg></button>
+                </div>
+                <small class="f-msg" id="su-pass-msg" role="alert"></small>
+                <span class="meter" aria-hidden="true"><i></i><i></i><i></i></span>
+              </div>
+
+              <div class="bottom">
+                <small class="form-msg" data-form-msg role="alert"></small>
+                <button type="submit" class="btn-main"><span class="lbl">Sign Up</span><span
+                    class="spin loading loading-spinner loading-sm" aria-hidden="true"></span><svg
+                    class="tick h-[22px] w-[22px]" viewBox="0 0 24 24" aria-hidden="true">
+                    <use href="#i-check" />
+                  </svg></button>
+                <div class="relative my-3 text-center">
+                  <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-slate-200/80"></div>
+                  </div>
+                  <span
+                    class="relative bg-white px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">or
+                    continue with</span>
+                </div>
+                <div class="grid grid-cols-3 gap-2.5">
+                  <button type="button" class="social cursor-pointer" data-provider="google"
+                    aria-label="Sign up with Google"><svg class="h-[19px] w-[19px] flex-none" viewBox="0 0 24 24"
+                      aria-hidden="true">
+                      <use href="#i-google" />
+                    </svg><span>Google</span><i class="spin loading loading-spinner loading-sm"
+                      aria-hidden="true"></i></button>
+                  <button type="button" class="social cursor-pointer" data-provider="facebook"
+                    aria-label="Sign up with Facebook"><svg class="h-[19px] w-[19px] flex-none" viewBox="0 0 24 24"
+                      aria-hidden="true">
+                      <use href="#i-facebook" />
+                    </svg><span>Facebook</span><i class="spin loading loading-spinner loading-sm"
+                      aria-hidden="true"></i></button>
+                  <button type="button" class="social cursor-pointer" data-provider="github"
+                    aria-label="Sign up with GitHub"><svg class="h-[19px] w-[19px] flex-none" viewBox="0 0 24 24"
+                      aria-hidden="true">
+                      <use href="#i-github" />
+                    </svg><span>GitHub</span><i class="spin loading loading-spinner loading-sm"
+                      aria-hidden="true"></i></button>
+                </div>
+              </div>
+            </form>
+
+          </div>
+        </div>
+
+        <!-- success -->
+        <div
+          class="done absolute inset-0 z-[6] flex flex-col items-center justify-center gap-2 rounded-3xl bg-white/95 p-8 text-center backdrop-blur-sm"
+          id="done" hidden aria-live="polite">
+          <div class="relative mb-2">
+            <div class="absolute inset-0 rounded-full bg-emerald-400/20 blur-xl animate-pulse"></div>
+            <svg class="done-ring relative h-[86px] w-[86px]" viewBox="0 0 80 80" aria-hidden="true">
+              <circle cx="40" cy="40" r="34" />
+              <path d="m26 41 10 10 19-21" />
+            </svg>
+          </div>
+          <h2 class="text-[25px] font-bold text-ink" id="done-title">Welcome</h2>
+          <p class="mb-4 max-w-[340px] text-[13.5px] text-muted leading-relaxed" id="done-text"></p>
+          <button type="button" class="btn-main !w-[170px] cursor-pointer" id="signout"><span class="lbl">Sign
+              out</span></button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- toasts (daisyUI) -->
+  <div class="toast toast-center toast-bottom z-50 pointer-events-none" id="toasts" aria-live="polite"></div>
+
+  <!-- Terms & Conditions Modal -->
+  <dialog id="terms-modal" class="modal modal-bottom sm:modal-middle" aria-labelledby="terms-modal-title">
+    <div class="modal-box relative max-w-xl rounded-2xl border border-slate-200/80 bg-white p-0 shadow-2xl text-ink">
+      <!-- Header -->
+      <div
+        class="sticky top-0 z-10 flex items-center justify-between border-b border-slate-100 bg-white/95 px-6 py-4 backdrop-blur">
+        <div class="flex items-center gap-3">
+          <div class="grid h-10 w-10 place-items-center rounded-xl bg-brand/10 text-brand-dark">
+            <svg class="h-5 w-5" viewBox="0 0 24 24">
+              <use href="#i-file-text" />
+            </svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="text-base font-semibold text-ink" id="terms-modal-title">Terms &amp; Conditions</h3>
+              <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-600">v2.4</span>
+            </div>
+            <p class="text-xs text-muted">Effective Date: October 2026</p>
+          </div>
+        </div>
+        <form method="dialog">
+          <button
+            class="grid h-8 w-8 place-items-center rounded-lg text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+            aria-label="Close modal">✕</button>
+        </form>
+      </div>
+
+      <!-- Content -->
+      <div class="max-h-[60vh] space-y-4 overflow-y-auto px-6 py-5 text-[13px] leading-relaxed text-slate-600">
+        <div class="rounded-xl bg-[#f8fafc] p-3.5 border border-slate-100 text-xs text-slate-500">
+          <p>Please read these terms carefully before creating an account or using our platform. By continuing, you
+            agree to comply with our rules and policies.</p>
+        </div>
+
+        <section class="space-y-1.5">
+          <h4 class="flex items-center gap-2 text-[14px] font-semibold text-ink">
+            <span
+              class="flex h-5 w-5 items-center justify-center rounded-full bg-brand/15 text-[11px] font-bold text-brand-dark">1</span>
+            Acceptance of Terms
+          </h4>
+          <p>By registering for an account, accessing, or using this authentication portal and related services, you
+            acknowledge that you have read, understood, and agree to be bound by these Terms &amp; Conditions.</p>
+        </section>
+
+        <section class="space-y-1.5">
+          <h4 class="flex items-center gap-2 text-[14px] font-semibold text-ink">
+            <span
+              class="flex h-5 w-5 items-center justify-center rounded-full bg-brand/15 text-[11px] font-bold text-brand-dark">2</span>
+            Account Security &amp; Credentials
+          </h4>
+          <p>You are responsible for maintaining the confidentiality of your login credentials and passwords. You agree
+            to immediately notify us of any unauthorized use of your account or any other breach of security.</p>
+        </section>
+
+        <section class="space-y-1.5">
+          <h4 class="flex items-center gap-2 text-[14px] font-semibold text-ink">
+            <span
+              class="flex h-5 w-5 items-center justify-center rounded-full bg-brand/15 text-[11px] font-bold text-brand-dark">3</span>
+            Privacy &amp; Data Protection
+          </h4>
+          <p>We treat your personal data with utmost security and industry-standard encryption. Authentication passwords
+            are salted and hashed with modern cryptographic primitives. We never sell your personal information to third
+            parties.</p>
+        </section>
+
+        <section class="space-y-1.5">
+          <h4 class="flex items-center gap-2 text-[14px] font-semibold text-ink">
+            <span
+              class="flex h-5 w-5 items-center justify-center rounded-full bg-brand/15 text-[11px] font-bold text-brand-dark">4</span>
+            Permitted Use &amp; Code of Conduct
+          </h4>
+          <p>You agree not to misuse the authentication system, attempt unauthorized access, reverse-engineer, inject
+            malicious scripts, or disrupt other users' experience on our platform.</p>
+        </section>
+
+        <section class="space-y-1.5">
+          <h4 class="flex items-center gap-2 text-[14px] font-semibold text-ink">
+            <span
+              class="flex h-5 w-5 items-center justify-center rounded-full bg-brand/15 text-[11px] font-bold text-brand-dark">5</span>
+            Modifications &amp; Termination
+          </h4>
+          <p>We reserve the right to modify these terms at any time with prior notice. Continued use of the platform
+            after updates constitutes your agreement to the new terms.</p>
+        </section>
+      </div>
+
+      <!-- Footer Action -->
+      <div class="flex items-center justify-between border-t border-slate-100 bg-slate-50/70 px-6 py-3.5">
+        <button type="button"
+          class="inline-flex items-center gap-1.5 text-xs text-muted hover:text-ink transition cursor-pointer"
+          id="download-terms-copy">
+          <svg class="h-3.5 w-3.5" viewBox="0 0 24 24">
+            <use href="#i-download" />
+          </svg>
+          Download a copy
+        </button>
+        <form method="dialog">
+          <button
+            class="h-9 cursor-pointer rounded-[8px] bg-ink px-5 text-[13px] font-medium text-white transition hover:bg-slate-700 active:scale-95">I
+            Understand</button>
+        </form>
+      </div>
+    </div>
+    <form method="dialog" class="modal-backdrop bg-black/40 backdrop-blur-[2px]">
+      <button>close</button>
+    </form>
+  </dialog>
+
+  <script src="vendor/lenis.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>

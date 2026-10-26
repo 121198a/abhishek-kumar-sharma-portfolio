@@ -1,0 +1,29 @@
+/* ===== EMBERDOOR THEME — edit these to restyle everything ===== */
+:root {
+  --bg: #07040f;
+  --ink: #f4eaff;
+  --mute: #a89bc4;
+  --a: #ff4fa3;
+  --b: #7b5cff;
+  --glow: #ffb36b;
+  --danger: #ff8a8a;
+  --ok: #6ee7a8;
+  --card-w: 420px;
+  --card-pad: 30px;
+  /* Corner radii: one small scale used everywhere */
+  --r-xs: 4px;
+  --r-sm: 12px;
+  --r-lg: 24px;
+  --r-pill: 999px;
+  --r-arch: 50% 50% 6px 6px / 30% 30% 6px 6px; /* door shape, for 3:5 boxes */
+  --radius: var(--r-lg);
+  --field-r: var(--r-sm);
+  /* Darker accent pair for buttons carrying white text (AA contrast) */
+  --a-deep: #c92a78;
+  --b-deep: #5b3fe0;
+  --btn-h: 54px;
+  --font: system-ui, "Segoe UI", Roboto, sans-serif;
+  --card-bg: linear-gradient(160deg, #ffffff18, #ffffff06);
+  --card-border: #ffffff26;
+  --ease: cubic-bezier(.2, .8, .2, 1);
+}

@@ -17,9 +17,9 @@ A production-grade, single-architecture personal portfolio built with Next.js 15
 
 ## 2. Tech Stack
 
-- **Framework:** Next.js 15.5.21 (React 18.3.1, App Router, Server Components by default)
+- **Framework:** Next.js 15.5.28 (React 18.3.1, App Router, Server Components by default)
 - **Language:** TypeScript 5.4.5 (Strict mode enabled)
-- **Styling:** Tailwind CSS 3.4.4 with custom design tokens, PostCSS, Autoprefixer
+- **Styling:** Tailwind CSS 3.4.19 with custom design tokens, PostCSS, Autoprefixer
 - **Smooth Scrolling:** Lenis (`lenis` ^1.3.26) with official CSS integration and reduced-motion guardrails
 - **Motion & Parallax:** Lightweight custom RAF-based scroll parallax, intersection-observer reveals, and magnetic interactions
 - **AI Assistant:** NVIDIA NIM API integration with deterministic local keyword/phrase fallback (`data/faq.ts`)

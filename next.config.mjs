@@ -31,6 +31,19 @@ const nextConfig = {
     return config;
   },
 
+  // Design Showcase: each project is a self-contained build in public/design-projects/<category>/<slug>/.
+  // Public files are served as-is, but a directory URL without a trailing slash has no file to match
+  // (and Next redirects a trailing slash away), so map the clean URL to the project's index.html.
+  // Deeper paths (assets/..., js/...) are real files and never reach this rule.
+  async rewrites() {
+    return [
+      {
+        source: "/design-projects/:category/:slug",
+        destination: "/design-projects/:category/:slug/index.html",
+      },
+    ];
+  },
+
   // Security headers. The enforced CSP contains only directives that cannot
   // break hydration. The full policy ships as Report-Only: open DevTools >
   // Console on the deployed site, confirm there are no violations, then
@@ -55,6 +68,20 @@ const nextConfig = {
           {
             key: "Permissions-Policy",
             value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
+          },
+        ],
+      },
+      // Design Showcase projects are standalone demos served from public/design-projects.
+      // Lamp Auth loads Google Fonts, which the portfolio's own report-only policy above does not
+      // allow, so give these pages their own policy. When two rules set the same header on a path the
+      // later one wins; the enforced Content-Security-Policy above still applies to them unchanged.
+      {
+        source: "/design-projects/:path*",
+        headers: [
+          {
+            key: "Content-Security-Policy-Report-Only",
+            value:
+              "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self'",
           },
         ],
       },

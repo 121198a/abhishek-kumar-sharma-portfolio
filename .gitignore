@@ -42,6 +42,12 @@ Thumbs.db
 *.tmp
 *.temp
 *.local
+*.bak
+*.backup
+*.old
+*-backup
+*audit-backup
+*clock-fix-backup
 
 # Certificates & keys
 *.pem

@@ -1,0 +1,307 @@
+/* Base Reset & Design Showcase Shell */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-primary: #0a0f1d;
+  --bg-secondary: #101827;
+  --text-primary: #f8fafc;
+  --text-muted: #94a3b8;
+  --accent-blue: #3b82f6;
+  --accent-cyan: #38bdf8;
+  --wave-back: #152c69;
+  --wave-mid: #1748c8;
+  --wave-front: #1746d1;
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow-x: hidden;
+  line-height: 1.5;
+}
+
+/* Showcase Header / Demo Page Shell */
+.showcase-header {
+  padding: 3rem 1.5rem 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: center;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.showcase-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  color: var(--accent-cyan);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+}
+
+.showcase-badge__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 8px #38bdf8;
+}
+
+.showcase-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  background: linear-gradient(135deg, #ffffff 30%, #93c5fd 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1rem;
+}
+
+.showcase-subtitle {
+  max-width: 640px;
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 2.5rem;
+}
+
+/* Feature grid */
+.showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 900px;
+  margin-bottom: 3rem;
+  text-align: left;
+}
+
+.showcase-card {
+  background: rgba(16, 24, 39, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  backdrop-filter: blur(12px);
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.showcase-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(59, 130, 246, 0.35);
+}
+
+.showcase-card__tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent-cyan);
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.showcase-card__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.35rem;
+}
+
+.showcase-card__desc {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+/* ==========================================================================
+   Reference-inspired animated wave footer
+   ========================================================================== */
+.portfolio-wave-footer {
+  position: relative;
+  isolation: isolate;
+  min-height: 230px;
+  margin-top: 2rem;
+  overflow: hidden;
+  background: var(--bg-secondary);
+  color: #dbeafe;
+  width: 100%;
+}
+
+.portfolio-wave-footer__art {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: linear-gradient(180deg, #101827 0%, #101827 45%, #142b72 100%);
+}
+
+.portfolio-wave-footer__wave {
+  position: absolute;
+  left: -8%;
+  bottom: -1px;
+  width: 116%;
+  height: 72%;
+  fill: #163b9b;
+  transform-origin: center bottom;
+}
+
+.portfolio-wave-footer__wave--back {
+  bottom: 22px;
+  fill: var(--wave-back);
+  animation: portfolio-wave-drift 11s ease-in-out infinite alternate;
+}
+
+.portfolio-wave-footer__wave--middle {
+  bottom: 7px;
+  fill: var(--wave-mid);
+  animation: portfolio-wave-drift 8s ease-in-out infinite alternate-reverse;
+}
+
+.portfolio-wave-footer__wave--front {
+  fill: var(--wave-front);
+  animation: portfolio-wave-drift 13s ease-in-out infinite alternate;
+}
+
+.portfolio-wave-footer__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 230px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  padding: 76px 20px 24px;
+}
+
+.portfolio-wave-footer__socials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.portfolio-wave-footer__socials a {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid rgba(219, 234, 254, 0.18);
+  border-radius: 50%;
+  background: rgba(30, 64, 175, 0.42);
+  color: #eaf2ff;
+  transition: transform 0.25s ease, background-color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  text-decoration: none;
+}
+
+.portfolio-wave-footer__socials a:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.65);
+  background: rgba(37, 99, 235, 0.85);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.45);
+}
+
+.portfolio-wave-footer__socials a:focus-visible,
+.portfolio-wave-footer__links a:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+
+.portfolio-wave-footer__socials svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.portfolio-wave-footer__socials a[aria-label="X"] svg {
+  fill: currentColor;
+  stroke: none;
+}
+
+.portfolio-wave-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 16px;
+}
+
+.portfolio-wave-footer__links a {
+  color: rgba(239, 246, 255, 0.9);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.portfolio-wave-footer__links a:hover {
+  color: #ffffff;
+  opacity: 0.8;
+}
+
+.portfolio-wave-footer__copyright {
+  margin: 0;
+  color: rgba(219, 234, 254, 0.72);
+  font-size: 0.75rem;
+  text-align: center;
+  letter-spacing: 0.01em;
+}
+
+@keyframes portfolio-wave-drift {
+  from {
+    transform: translate3d(-2%, 4px, 0) scaleY(0.94);
+  }
+  to {
+    transform: translate3d(2%, -5px, 0) scaleY(1.06);
+  }
+}
+
+@media (max-width: 480px) {
+  .portfolio-wave-footer,
+  .portfolio-wave-footer__content {
+    min-height: 200px;
+  }
+  .portfolio-wave-footer__content {
+    gap: 13px;
+    padding: 68px 16px 20px;
+  }
+  .portfolio-wave-footer__links {
+    gap: 6px 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-wave-footer__wave {
+    animation: none !important;
+  }
+  .portfolio-wave-footer__socials a,
+  .portfolio-wave-footer__links a {
+    transition: none;
+  }
+}

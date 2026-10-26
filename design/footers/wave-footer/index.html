@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animated Wave Footer | Design Showcase</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Showcase Page Header & Overview -->
+  <header class="showcase-header">
+    <div class="showcase-badge">
+      <span class="showcase-badge__dot"></span>
+      Interactive Design Component
+    </div>
+    <h1 class="showcase-title">Animated Wave Footer</h1>
+    <p class="showcase-subtitle">
+      A multi-layered fluid wave footer featuring smooth CSS SVG parallax drift, glowing social badges, and responsive navigation links. Designed for premium web portfolios and digital experiences.
+    </p>
+
+    <div class="showcase-grid">
+      <div class="showcase-card">
+        <span class="showcase-card__tag">3 Layer Parallax</span>
+        <h3 class="showcase-card__title">Harmonic Wave Drift</h3>
+        <p class="showcase-card__desc">Independent Bezier curve frequencies (11s, 8s, 13s) create an organic, ever-shifting ocean wave illusion.</p>
+      </div>
+
+      <div class="showcase-card">
+        <span class="showcase-card__tag">Accessibility</span>
+        <h3 class="showcase-card__title">Reduced Motion Guard</h3>
+        <p class="showcase-card__desc">Full support for prefers-reduced-motion media query, disabling animations while preserving pristine aesthetics.</p>
+      </div>
+
+      <div class="showcase-card">
+        <span class="showcase-card__tag">Interaction</span>
+        <h3 class="showcase-card__title">Floating Social Pills</h3>
+        <p class="showcase-card__desc">Interactive icon buttons with subtle lift dynamics, blue ambient glow, and high-contrast accessibility focus rings.</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Animated Wave Footer Component -->
+  <footer class="portfolio-wave-footer" aria-label="Portfolio footer links">
+    <div class="portfolio-wave-footer__art" aria-hidden="true">
+      <svg class="portfolio-wave-footer__wave portfolio-wave-footer__wave--back" viewBox="0 0 1440 180" preserveAspectRatio="none">
+        <path d="M0,70 C180,20 280,145 470,90 C650,38 770,18 940,78 C1110,138 1260,28 1440,68 L1440,180 L0,180 Z" />
+      </svg>
+      <svg class="portfolio-wave-footer__wave portfolio-wave-footer__wave--middle" viewBox="0 0 1440 180" preserveAspectRatio="none">
+        <path d="M0,92 C190,145 320,25 520,80 C720,135 850,150 1030,85 C1200,22 1320,90 1440,55 L1440,180 L0,180 Z" />
+      </svg>
+      <svg class="portfolio-wave-footer__wave portfolio-wave-footer__wave--front" viewBox="0 0 1440 180" preserveAspectRatio="none">
+        <path d="M0,112 C210,65 350,130 540,108 C760,82 850,145 1060,105 C1220,74 1320,120 1440,96 L1440,180 L0,180 Z" />
+      </svg>
+    </div>
+
+    <div class="portfolio-wave-footer__content">
+      <nav class="portfolio-wave-footer__socials" aria-label="Social profiles">
+        <a href="https://github.com/121198a" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M15 22v-4a4.8 4.8 0 00-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 004 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+            <path d="M9 18c-4.51 2-5-2-7-2" />
+          </svg>
+        </a>
+        <a href="https://www.linkedin.com/in/abhishek-kumar-sharma-75306b1ba/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z" />
+            <rect x="2" y="9" width="4" height="12" />
+            <circle cx="4" cy="4" r="2" />
+          </svg>
+        </a>
+        <a href="https://www.instagram.com/_.itsyourabhishek._/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="5" />
+            <circle cx="12" cy="12" r="4" />
+            <circle cx="17.5" cy="6.5" r="1" />
+          </svg>
+        </a>
+        <a href="https://x.com/12_sharma_ji" target="_blank" rel="noopener noreferrer" aria-label="X" title="X">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M18.9 2H22l-6.8 7.8L23.2 22h-6.3l-4.9-7.4L5.5 22H2.3l7.3-8.4L1.8 2h6.5l4.4 6.8L18.9 2Zm-1.1 18h1.7L7.3 3.9H5.5L17.8 20Z" />
+          </svg>
+        </a>
+      </nav>
+
+      <nav class="portfolio-wave-footer__links" aria-label="Footer navigation">
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#portfolio">Portfolio</a>
+        <a href="#skills">Skills</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <p class="portfolio-wave-footer__copyright">
+        &copy; <span id="year">2026</span> Abhishek Kumar Sharma. All rights reserved.
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

@@ -181,8 +181,17 @@ export const designCategories: DesignCategory[] = [
     id: "footers",
     title: "Footers",
     description: "Footer layouts and treatments.",
-    status: "coming-soon",
-    projects: [],
+    status: "live",
+    projects: [
+      {
+        slug: "wave-footer",
+        title: "Animated Wave Footer",
+        description:
+          "Multi-layered fluid ocean wave footer with smooth CSS parallax drift animations, glow-hover social icons, and quick-navigation links.",
+        tags: ["HTML", "CSS", "SVG", "Animation"],
+        status: "live",
+      },
+    ],
   },
 ];
 

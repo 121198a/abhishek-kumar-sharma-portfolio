@@ -199,7 +199,7 @@ export default function Footer() {
         </div>
 
         {/* Fluid Wave Art Base & Social Profiles */}
-        <div className="relative mt-8 overflow-hidden rounded-2xl border border-line/60 bg-gradient-to-b from-panel via-panel2/80 to-[#101827]/90 pt-8 pb-3 text-center">
+        <div className="relative mt-8 overflow-hidden rounded-2xl border border-line/60 bg-gradient-to-b from-panel via-panel2 to-panel2/80 dark:to-[#0a0f1d] pt-8 pb-3 text-center">
           <div className="relative z-10 px-6">
             <nav className="flex items-center justify-center gap-3 mb-3" aria-label="Footer social profiles">
               <a

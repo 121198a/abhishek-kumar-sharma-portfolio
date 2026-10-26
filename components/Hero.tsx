@@ -52,20 +52,20 @@ export default function Hero({ video = null }: HeroProps) {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-[1] overflow-hidden"
       >
-        <div className="hero-ambient opacity-70" />
-        <div className="hero-ambient-alt opacity-70" />
+        <div className="hero-ambient opacity-50 dark:opacity-70" />
+        <div className="hero-ambient-alt opacity-50 dark:opacity-70" />
 
-        {/* Directional scrim: protect left-side text while keeping center & right video crystal clear */}
-        <div className="absolute inset-0 bg-gradient-to-r from-bg/85 via-bg/35 to-transparent sm:from-bg/80 sm:via-bg/25 sm:to-transparent" />
-        {/* Subtle bottom edge blend into the page */}
-        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-bg via-bg/40 to-transparent" />
+        {/* Theme-adaptive directional scrim: Solid on left for text contrast, blending cleanly into ambient video */}
+        <div className="absolute inset-0 bg-gradient-to-r from-bg via-bg/90 to-bg/60 dark:from-bg/95 dark:via-bg/80 dark:to-bg/35" />
+        {/* Subtle vertical blend at top and bottom */}
+        <div className="absolute inset-0 bg-gradient-to-b from-bg/70 via-transparent to-bg" />
       </div>
 
       {/* Hero content */}
       <div className="relative z-10 mx-auto w-full max-w-shell px-6 sm:px-8">
         <Reveal immediate delay={0.05} direction="down">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="inline-flex items-center gap-2 rounded-full border border-purple/30 bg-purple/15 px-3 py-1 text-xs font-semibold text-[#4f46e5]">
+            <span className="inline-flex items-center gap-2 rounded-full border border-purple/30 bg-purple/15 px-3 py-1 text-xs font-semibold text-purple">
               <span
                 aria-hidden="true"
                 className="h-2 w-2 shrink-0 rounded-full bg-[#34d399] motion-safe:animate-pulse"

@@ -165,7 +165,7 @@ export default function ResponsiveVideo({ manifest, minWidth = 768 }: Props) {
           playsInline
           preload="metadata"
           tabIndex={-1}
-          className="h-full w-full object-cover opacity-80 dark:opacity-75 transition-opacity duration-700"
+          className="h-full w-full object-cover opacity-25 sm:opacity-30 dark:opacity-65 transition-opacity duration-700"
         />
       </div>
       {active && (

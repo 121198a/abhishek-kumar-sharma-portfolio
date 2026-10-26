@@ -52,11 +52,13 @@ export default function Hero({ video = null }: HeroProps) {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-[1] overflow-hidden"
       >
-        <div className="hero-ambient" />
-        <div className="hero-ambient-alt" />
+        <div className="hero-ambient opacity-70" />
+        <div className="hero-ambient-alt opacity-70" />
 
-        {/* Preserve the original horizontal hero overlay. */}
-        <div className="absolute inset-0 bg-gradient-to-r from-bg via-bg/90 to-bg/70" />
+        {/* Directional scrim: protect left-side text while keeping center & right video crystal clear */}
+        <div className="absolute inset-0 bg-gradient-to-r from-bg/85 via-bg/35 to-transparent sm:from-bg/80 sm:via-bg/25 sm:to-transparent" />
+        {/* Subtle bottom edge blend into the page */}
+        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-bg via-bg/40 to-transparent" />
       </div>
 
       {/* Hero content */}
@@ -98,9 +100,7 @@ export default function Hero({ video = null }: HeroProps) {
                         className="kinetic-character"
                         style={{
                           animationDelay: `${
-                            0.12 +
-                            wordIndex * 0.18 +
-                            characterIndex * 0.026
+                            0.12 + wordIndex * 0.18 + characterIndex * 0.026
                           }s`,
                         }}
                       >
@@ -182,10 +182,7 @@ export default function Hero({ video = null }: HeroProps) {
           <div className="mt-10 border-t border-line pt-6 sm:mt-12">
             <dl className="grid grid-cols-2 gap-6 sm:grid-cols-4">
               {stats.map((stat) => (
-                <div
-                  key={stat.label}
-                  className="flex flex-col-reverse py-1"
-                >
+                <div key={stat.label} className="flex flex-col-reverse py-1">
                   <dt className="mt-1 text-xs font-medium text-muted">
                     {stat.label}
                   </dt>

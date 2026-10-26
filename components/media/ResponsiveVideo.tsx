@@ -45,34 +45,67 @@ export default function ResponsiveVideo({ manifest, minWidth = 768 }: Props) {
       setActive(false);
       return;
     }
-    if (v.getAttribute("src")) return; // already loaded
+
     const source = pickSource(manifest.sources, window.innerWidth, window.devicePixelRatio || 1, (m) => v.canPlayType(m) !== "");
     if (!source) return;
-    v.src = source.src;
-    v.load();
+
+    // Guarantee browser recognizes the element as muted for autoplay policy
+    v.defaultMuted = true;
+    v.muted = true;
+
+    if (v.getAttribute("src") !== source.src) {
+      v.src = source.src;
+      v.load();
+    }
+
     setActive(true);
-    if (!userPausedRef.current) v.play().catch(() => setUserPaused(true));
+
+    if (!userPausedRef.current) {
+      const p = v.play();
+      if (p !== undefined) {
+        p.catch(() => {
+          // Autoplay policy deferred until user interaction; do NOT set userPaused to true!
+        });
+      }
+    }
   }, [manifest.sources, minWidth]);
 
   useEffect(() => {
+    const v = videoRef.current;
+    if (v) {
+      v.defaultMuted = true;
+      v.muted = true;
+    }
+
     // Wait until the browser is idle so the video never competes with first paint.
-    // (Safari has no requestIdleCallback, hence the runtime check.)
     const hasIdle = typeof window.requestIdleCallback === "function";
-    const handle = hasIdle ? window.requestIdleCallback(tryLoad, { timeout: 2000 }) : window.setTimeout(tryLoad, 600);
+    const handle = hasIdle ? window.requestIdleCallback(tryLoad, { timeout: 2000 }) : window.setTimeout(tryLoad, 400);
 
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     mq.addEventListener("change", tryLoad);
     window.addEventListener("resize", tryLoad);
 
+    // One-time interaction listener ensures deferred autoplay starts as soon as user touches or scrolls
+    const onUserGesture = () => {
+      const el = videoRef.current;
+      if (el && !userPausedRef.current && el.paused) {
+        el.defaultMuted = true;
+        el.muted = true;
+        el.play().catch(() => {});
+      }
+    };
+    window.addEventListener("pointerdown", onUserGesture, { once: true, passive: true });
+    window.addEventListener("scroll", onUserGesture, { once: true, passive: true });
+    window.addEventListener("keydown", onUserGesture, { once: true, passive: true });
+
     const onVisibility = () => {
-      const v = videoRef.current;
-      if (!v || !v.getAttribute("src")) return;
-      if (document.hidden) v.pause();
-      else if (!userPausedRef.current) v.play().catch(() => {});
+      const el = videoRef.current;
+      if (!el || !el.getAttribute("src")) return;
+      if (document.hidden) el.pause();
+      else if (!userPausedRef.current) el.play().catch(() => {});
     };
     document.addEventListener("visibilitychange", onVisibility);
 
-    const v = videoRef.current;
     const io =
       v && "IntersectionObserver" in window
         ? new IntersectionObserver(([entry]) => {
@@ -89,6 +122,9 @@ export default function ResponsiveVideo({ manifest, minWidth = 768 }: Props) {
       else window.clearTimeout(handle);
       mq.removeEventListener("change", tryLoad);
       window.removeEventListener("resize", tryLoad);
+      window.removeEventListener("pointerdown", onUserGesture);
+      window.removeEventListener("scroll", onUserGesture);
+      window.removeEventListener("keydown", onUserGesture);
       document.removeEventListener("visibilitychange", onVisibility);
       io?.disconnect();
     };
@@ -99,6 +135,8 @@ export default function ResponsiveVideo({ manifest, minWidth = 768 }: Props) {
     if (!v) return;
     if (userPaused) {
       setUserPaused(false);
+      v.defaultMuted = true;
+      v.muted = true;
       v.play().catch(() => {});
     } else {
       setUserPaused(true);
@@ -112,15 +150,14 @@ export default function ResponsiveVideo({ manifest, minWidth = 768 }: Props) {
         <video
           ref={videoRef}
           poster={manifest.poster.src}
+          autoPlay
           muted
           loop
           playsInline
-          preload="none"
+          preload="metadata"
           tabIndex={-1}
-          className="h-full w-full object-cover opacity-30"
+          className="h-full w-full object-cover opacity-80 dark:opacity-75 transition-opacity duration-700"
         />
-        {/* Keeps hero text readable over any footage. */}
-        <div className="absolute inset-0 bg-gradient-to-b from-bg/60 via-bg/50 to-bg" />
       </div>
       {active && (
         <button

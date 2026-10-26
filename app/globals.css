@@ -1223,3 +1223,49 @@ html.motion-reduced .hero-ambient-alt {
     transition: none !important;
   }
 }
+
+/* Animated Wave Footer Banner & Base Art */
+.portfolio-wave-footer__wave {
+  position: absolute;
+  left: -8%;
+  bottom: -1px;
+  width: 116%;
+  height: 100%;
+  transform-origin: center bottom;
+  pointer-events: none;
+}
+
+.portfolio-wave-footer__wave--back {
+  bottom: 8px;
+  fill: #1d4ed8;
+  opacity: 0.45;
+  animation: portfolio-wave-drift 11s ease-in-out infinite alternate;
+}
+
+.portfolio-wave-footer__wave--middle {
+  bottom: 3px;
+  fill: #2563eb;
+  opacity: 0.6;
+  animation: portfolio-wave-drift 8s ease-in-out infinite alternate-reverse;
+}
+
+.portfolio-wave-footer__wave--front {
+  fill: #3b82f6;
+  opacity: 0.8;
+  animation: portfolio-wave-drift 13s ease-in-out infinite alternate;
+}
+
+@keyframes portfolio-wave-drift {
+  from {
+    transform: translate3d(-2%, 2px, 0) scaleY(0.95);
+  }
+  to {
+    transform: translate3d(2%, -3px, 0) scaleY(1.05);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-wave-footer__wave {
+    animation: none !important;
+  }
+}

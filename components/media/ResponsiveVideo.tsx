@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { pickSource, shouldLoadVideo, type VideoManifest } from "@/lib/media-policy";
+import { useMotionPreference } from "@/components/providers/MotionPreferenceProvider";
 
 type Props = {
   manifest: VideoManifest;
@@ -18,6 +19,7 @@ type NetworkInformation = { effectiveType?: string; saveData?: boolean };
 // - Pauses when scrolled out of view or the tab is hidden (CPU/battery).
 // - Visible pause/play control (WCAG 2.2.2: auto-playing motion > 5 s needs one).
 export default function ResponsiveVideo({ manifest, minWidth = 768 }: Props) {
+  const { motionEnabled, ready } = useMotionPreference();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [active, setActive] = useState(false); // a source was loaded
   const [userPaused, setUserPaused] = useState(false);
@@ -28,10 +30,19 @@ export default function ResponsiveVideo({ manifest, minWidth = 768 }: Props) {
     const v = videoRef.current;
     if (!v) return;
     const conn = (navigator as Navigator & { connection?: NetworkInformation }).connection;
+
+    // Respect portfolio user motion preference if set, falling back to system media query
+    const isReduced = ready
+      ? !motionEnabled
+      : window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // Respect user's explicit Save-Data mode when enabled on metered connections
+    const effectiveType = conn?.saveData ? conn?.effectiveType : undefined;
+
     const allowed = shouldLoadVideo({
-      reducedMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+      reducedMotion: isReduced,
       saveData: !!conn?.saveData,
-      effectiveType: conn?.effectiveType,
+      effectiveType,
       viewportWidth: window.innerWidth,
       minWidth,
       pageHidden: document.hidden,
@@ -68,7 +79,7 @@ export default function ResponsiveVideo({ manifest, minWidth = 768 }: Props) {
         });
       }
     }
-  }, [manifest.sources, minWidth]);
+  }, [manifest.sources, minWidth, motionEnabled, ready]);
 
   useEffect(() => {
     const v = videoRef.current;
@@ -77,9 +88,8 @@ export default function ResponsiveVideo({ manifest, minWidth = 768 }: Props) {
       v.muted = true;
     }
 
-    // Wait until the browser is idle so the video never competes with first paint.
-    const hasIdle = typeof window.requestIdleCallback === "function";
-    const handle = hasIdle ? window.requestIdleCallback(tryLoad, { timeout: 2000 }) : window.setTimeout(tryLoad, 400);
+    // Initialize playback promptly after hydration
+    const timer = window.setTimeout(tryLoad, 150);
 
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     mq.addEventListener("change", tryLoad);
@@ -118,8 +128,7 @@ export default function ResponsiveVideo({ manifest, minWidth = 768 }: Props) {
     if (v && io) io.observe(v);
 
     return () => {
-      if (hasIdle) window.cancelIdleCallback(handle);
-      else window.clearTimeout(handle);
+      window.clearTimeout(timer);
       mq.removeEventListener("change", tryLoad);
       window.removeEventListener("resize", tryLoad);
       window.removeEventListener("pointerdown", onUserGesture);
